@@ -820,7 +820,7 @@ window.addEventListener("load",function(){
     g=new Game();
 
     // Drawing here!
-    g.createByTileset(-4, 0, the_plains, ["Beware! This is a junction! Tyler designed what you will find if you go down, Ethan designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);//*/-2.5,-112,lvl1); // -5, -6 // -4, -12, ethan_lvl
+    g.createByTileset(-4, 0, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);//*/-2.5,-112,lvl1); // -5, -6 // -4, -12, ethan_lvl
     //g.createByTileset(0, 0, `rrrr\nrrrr\n`);
     /*g.createSign(0,5,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me")
     g.createSign(37,24,"You'll find that you have a magic power - an illegal jump! If you run off a surface without jumping, you may jump <i>in midair</i> and to the next platform")
