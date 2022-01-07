@@ -32,145 +32,76 @@ lrcccccccccccccr                      r r
 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 `
 var lvl1=
-`                                zzzzzzzz                                                                                                v
-                                                       e e e   e e e   e e e   e e e   e e ǝ   ǝ   ǝ   ǝ   ǝ   ǝ   ǝ   ǝ   ǝ   ǝ   ǝ  v
- v                                                     ziiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiir
- r rrrrrrrrrrFrrrrrrrrrrrrrrrrrrrrrrrzrrrr  vZvvvvvvvvvvv                                  v v
- r           C                       zr   r                                                v v
- r                  v4x                z     r                                               v v
- r   rrrrrrrrrrrrzrrrrrrrrrrrrrrrrrrrrr     r                                              vev
- r          r  v zv                   r r    r                                             vev
- r          r  v zv                   r r     r                                            vev
- r          r   zr rr rrrrrrrrrrr rrrrr rr     r                                           vev
- r          r   zr r               cr r r r     r                                          vev
- r          rrrrzr r                r r r  r     r                                         vev
- r              zr r rrrrrrrrrrrrrr r r r   l    lr                                        v v
- r              zr r                  r r    r   llr                                       v v
- rrrrrrrrrrrr   zr r                  r r         llr     v                                v v
- rCc        rvrrr   rrrrrrrrrrrrrrrrr r r        l  lr   v                                 v v
- r             r                      r r       r       v                                  v v
- r      z      r z                    r r      l       v                                   v v
- rrrrrrrrrrrrrrr z     z z z z z z    r r     r                                            v v
- rcccccccccccccr z                    r r    l                                             v v
-  cccccccccccccr z    z z z z z z z   r r   r                                              vev
-  C   C   C   Crrrz                     r  r                                               vev
- r rrrrrrrrrrrrrllrrrrrrrrrrrrrrrrrrrrrpr                                                  vev
- r                                      r                                                  vev
- r                                       r                                                 vev
- rzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    r                   r      r      r       r        vev
- rr            l           l     l                                      eeeeeeeeeeeee                              l
+`                                zzzzzzzz
+
+ v                                        v
+ r  e   e   e   e   e   e   e   e   e   e v
+ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrrr
+ r                                    r   r
+ r                                    r    r
+ r   rrrrrrrrrrrrzrrrrrrrrrrrrrrrrrrrrr     r
+ r          r                         r r    r
+ r          r                                 r
+ r          r   zrvrrvrrrrrrrrrrrvrrrrrvrr     r
+ r          r   zr r               cr r r r     r
+ r          rrrrzr r                r r r  r     r
+ r              zr r rrrrrrrrrrrrrr r r r   l    lr
+ r              zr r                  r r    r   llr
+ rrrrrrrrrrrr   zr r                  r r         llr     v
+ rCc        rrrrr   rrrrrrrrrrrrrrrrr r r        l  lr   v
+ r             r                      r r       r       v
+ r      z      r z                    r r      l       v
+ rrrrrrrrrrrrrrr z     z z z z z z    r r     r
+ rcccccccccccccr z                    r r    l
+  cccccccccccccr z    z z z z z z z   r r   r
+  C   C   C   Crrrz                   r r  r
+ r rrrrrrrrrrrrrllrrrrrrrrrrrrrrrrrrrrr r
+ r                                      rz
+ r                                       r
+ rzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    r                   r      r      r       r
+ rr            l           l     l        Zz                                                                       l
  rrl rl rl rl rl rl   rrl rl rl rl rll rrrrrrrrrrrrlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
  l
- lllllIIIlllIIIllllIIIlllllIIIlllIIIlIIIl
-
+ lllllIIIlllIIIllllIIIlllllIIIlllIIIlIIIll
+l                                         l
  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                                        l
-                                        l
-                                        l
-                                        f
-                                        f
-                                        f
-                                        f
-                                        l
-                                        l
-                                        l
-                                        rrrrrrrrr          r       r       r       r       r       r
-                                        r
-                                        r
-                                        r                                                                  r
-                                        r
-                                        r
-                                        r                                                                        r
-                                        r
-                                        r      ie
-                                        lfllllllllllllllllllllllllllllllllGffGlllllllllllllllllllllllllllll llllllllllllllr            l
-                                                                                                            v                       f
-                                                                                                            v                       f
-                                                             c    c                                         v                  c       f
-                                                   cll      c  c  l  c                                      v                  c       l
-                                            c  c l    l        l     l  c       zlz lz  z  zl z  zllllcz  zl                  c        l
-                                            l   l      c  lz   l     l  c        l  lc   c     c  c c   c   c l  l  l  l  l  l c       l
-                                         C               l  z   ccc     llllzclzc  c     lz    lz       lz lz  c  c  c  c  c r cǝ      l
-                                         r lrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                                v        r rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                                v        l     l     l     l     l     l    r
-                                v           c     c     c     c     c     c r
-                                v                                           r
-                                v         zl    zl    zl    zf    zl    zl  r      Cl
-                                rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrFrrrrrrrrrrrr r      r
-                                        l                                 v
-                                        C                                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-                                        C
-                                        r    r    r    r    r    r    r    rr   r  c r    r    r    r    r    r    r    r    r    r    r
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr`
 
-
-
-
-
-
-
-
-
-
-
-
-
-                                        CCCCCCCC
-                                        rrrrrrrr                                                                                        rrrrrrrrrr  r
-                                                                                                                                        rCCCCCCCCCCCr
-                                                                                                                                        rCCCCCCCCCCCr
-                                                                                                                                        CCCCCCCCcCCCc
-r r
-r r                                                                                                                                     rrrrrrrrrrrrr
-r r
-r r
-r r
-r r
-r r
-r r
-r r
-r r                                                                                                                    CCCCCCCCCCCC
-r r                                                                                                                    rlllllrllllr
-r r
-r r
-r r                                          r         r                                   l
-r r                                                                                        l
-r r                                                                                        lCCCCCCCCCCCCCCCCC
-r r                                      r                                                 lllrlllrlllrlllrll
-r r
-r r    lll                        r
-r r    lCl
-r r    c
-r rr   c                     r              l   llllll
-r      c                                    rlrlrl           l
-r      r          l                                    zllll
-rrrrrrrr lrrrrrrrllllllllrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-
-        l
-
-
-                                                                                     r
-
-
-
-
-
-
-
-
-
-                                                                                     r
-
-
-
-
-
-
-
-                                                                        CCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-                                                                        rrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-`
+var lvl2 = `
+l
+l
+l
+f
+f
+f
+f
+l
+l
+l     s
+rrrrrrrrr          r       r       r       r       r       r
+r
+r
+r                                                                  r
+r
+r
+r                                                                        r
+r
+r      ie
+lfllllllllllllllllllllllllllllllllGffGlllllllllllllllllllllllllllll llllllllllllllr            l
+                                                                    v                          l
+                                                                    v                          l
+                     c    c                                         v                  c       l
+           cll      c  c  l  c                                      v                  c       l
+    c  c l    l        l     l  c       zlz lz  z  zl z  zllllcz  zl                  c        l
+    l   l      c  lz   l     l  c        l  lc   c     c  c c   c   c l  l  l  l  l  l c       l
+ C               l  z   ccc     llllzclzc  c     lz    lz       lz lz  c  c  c  c  c r cǝ      l
+ r lrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+v        r rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+v        l     l     l     l     l     l    r
+v           c     c     c     c     c     c r
+v                                           r
+v         zl    zl    zl    zf    zl    zl  r
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrFrrrrrrrrrrrrlr`
 var ethan_lvl=
 `
 
@@ -339,18 +270,24 @@ class Brick{
             elem.innerHTML = visibleText;
         }
         this.type=type;
+        this.needsDomRefresh = false;
     }
     move(xm,ym){
         this.x1+=xm;
         this.y1+=ym;
         this.x2+=xm;
         this.y2+=ym;
+        this.needsDomRefresh = true;
     }
     apply(){
-        if ((this.x1 < window.innerWidth || this.x2 > 0) && (this.y1 < window.innerHeight || this.y2 > 0)){ // Don't do a dom operation unless the brick is visible
+        if ((this.x1 < window.innerWidth || this.x2 > 0) && (this.y1 < window.innerHeight || this.y2 > 0) && this.needsDomRefresh){ // Don't do a dom operation unless the brick is visible
             this.element.style.left=this.x1.toString()+"px";
             this.element.style.top=this.y1.toString()+"px";
+            this.needsDomRefresh = false;
         }
+    }
+    delete(){
+        this.element.parentNode.removeChild(this.element);
     }
 }
 
@@ -382,6 +319,9 @@ class Player{
         this.checkPointNum = 0;
         this.revalio=0; // 0 = nothing, 1 = g pressed, 2 = h pressed, 3 = c pressed, 4 = "!" pressed and display blocks until u pressed.
         this.phaser=0; // 0 = nothing, 1 = p pressed and revalio at 4, 2 = hit solid block to phase through, cycles back when it is no longer touching any solid blocks
+    }
+    delete(){
+        this.element.parentNode.removeChild(this.element);
     }
     onkeyup(event){
         if (event.keyCode==37){
@@ -509,7 +449,8 @@ class Player{
     }
     end(){
         window.alert(this.score);
-        document.documentElement.innerHTML="";
+        this.delete();
+        this.game.die = true;
     }
     refreshscore(){
         this.element.innerText=this.score.toString();
@@ -519,6 +460,7 @@ class Player{
 
 class Game{
     constructor(xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
+        this.die = false;
         this.bricks=[];
         this.minigames=[];
         this.xoffset=0;
@@ -591,10 +533,10 @@ class Game{
                 this.createBrick(x, y, width, height, "lava", "solid");
                 break;
             case "e":
-                this.enemies.push([this.createBrick(x, y, width, "lava", "killu"), 5, 0]);
+                this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), 5, 0]);
                 break;
             case "ǝ":
-                this.enemies.push([this.createBrick(x, y, width, "lava", "killu"), -5, 0]);
+                this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), -5, 0]);
                 break;
             case "z":
                 this.createBrick(x, y, width, height, "invisible", "elevator");
@@ -643,8 +585,9 @@ class Game{
                 else*/{
                     if (item == "s"){
                         this.createSign(ix, iy, signs[signNum]);
+                        signNum ++;
                     }
-                    if (item == tileset[i - 1]){
+                    if (item == tileset[i - 1] && ["e", "c", "C"].indexOf(tileset[i - 1]) == -1){
                         curHoriz ++;
                     }
                     else{
@@ -741,6 +684,24 @@ class Game{
     }
 
     run(){
+        if (this.die){
+            document.getElementById("gameover").style.display="block";
+            setTimeout(() => {
+                document.getElementById("gameover").style.display="none";
+                document.getElementById("menu").style.display="";
+            }, 2000);
+            this.bricks.forEach((item, i) => {
+                item.delete();
+                item = null;
+            });
+            this.enemies.forEach((item, i) => {
+                item = null;
+            });
+            this.bricks = null;
+            this.enemies = null;
+            this.player = null;
+            return true;
+        }
         if (this.minigamePlaying){
             var city = this.minigames[this.minigamePlaying](this.minigame, this.minigameTick); // Should return 0 or any other falsey number if no effect, 1 if the player wins, 2 if the player loses.
             if (city == 1){
@@ -816,15 +777,29 @@ class Game{
 }
 
 var g=null;
-window.addEventListener("load",function(){
+document.getElementById("playbutton").addEventListener("click",function(){
     g=new Game();
 
     // Drawing here!
-    g.createByTileset(-4, 0, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);//*/-2.5,-112,lvl1); // -5, -6 // -4, -12, ethan_lvl
-    //g.createByTileset(0, 0, `rrrr\nrrrr\n`);
-    /*g.createSign(0,5,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me")
-    g.createSign(37,24,"You'll find that you have a magic power - an illegal jump! If you run off a surface without jumping, you may jump <i>in midair</i> and to the next platform")
-    g.createSign(-4,14,"You've made it! Welcome to Level 2!");*/
+    console.log(document.getElementById("levelselect").value);
+    switch(document.getElementById("levelselect").value){
+        case "1":
+            g.createByTileset(-5, 6, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);
+            break;
+        case "2":
+            g.createByTileset(-3, -8, lvl1);
+            g.createSign(2,10,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me");
+            break;
+        case "3":
+            g.createByTileset(-4, -12, ethan_lvl);
+            break;
+        case "4":
+            g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
+            break;
+    }//*///-2.5,-112,lvl1); // -5, -6 // -4, -12, ethan_lvl
+    document.getElementById("menu").style.display="none";
+    //g.createByTileset(0, 1, `r er\nrrrr\n`);
+    /**/
     // And now more Crap!
     Array.from(document.getElementsByClassName("tencoin")).forEach((item, i) => {
         item.innerHTML="<p class='coin_text'>10</p>";
@@ -834,6 +809,9 @@ window.addEventListener("load",function(){
     });
 
     c=setInterval(function(){
-        g.run();
+        if (g.run()){
+            g = null; // GC g.
+            clearInterval(c);
+        }
     }, 20);
 });
