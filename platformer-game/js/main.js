@@ -34,9 +34,10 @@ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 var lvl1=
 `                                zzzzzzzz
 
- v                                        v
- r  e   e   e   e   e   e   e   e   e   e v
- rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrrr
+ v                                       v
+ r  e   e   e   e   e   e   e   e   e   ev
+ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrr
+ r                                    r  r
  r                                    r   r
  r                                    r    r
  r   rrrrrrrrrrrrzrrrrrrrrrrrrrrrrrrrrr     r
@@ -54,7 +55,7 @@ var lvl1=
  rrrrrrrrrrrrrrr z     z z z z z z    r r     r
  rcccccccccccccr z                    r r    l
   cccccccccccccr z    z z z z z z z   r r   r
-  C   C   C   Crrrz                   r r  r
+  C   C   C   Cr rz                   r r  r
  r rrrrrrrrrrrrrllrrrrrrrrrrrrrrrrrrrrr r
  r                                      rz
  r                                       r
@@ -63,9 +64,10 @@ var lvl1=
  rrl rl rl rl rl rl   rrl rl rl rl rll rrrrrrrrrrrrlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
  l
  lllllIIIlllIIIllllIIIlllllIIIlllIIIlIIIll
-l                                         l
+                                          l
  CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr`
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+`
 
 var lvl2 = `
 l
