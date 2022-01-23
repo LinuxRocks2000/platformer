@@ -237,6 +237,54 @@ rrrrrrrrrrrrrrrrrrrrrrrrr   rrr rrlllrlllrlllrrrr rrrrrrrrrr   crrrrrrrrrrrrrrrr
                                                    lrrrl                                                                rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 `
 
+var actual_maze = `
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrl
+r                                       r
+r                                       rr
+r              rrr rrrrrrrrrrrrrrrr rrrrr
+r                r rCC                  r
+r    s           r rCC                  rr
+rrrrrrrrrrrrrrrr r rrlrrlrrlrrrrrrrrrrr r
+               r r                    r r
+               r rCcccccccccccccccccccr r
+               r rrrrrrrrrrrrrrrrrrrllr rrr
+               r                      r   r
+       l       r                      r   r
+       lr      r                      rr  rr        c c  vvvvv  c c
+       l       r                      r   rrCvceccvZ e  vcccccvZ e    v
+       l       r C    c     c    c   cr   rrrrrrrrrrrrrrrrrrrrrrrrrrrr
+       lr      rlrllllrlllllrllllrlllrr r v                          r
+       l                                r v                          r
+       l                                rCv   e                      r
+s      l                                rrrrrrrr                     v  r
+l rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr       rz     l e    le     v r
+l                                                rrrrrrrrrrrrrrrrrrrrrrr
+l                                         rlr                         r
+rrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrrrrlClr c c c                 sr
+r                                             rrrrrrrrrrrrrrrrrrrrrrrrr
+rc c c c c c c c c c C c C c C c C c C c C c
+rrrrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrr
+r                                             r r rrrrrrrrrrrrrrrrrrrrrrrrrrrr
+r                       C                     r r                            r
+r rrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrr r r          rlrrr             r
+r                                               rrr rrrrrr r           r rrr r
+r                                           c   r        r r      rrrrrr r
+rrrrrrrrrrrrrrrrrrrrrrrlllrrrrrrrrrrrrrrrrrrrrrrrc      lr   rrrrr       r
+                                            r    rrrrrr rr   r           r
+                                            r         r rrrrrc    rrrrrrr
+                                            rCCCCCCCCCCCr     rrr        r
+                                            rCCCCCCCCCCCr       r        r
+                                            r           l       rrrrrrrr r
+                                            r           l              r r
+                                            rrrrrrrrrrrrr              r r
+                                                                       r r
+                                                                       r r
+                                                                       r rrr
+                                                                       r   l
+                                                                       r  sl
+                                                                       rrrrr
+`
+
 var lvl_test = `
 
 rrrrrrrrr
@@ -246,9 +294,10 @@ r
 r
 r
 rrrrrrrrrrrr
+
 `
 class Brick{
-    constructor(x,y,width,height,renderclass,type,text,visibleText,probability){
+    constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability){
         this.x1=x;
         this.y1=y;
         this.x2=x+width; // For collisions
@@ -273,6 +322,7 @@ class Brick{
         }
         this.type=type;
         this.needsDomRefresh = false;
+        this.scale = scale;
     }
     move(xm,ym){
         this.x1+=xm;
@@ -283,8 +333,8 @@ class Brick{
     }
     apply(){
         if ((this.x1 < window.innerWidth || this.x2 > 0) && (this.y1 < window.innerHeight || this.y2 > 0) && this.needsDomRefresh){ // Don't do a dom operation unless the brick is visible
-            this.element.style.left=this.x1.toString()+"px";
-            this.element.style.top=this.y1.toString()+"px";
+            this.element.style.left=((this.x1)).toString()+"px";
+            this.element.style.top=((this.y1)).toString()+"px";
             this.needsDomRefresh = false;
         }
     }
@@ -295,7 +345,10 @@ class Brick{
 
 
 class Player{
-    constructor(width,height,game){
+    constructor(mobile,width,height,game){
+        if (mobile){
+            this.joystick = new JoyStick({radius: window.innerHeight/8, x: window.innerWidth - window.innerHeight/8, y: window.innerHeight * 7/8, inner_radius: window.innerHeight/8 - 10})
+        }
         this.width=width
         this.height=height
         this.game=game
@@ -318,58 +371,58 @@ class Player{
         this.x2 = rect.right;
         this.y2 = rect.bottom;
         // Developer mode stuff
+        this.lock = "ghc1";
         this.checkPointNum = 0;
-        this.revalio=0; // 0 = nothing, 1 = g pressed, 2 = h pressed, 3 = c pressed, 4 = "!" pressed and display blocks until u pressed.
-        this.phaser=0; // 0 = nothing, 1 = p pressed and revalio at 4, 2 = hit solid block to phase through, cycles back when it is no longer touching any solid blocks
+        this.cheat = {
+            active: false,
+            devView: false,
+            phaser: 0, // 0 = nothing, 1 = p pressed and revalio at 4, 2 = hit solid block to phase through, cycles back when it is no longer touching any solid blocks
+            invincible: false,
+            collidesWithLava: false
+        }
         this.gravity = 1;
     }
     delete(){
         this.element.parentNode.removeChild(this.element);
     }
     onkeyup(event){
+        if (event.key == this.lock[this.checkPointNum]){
+            this.checkPointNum ++;
+            if (this.checkPointNum == this.lock.length){
+                this.cheat.active = true;
+                alert("All cheats unlocked!");
+            }
+        }
+        else{
+            this.checkPointNum = 0;
+        }
         if (event.keyCode==37){
             this.leftpressed=false;
         }
         else if (event.keyCode==39){
             this.rightpressed=false;
         }
-        else if (event.keyCode==71 && this.revalio == 0){
-            this.revalio = 1;
+        if (this.cheat.active){
+            switch (event.key){
+                case "r":
+                    this.cheat.devView = !this.cheat.devView;
+                    if (this.cheat.devView){
+                        document.getElementById("game-main").classList.add("revalio");
+                    }
+                    else{
+                        document.getElementById("game-main").classList.remove("revalio");
+                    }
+                    break;
+                case "i":
+                    this.cheat.invincible = true;
+                    break;
+                case "g":
+                    this.gravity *= -1;
+                    break;
+            }
         }
-        else if (event.keyCode==72 && this.revalio == 1){
-            this.revalio = 2;
-        }
-        else if (event.keyCode==67 && this.revalio == 2){
-            this.revalio = 3;
-        }
-        else if (event.keyCode==49 && this.revalio == 3){
-            this.revalio = 4;
-            document.getElementById("game-main").classList.add("revalio");
-        }
-        else if (event.keyCode==85 && this.revalio == 4){
-            this.revalio = 0;
-            document.getElementById("game-main").classList.remove("revalio");
-        }
-        else if (event.keyCode==32 && this.revalio == 4){
-            this.xv *= 20; // Fast!
-        }
-        else if (event.keyCode==80 && this.revalio == 4){
-            this.phaser=1;
-        }
-        else if (event.keyCode==66 && this.revalio == 4){
-            this.yv = -40;
-        }
-        else if (event.keyCode == 70 && this.revalio == 4){
-            this.game.toggleEnemies();
-        }
-        else if (event.keyCode == 71){
-            var checkpoint = this.game.checkPoints[this.checkPointNum];
-            this.game.move(checkpoint[0] * -50 - this.game.x, 0);
-            this.checkPointNum ++;
-        }
-        console.log(event.key);
-        if (event.key === "!"){
-            this.gravity *= -1;
+        if (event.key === "p"){
+            alert("Paused. Click out of this alert box when you are ready to begin again.");
         }
     }
     onkeydown(event){
@@ -385,11 +438,15 @@ class Player{
         }
     }
     run(){
-        if (this.leftpressed){
+        if (this.leftpressed || (this.joystick && this.joystick.left)){
             this.xv+=2;
         }
-        if (this.rightpressed){
+        if (this.rightpressed || (this.joystick && this.joystick.right)){
             this.xv-=2;
+        }
+        if (this.joystick && this.joystick.up && this.onground){
+            this.yv = -20 * this.gravity;
+            this.onground = false;
         }
         this.game.move(0,this.yv);
         colis=this.game.checkCollision();
@@ -401,14 +458,11 @@ class Player{
             this.score+=colis["fiftycoin"]*50;
             this.refreshscore();
         }
-        if (colis["solid"] > 0){
+        if (colis["solid"] > 0 || (colis["killu"] > 0 && this.cheat.invincible)){
             if (this.phaser == 1){
                 this.phaser = 2;
             }
-            else if (this.phaser == 2){
-                // Nothing!
-            }
-            else{
+            else if (this.phaser != 2){
                 while (this.game.checkCollision()["solid"] > 0){
                     this.game.move(0,this.yv/Math.abs(this.yv) * -1);
                 }
@@ -428,7 +482,7 @@ class Player{
             this.refreshscore();
 
         }
-        if (colis["killu"] > 0 && this.revalio!=4){
+        if (colis["killu"] > 0 && !this.cheat.invincible){
             this.end();
         }
         if (colis["fiftycoin"] > 0){
@@ -467,7 +521,7 @@ class Player{
 
 
 class Game{
-    constructor(xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
+    constructor(mobile, xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
         this.die = false;
         this.bricks=[];
         this.minigames=[];
@@ -475,7 +529,7 @@ class Game{
         this.yoffset=0;
         this.brickWidth=brickwidth;
         this.brickHeight=brickheight;
-        this.player=new Player(49,99,this);
+        this.player=new Player(mobile, 49,99,this);
         window.addEventListener('keydown',function(event){g.player.onkeydown(event)});
         window.addEventListener("keyup",function(event){g.player.onkeyup(event)});
         this.minigame = document.getElementById("minigame");
@@ -487,9 +541,10 @@ class Game{
         this.checkPoints = [];
         this.y = 0;
         this.x = 0;
+        this.scale = 1;
     }
     _createBrick(x,y,width,height,renderclass,type,text,visibleText, probability){
-        var x = new Brick(x+window.innerWidth/2+this.xoffset,y+window.innerHeight/2+this.yoffset,width,height,renderclass,type,text,visibleText, probability);
+        var x = new Brick(x+window.innerWidth/2+this.xoffset,y+window.innerHeight/2+this.yoffset,width,height, this.scale,renderclass,type,text,visibleText, probability);
         this.bricks.push(x);
         return x;
     }
@@ -786,11 +841,10 @@ class Game{
 
 var g=null;
 document.getElementById("playbutton").addEventListener("click",function(){
-    g=new Game();
+    g=new Game(document.querySelector("#mobileOrNot > input").checked);
 
     // Drawing here!
-    console.log(document.getElementById("levelselect").value);
-    switch(document.getElementById("levelselect").value){
+    switch(document.querySelector("#levelselect > select").value){
         case "1":
             g.createByTileset(-5, 6, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);
             break;
@@ -803,6 +857,9 @@ document.getElementById("playbutton").addEventListener("click",function(){
             break;
         case "4":
             g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
+            break;
+        case "5":
+            g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
             break;
     }//*///-2.5,-112,lvl1); // -5, -6 // -4, -12, ethan_lvl
     document.getElementById("menu").style.display="none";

@@ -7,19 +7,28 @@
     </head>
     <body>
         <div id = "menu">
-            <select id="levelselect">
-                <option value="2">Labyrinth</option>
-                <option value="1">The Plains</option>
-                <option value="4">The Basement</option>
-            </select>
-            <button id="playbutton">
-                Play
-            </button>
+            <div id="levelselect">
+                <select>
+                    <option value="2">Labyrinth</option>
+                    <option value="1">The Plains</option>
+                    <option value="4">The Basement</option>
+                    <option value="5">An actual maze this time</option>
+                </select>
+            </div>
+            <div id = "mobileOrNot">
+                <input type = "checkbox">Mobile</input>
+            </div>
+            <div id = "playbutton-wrapper">
+                <button id="playbutton">
+                    Play
+                </button>
+            </div>
         </div>
         <div id = "gameover" style="display: none;">
             Game over.
         </div>
         <div id="game-main"></div>
+        <script src="js/joystick.js" type="text/javascript"></script>
         <script src="js/main.js" charset="utf-8"></script>
         <div id="minigame" style = "display: none;"></div>
     </body>

@@ -117,34 +117,46 @@
     transform: translate(-50%, -50%);
     font-size: 40px;
     height: 100vh;
+    display: grid;
+    grid-template-areas: "level"
+                         "playbutton"
+                         "mobile";
 }
-#menu > button, #menu > select{
+#levelselect, #playbutton{
     border: none;
     font-size: 40px;
     padding: 10px;
-}
-#menu > select{
     text-align: center;
-    position: absolute;
+}
+#levelselect{
+    grid-area: level;
+}
+#levelselect > select{
+    font-size: inherit;
+    padding: inherit;
+    text-align: inherit;
+    position: relative;
     top: 50%;
-    left: 25%;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
 }
-#menu > select > option{
-    position: inherit;
-}
-#menu > button{
-    background-image: repeating-linear-gradient(45deg, white, white 20px, pink 20px, pink 40px);
-    transition: width 3s, height 3s, padding 3s;
+#playbutton{
+    background-color: pink;
+    transition: background-color 2s;
     width: 200px;
     height: 100px;
     margin: 0px;
-    position: absolute;
+    position: relative;
     top: 50%;
-    left: 75%;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
 }
-#menu > button:hover{
-    width: 50%;
+#playbutton-wrapper{
+    width: 100%;
     height: 100%;
+    grid-area: playbutton;
+}
+#playbutton:hover{
+    background-color: grey;
+}
+#mobileOrNot{
+    grid-area: mobile;
 }
