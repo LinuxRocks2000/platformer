@@ -35,8 +35,8 @@ var lvl1=
 `                                zzzzzzzz
 
  v                                       v
- r  e   e   e   e   e   e   e   e   e   ev
- rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrr
+ r  e   e   e   e   e   e   e   e   e   evZ
+ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrrvvvvvvvvvvvvvz
  r                                    r  r
  r                                    r   r
  r                                    r    r
@@ -46,22 +46,22 @@ var lvl1=
  r          r   zrvrrvrrrrrrrrrrrvrrrrrvrr     r
  r          r   zr r               cr r r r     r
  r          rrrrzr r                r r r  r     r
- r              zr r rrrrrrrrrrrrrr r r r   l    lr
- r              zr r                  r r    r   llr
- rrrrrrrrrrrr   zr r                  r r         llr     v
- rCc        rrrrr   rrrrrrrrrrrrrrrrr r r        l  lr   v
- r             r                      r r       r       v
- r      z      r z                    r r      l       v
- rrrrrrrrrrrrrrr z     z z z z z z    r r     r
+ r              zr r rrrrrrrrrrrrrrrr r r   l    lr
+ rrrrrrrr       zr r                  r r    r   llr
+ r      rrrr     r r                  r r         llr
+ rCc        rrrrr   rrrrrrrrrrrrrrrrr r r        l  lr
+ r                                    r r       r
+ r      z    e v z                    r r      l
+ rrrrrrrrrrrrrrr z     z z z z z z  r r r     r
  rcccccccccccccr z                    r r    l
   cccccccccccccr z    z z z z z z z   r r   r
-  C   C   C   Cr rz                   r r  r
+  C   C   C   Cr  z                  lr r  r
  r rrrrrrrrrrrrrllrrrrrrrrrrrrrrrrrrrrr r
- r                                      rz
+ r                                      r
  r                                       r
- rzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    r                   r      r      r       r
- rr            l           l     l        Zz                                                                       l
- rrl rl rl rl rl rl   rrl rl rl rl rll rrrrrrrrrrrrlllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+ rzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    r
+ rr            l           l     l      r  z         z     l
+ rrl rl rl rl rl rl   rrl rl rl rl rll rrrrrrrrrrrrlllllllll
  l
  lllllIIIlllIIIllllIIIlllllIIIlllIIIlIIIll
                                           l
@@ -321,6 +321,7 @@ class Player{
         this.checkPointNum = 0;
         this.revalio=0; // 0 = nothing, 1 = g pressed, 2 = h pressed, 3 = c pressed, 4 = "!" pressed and display blocks until u pressed.
         this.phaser=0; // 0 = nothing, 1 = p pressed and revalio at 4, 2 = hit solid block to phase through, cycles back when it is no longer touching any solid blocks
+        this.gravity = 1;
     }
     delete(){
         this.element.parentNode.removeChild(this.element);
@@ -366,10 +367,14 @@ class Player{
             this.game.move(checkpoint[0] * -50 - this.game.x, 0);
             this.checkPointNum ++;
         }
+        console.log(event.key);
+        if (event.key === "!"){
+            this.gravity *= -1;
+        }
     }
     onkeydown(event){
         if (event.keyCode==38 && this.onground){
-            this.yv=-20;
+            this.yv=-20 * this.gravity;
             this.onground=false;
         }
         else if (event.keyCode==37){
@@ -407,7 +412,7 @@ class Player{
                 while (this.game.checkCollision()["solid"] > 0){
                     this.game.move(0,this.yv/Math.abs(this.yv) * -1);
                 }
-                if (this.yv > 0){
+                if (this.yv*this.gravity > 0){
                     this.onground=true;
                 }
                 this.yv=0;
@@ -421,6 +426,7 @@ class Player{
         if (colis["tencoin"] > 0){
             this.score+=colis["tencoin"]*10;
             this.refreshscore();
+
         }
         if (colis["killu"] > 0 && this.revalio!=4){
             this.end();
@@ -447,7 +453,7 @@ class Player{
             this.phaser=0;
         }
         this.xv*=0.8;
-        this.yv+=1;
+        this.yv+=this.gravity;
     }
     end(){
         window.alert(this.score);
@@ -790,7 +796,7 @@ document.getElementById("playbutton").addEventListener("click",function(){
             break;
         case "2":
             g.createByTileset(-3, -8, lvl1);
-            g.createSign(2,10,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me");
+            g.createSign(5,7,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me");
             break;
         case "3":
             g.createByTileset(-4, -12, ethan_lvl);
