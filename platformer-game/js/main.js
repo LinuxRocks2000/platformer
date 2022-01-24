@@ -250,8 +250,8 @@ rrrrrrrrrrrrrrrr r rrlrrlrrlrrrrrrrrrrr r
                r rrrrrrrrrrrrrrrrrrrllr rrr
                r                      r   r
        l       r                      r   r
-       lr      r                      rr  rr        c c  vvvvv  c c
-       l       r                      r   rrCvceccvZ e  vcccccvZ e    v
+       lr      r                      rr  rr  cccc cccc cccc cccc cccc
+       l       r                      r   rrCv e     e           e    v
        l       r C    c     c    c   cr   rrrrrrrrrrrrrrrrrrrrrrrrrrrr
        lr      rlrllllrlllllrllllrlllrr r v                          r
        l                                r v                          r
@@ -376,9 +376,10 @@ class Player{
         this.cheat = {
             active: false,
             devView: false,
-            phaser: 0, // 0 = nothing, 1 = p pressed and revalio at 4, 2 = hit solid block to phase through, cycles back when it is no longer touching any solid blocks
+            phaser: 0, // 0 = nothing, 1 = waiting for collision to phase through, 2 = phasing through
             invincible: false,
-            collidesWithLava: false
+            collidesWithLava: false,
+            flying: false
         }
         this.gravity = 1;
     }
@@ -414,10 +415,19 @@ class Player{
                     }
                     break;
                 case "i":
-                    this.cheat.invincible = true;
+                    this.cheat.invincible = !this.cheat.invincible;
                     break;
                 case "g":
                     this.gravity *= -1;
+                    break;
+                case "s":
+                    this.cheat.phaser = 1;
+                    break;
+                case "j":
+                    this.yv = -5 * this.gravity;
+                    break;
+                case "f":
+                    this.cheat.flying = !this.cheat.flying;
                     break;
             }
         }
@@ -426,9 +436,13 @@ class Player{
         }
     }
     onkeydown(event){
-        if (event.keyCode==38 && this.onground){
+        console.log(event.key);
+        if (event.keyCode==38 && (this.onground || this.cheat.flying)){
             this.yv=-20 * this.gravity;
             this.onground=false;
+        }
+        else if (event.key == "ArrowDown" && this.cheat.flying){
+            this.yv = 20 * this.gravity;
         }
         else if (event.keyCode==37){
             this.leftpressed=true;
@@ -459,10 +473,10 @@ class Player{
             this.refreshscore();
         }
         if (colis["solid"] > 0 || (colis["killu"] > 0 && this.cheat.invincible)){
-            if (this.phaser == 1){
-                this.phaser = 2;
+            if (this.cheat.phaser == 1){
+                this.cheat.phaser = 2;
             }
-            else if (this.phaser != 2){
+            else if (this.cheat.phaser != 2){
                 while (this.game.checkCollision()["solid"] > 0){
                     this.game.move(0,this.yv/Math.abs(this.yv) * -1);
                 }
@@ -472,8 +486,8 @@ class Player{
                 this.yv=0;
             }
         }
-        else if (this.phaser == 2){
-            this.phaser=0;
+        else if (this.cheat.phaser == 2){
+            this.cheat.phaser=0;
         }
         this.game.move(this.xv,0);
         var colis=this.game.checkCollision();
@@ -490,10 +504,10 @@ class Player{
             this.refreshscore();
         }
         if (colis["solid"] > 0){
-            if (this.phaser == 1){
-                this.phaser = 2;
+            if (this.cheat.phaser == 1){
+                this.cheat.phaser = 2;
             }
-            else if (this.phaser == 2){
+            else if (this.cheat.phaser == 2){
                 // Nothing!
             }
             else{
@@ -503,11 +517,16 @@ class Player{
                 this.xv=0;
             }
         }
-        else if (this.phaser == 2){
-            this.phaser=0;
+        else if (this.cheat.phaser == 2){
+            this.cheat.phaser=0;
         }
         this.xv*=0.8;
-        this.yv+=this.gravity;
+        if (this.cheat.flying){
+            this.yv *= 0.8
+        }
+        else{
+            this.yv+=this.gravity;
+        }
     }
     end(){
         window.alert(this.score);
