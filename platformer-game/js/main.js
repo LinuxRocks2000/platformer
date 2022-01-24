@@ -530,8 +530,8 @@ class Game{
         this.brickWidth=brickwidth;
         this.brickHeight=brickheight;
         this.player=new Player(mobile, 49,99,this);
-        window.addEventListener('keydown',function(event){g.player.onkeydown(event)});
-        window.addEventListener("keyup",function(event){g.player.onkeyup(event)});
+        window.addEventListener('keydown', () => {this.player.onkeydown(event)});
+        window.addEventListener("keyup", () => {this.player.onkeyup(event)});
         this.minigame = document.getElementById("minigame");
         this.minigameTick = 0;
         this.minigamePlaying = null;
