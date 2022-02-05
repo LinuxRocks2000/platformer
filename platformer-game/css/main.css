@@ -10,7 +10,7 @@
     position:absolute;
 }
 #game-main.revalio > div{
-    background-color:blue;
+    background-color:red;
     border-radius:20px !important;
 }
 #game-main.revalio > div.killu{
