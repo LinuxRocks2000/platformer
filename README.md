@@ -4,3 +4,5 @@ A simple game I made a while ago. Visit https://linuxrocks2000.github.io/platfor
 
 
 No, it isn't beautiful or well polished.
+
+the best game.
