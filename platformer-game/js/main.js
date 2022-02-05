@@ -295,7 +295,17 @@ r
 r
 rrrrrrrrrrrr
 
+var cave = `
+rrrrrrrrrlllrrrrrrrllrrrrrrrrrrrrllll    llllrrrrlllrrrrrrrrrrrrrrrrrrrrrrrllrrrrrrrrrrrrrrrrrrrrrrrr
+r                                                                                            r
+r                                                                                            r
+r                                                                                            r
+r                                                                                            r
+r                                                                                            r
+rrrrrrrrrrllrrrrrrrllrrrrrrrrrrr                           rrrrlllrrrrrrrrrrrrrllrrrrrrrrrrrrrrrrrrr
+                              rrrrrrlllrrrrrrrrrlrrrrrrrrrrrrrrrrrrrrrrrr
 `
+
 class Brick{
     constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability){
         this.x1=x;
@@ -853,7 +863,7 @@ document.getElementById("playbutton").addEventListener("click",function(){
             g.createSign(5,7,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me");
             break;
         case "3":
-            g.createByTileset(-4, -12, ethan_lvl);
+            g.createByTileset(-4, -12, cave);
             break;
         case "4":
             g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
