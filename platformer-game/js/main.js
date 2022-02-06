@@ -34,20 +34,21 @@ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 var lvl1=
 `                                zzzzzzzz
 
- v                                       v
- r  e       e       e       e       e    vZ
- rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrr
+ v                                      v
+ r    e    e     e     e     e          vZ
+ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr  r
+ r                                    r r
  r                                    r  r
  r                                    r   r
  r                                    r    r
  r   rrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrr     r
  r          r     v                   r r    r
- r          rvvvz                             r
- r          r   zrvrrvrrrrrrrrrrrvrrrrrvrr     r
- r          r   zr r               cr r r r     r
- r          rrrrzr r                r r r  r     r
- r              zr r rrrrrrrrrrrrrrrr r r   l    lr
- rrrrrrrr       zr r                  r r    r   llr
+ r          rvvvv                             r
+ r          r    rvrrvrrrrrrrrrrrvrrrrrvrr     r
+ r          r    r r               cr r r r     r
+ r          rrrr r r                r r r  r     r
+ r               r r rrrrrrrrrrrrrrrr r r   l    lr
+ rrrrrrrr        r r                  r r    r   llr
  r      rrrr     r r                  r r         llr
  rCc        rrrrr   rrrrrrrrrrrrrrrrr r r        l  lr
  r                                    r r       r
@@ -96,14 +97,8 @@ lfllllllllllllllllllllllllllllllllGffGlllllllllllllllllllllllllllll llllllllllll
            cll      c  c  l  c                                      v                  c       l
     c  c l    l        l     l  c       zlz lz  z  zl z  zllllcz  zl                  c        l
     l   l      c  lz   l     l  c        l  lc   c     c  c c   c   c l  l  l  l  l  l c       l
- C               l  z   ccc     llllzclzc  c     lz    lz       lz lz  c  c  c  c  c r cǝ      l
+ n               l  z   ccc     llllzclzc  c     lz    lz       lz lz  c  c  c  c  c r cǝ      l
  r lrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-v        r rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-v        l     l     l     l     l     l    r
-v           c     c     c     c     c     c r
-v                                           r
-v         zl    zl    zl    zf    zl    zl nr
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrFrrrrrrrrrrrrrr
 `
 var ethan_lvl=
 `
@@ -289,19 +284,92 @@ rrrrrrrrrrrrrrrrrrrrrrrlllrrrrrrrrrrrrrrrrrrrrrrrc      lr   rrrr        r      
                                                         rrrrrrrrrrrrrrrr
 `
 
-var testing = `
+var training = `
+r           s
+rrrrrrrrrrrrrllrrrr
+                    ccccccccs
+                    rrrrrrrrr
 
+                                r    e r   c
+                                rrrrrrrrrrrr    s  n
+                                                rrrrrrr
+`
 
+var tinymaze = `
+r                c
+r                r
+r                r              c
+r                r     e        r
+r                rvrrrrrrrrrvrrrr
+r    c                     r                     n
+r    r       e           vcr  c    lll      rrrrr
+rrrrrrrrrrrrrrvrrrrrrrrrrr rrrrrrrrrrr   e  r
+                                     rrrrrrrr
+        c       r          e  vcr
+        rrrrrrrrrrrrrrrrrrrrrrr r
+                              rlr
+`
 
-
-   n
-rrrrrrrrrrrr
-
+var fortress = `
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+r                                                  r
+r                                                  r
+r                                                  r
+r           c         c         c        c         r
+r    r      l        ele        l       ele     l nr
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 `
 
 
 window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
+window.phases = [
+    [
+        {
+            id: 7,
+            name: "Training"
+        },
+        {
+            id: 6,
+            name: "Tiny Maze"
+        },
+        {
+            id: 8,
+            name: "Fortress"
+        }
+    ],
+    [
+        {
+            id: 2,
+            name: "Labyrinth"
+        },
+        {
+            id: 5,
+            name: "An Actual Maze This Time"
+        }
+    ],
+    [
+        {
+            id: 1,
+            name: "The Plains"
+        },
+        {
+            id: 4,
+            name: "The Basement"
+        }
+    ]
+];
+
+function loadPhase(phasenum){
+    window.phases[phasenum - 1].forEach((item, i) => {
+        var el = document.createElement("option");
+        el.id = item.id.toString();
+        el.value = item.id.toString();
+        el.innerText = item.name;
+        document.getElementById("dropdown").appendChild(el);
+    });
+    console.log(window.phases[phasenum - 1]);
+}
 
 class Brick{
     constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability){
@@ -794,18 +862,14 @@ class Game{
                 document.getElementById("gamewin").style.display="block";
                 document.getElementById("gamewin").innerText = "You beat the level! Your score: " + this.player.score;
                 window.levelsBeaten ++;
-                if (window.levelsBeaten == 2){
+                if (window.levelsBeaten == window.phases[window.phase - 1].length){
                     window.phase ++;
-                    window.levelsBeaten = 0;
-                    alert("You have unlocked phase " + window.phase + "!");
-                    if (window.phase == 2){
-                        document.getElementById("dropdown").innerHTML += "<option value=\"2\" id=\"2\">Labyrinth</option><option value=\"1\" id=\"1\">The Plains</option>";
-                    }
+                    loadPhase(window.phase);
                 }
                 var variab = document.getElementById(document.querySelector("#levelselect > select").value);
                 variab.parentNode.removeChild(variab);
             }
-            else{
+            if (this.die){
                 document.getElementById("gameover").style.display="block";
             }
             window.removeEventListener('keydown', this.onkeydown);
@@ -923,8 +987,15 @@ document.getElementById("playbutton").addEventListener("click",function(){
         case "5":
             g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
             break;
-        case "T":
-            g.createByTileset(0, 0, testing);
+        case "6":
+            g.createByTileset(-2, 0, tinymaze);
+            break;
+        case "7":
+            g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+            g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
+            break;
+        case "8":
+            g.createByTileset(-2, -5, fortress);
             break;
     }
     document.getElementById("menu").style.display="none";
@@ -941,3 +1012,5 @@ document.getElementById("playbutton").addEventListener("click",function(){
         }
     }, 20);
 });
+
+loadPhase(window.phase);
