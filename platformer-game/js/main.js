@@ -35,14 +35,14 @@ var lvl1=
 `                                zzzzzzzz
 
  v                                       v
- r  e   e   e   e   e   e   e   e   e   evZ
- rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrrvvvvvvvvvvvvvz
+ r  e       e       e       e       e    vZ
+ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rrr
  r                                    r  r
  r                                    r   r
  r                                    r    r
- r   rrrrrrrrrrrrzrrrrrrrrrrrrrrrrrrrrr     r
- r          r                         r r    r
- r          r                                 r
+ r   rrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrr     r
+ r          r     v                   r r    r
+ r          rvvvz                             r
  r          r   zrvrrvrrrrrrrrrrrvrrrrrvrr     r
  r          r   zr r               cr r r r     r
  r          rrrrzr r                r r r  r     r
@@ -60,12 +60,12 @@ var lvl1=
  r                                      r
  r                                       r
  rzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    r
- rr            l           l     l      r  z         z     l
+ rr            l           l     l                         l
  rrl rl rl rl rl rl   rrl rl rl rl rll rrrrrrrrrrrrlllllllll
  l
  lllllIIIlllIIIllllIIIlllllIIIlllIIIlIIIll
-                                          l
- CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+ CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCn
 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 `
 
@@ -102,8 +102,9 @@ v        r rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 v        l     l     l     l     l     l    r
 v           c     c     c     c     c     c r
 v                                           r
-v         zl    zl    zl    zf    zl    zl  r
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrFrrrrrrrrrrrrlr`
+v         zl    zl    zl    zf    zl    zl nr
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrFrrrrrrrrrrrrrr
+`
 var ethan_lvl=
 `
 
@@ -215,26 +216,26 @@ var the_plains = `
          l                                                            l
          l                                                   llllll   l
 r        l                                           cl    rl      r  l
-r                                                    rl    r       r  l  C                                   l   l           rl       lr    ll
+r                                                    rl    r       r  l  C
 r                                                     l    r     r r  l lrrrr
 r                cl                                  cl    r     r r        r
-r        c       rl       l                          rl   rr     r r        r                                                rl             r
-r        l        l      l l                          l    r     r rrrrrrrr r                                                           r  ll
-r        r        l     lCcCl                         l    r    rr                                                    r            llrllll
-r        r        l  c  lC Cl k  c   c   c   c      k l c  r     r              k        c        c        ckl   l k  lCl  s rl k r
-rrrrrrrrrrrrrrrrrrrrrrrrr   rrr rrlllrlllrlllrrrr rrrrrrrrrr   crrrrrrrrrrrrrrrrrllllllllrllllllllrllllllllrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr  rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
-                        r       r               l l            r                                                         r r                                                      r
-                        r       r               l Cl          l                                                          r r
-                        r       r               l  Cl         l                                                          r r                                                        r
-                        rrrrrrrrr               l   Cl      cl                                                          r  r
-                                                l           r                                                           r  r                                                      r
-                                                l          l                                                            r  r
-                                                l          l                                                            r                                                           r
-                                                l        cl                                                             r
-                                                l        r                                                              r                                                         r
-                                                 l      l                                                               r lr                                                        r
-                                                  lccccCl                                                               r l                                                         r
-                                                   lrrrl                                                                rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+r        c       rl       l                          rl   rr     r r        r
+r        l        l      l l                          l    r     r rrrrrrrr r
+r        r        l     lCcCl                         l    r    rr                                                    r
+r        r        l  c  lC Cl k  c   c   c   c      k l c  r     r              k        c        c        ckl   l k  lCl  n
+rrrrrrrrrrrrrrrrrrrrrrrrr   rrr rrlllrlllrlllrrrr rrrrrrrrrr   crrrrrrrrrrrrrrrrrllllllllrllllllllrllllllllrrrrrrrrrrrrrrrrr
+                        r       r               l l            r
+                        r       r               l Cl          l
+                        r       r               l  Cl         l
+                        rrrrrrrrr               l   Cl      cl
+                                                l           r
+                                                l          l
+                                                l          l
+                                                l        cl
+                                                l        r
+                                                 l      l
+                                                  lccccCl
+                                                   lrrrl
 `
 
 var actual_maze = `
@@ -257,7 +258,7 @@ rrrrrrrrrrrrrrrr r rrlrrlrrlrrrrrrrrrrr r
        l                                r v                          r
        l                                rCv   e                      r
 s      l                                rrrrrrrr                     v  r
-l rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr       rz     l e    le     v r
+l rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr       rz     l      ele     v r
 l                                                rrrrrrrrrrrrrrrrrrrrrrr
 l                                         rlr                         r
 rrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrrrrlClr c c c                 sr
@@ -267,35 +268,41 @@ rrrrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrr
 r                                             r r rrrrrrrrrrrrrrrrrrrrrrrrrrrr
 r                       C                     r r                            r
 r rrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrr r r          rrrrr             r
-r                                               rrr rrrrrr r           r rrr r
-r                                           c   r        r r      rrrrrr r
-rrrrrrrrrrrrrrrrrrrrrrrlllrrrrrrrrrrrrrrrrrrrrrrrc      lr   rrrrr       r
-                                            r    rrrrrr rr   r           r
-                                            r         r rrrrrc    rrrrrrr
-                                            rCCCCCCCCCCCr     rrr        r
+r                                               rrr rrrrrr r           r rrr rrrrrrrrrrrrrr
+r                                           c   r        r r     rrrrrrr r                r
+rrrrrrrrrrrrrrrrrrrrrrrlllrrrrrrrrrrrrrrrrrrrrrrrc      lr   rrrr        r                r
+                                            r    rrrrrr rr   r           r                r
+                                            r         r rrrrrc    rrrrrrrrFFFFFFFFFFFFFFFFr
+                                            rCCCCCCCCCCCr      r         r
                                             rCCCCCCCCCCCr       r        r
                                             r           l       rrrrrrrr r
-                                            r           l              r r
-                                            rrrrrrrrrrrrr              r r
-                                                                       r r
-                                                                       r r
-                                                                       r rrr
-                                                                       r   l
-                                                                       r  sl
-                                                                       rrrrr
+                                            r           lCCCCCCCCCCCCCCr r
+                                            rrrrrrrrrrrrrrrrrr         r r
+                                                        r              r r
+                                                        r     c c c c cr rCC
+                                                        r    rrrrrrrrrrr rrrlllllllllllllll
+                                                        r              rCCCl
+                                                        r         cccccrCCnl
+                                                        r              rrrrr
+                                                        r              r
+                                                        r c c c c c c cr
+                                                        rrrrrrrrrrrrrrrr
 `
 
-var lvl_test = `
+var testing = `
 
-rrrrrrrrr
 
-r
-r
-r
-r
+
+
+   n
 rrrrrrrrrrrr
 
 `
+
+
+window.phase = 1; // Unlock new levels by doing a good job.
+window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
+
 class Brick{
     constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability){
         this.x1=x;
@@ -429,6 +436,9 @@ class Player{
                 case "f":
                     this.cheat.flying = !this.cheat.flying;
                     break;
+                case ".":
+                    this.xv *= 10;
+                    break;
             }
         }
         if (event.key === "p"){
@@ -530,7 +540,6 @@ class Player{
     }
     end(){
         window.alert(this.score);
-        this.delete();
         this.game.die = true;
     }
     refreshscore(){
@@ -542,6 +551,7 @@ class Player{
 class Game{
     constructor(mobile, xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
         this.die = false;
+        this.win = false;
         this.bricks=[];
         this.minigames=[];
         this.xoffset=0;
@@ -549,8 +559,14 @@ class Game{
         this.brickWidth=brickwidth;
         this.brickHeight=brickheight;
         this.player=new Player(mobile, 49,99,this);
-        window.addEventListener('keydown', () => {this.player.onkeydown(event)});
-        window.addEventListener("keyup", () => {this.player.onkeyup(event)});
+        this.onkeyup = (event) => {
+            this.player.onkeyup(event);
+        };
+        this.onkeydown = (event) => {
+            this.player.onkeydown(event);
+        };
+        window.addEventListener('keydown', this.onkeydown);
+        window.addEventListener("keyup", this.onkeyup);
         this.minigame = document.getElementById("minigame");
         this.minigameTick = 0;
         this.minigamePlaying = null;
@@ -644,6 +660,9 @@ class Game{
             case "k":
                 this.checkPoints.push([x, y]);
                 break;
+            case "n":
+                this.createBrick(x, y, width, height, "end", "end");
+                break;
         }
     }
     createByTileset(x,y,tileset, signs){
@@ -718,7 +737,8 @@ class Game{
             "minigame":0,
             "elevator":0,
             "bigElevator":0,
-            "all":0
+            "end":0,
+            "all":0,
         }; // Supported solidities: Solid, Notsolid, Killu
         var passers = 0;
         this.bricks.forEach((item, i) => {
@@ -751,6 +771,9 @@ class Game{
                     if (!(item.type=="elevator" || (item.type == "bigElevator") || item.type == "enemyFlipper")){
                         dictionary["all"]++;
                     }
+                    if (item.type == "end"){
+                        this.win = true;
+                    }
                 }
                 else if (!this.probPassers.includes(object)){
                     this.probPassers.push(object);
@@ -766,12 +789,27 @@ class Game{
     }
 
     run(){
-        if (this.die){
-            document.getElementById("gameover").style.display="block";
-            setTimeout(() => {
-                document.getElementById("gameover").style.display="none";
-                document.getElementById("menu").style.display="";
-            }, 2000);
+        if (this.die || this.win){
+            if (this.win){
+                document.getElementById("gamewin").style.display="block";
+                document.getElementById("gamewin").innerText = "You beat the level! Your score: " + this.player.score;
+                window.levelsBeaten ++;
+                if (window.levelsBeaten == 2){
+                    window.phase ++;
+                    window.levelsBeaten = 0;
+                    alert("You have unlocked phase " + window.phase + "!");
+                    if (window.phase == 2){
+                        document.getElementById("dropdown").innerHTML += "<option value=\"2\" id=\"2\">Labyrinth</option><option value=\"5\" id=\"5\">An actual maze this time</option>";
+                    }
+                }
+                var variab = document.getElementById(document.querySelector("#levelselect > select").value);
+                variab.parentNode.removeChild(variab);
+            }
+            else{
+                document.getElementById("gameover").style.display="block";
+            }
+            window.removeEventListener('keydown', this.onkeydown);
+            window.removeEventListener("keyup", this.onkeyup);
             this.bricks.forEach((item, i) => {
                 item.delete();
                 item = null;
@@ -779,9 +817,15 @@ class Game{
             this.enemies.forEach((item, i) => {
                 item = null;
             });
+            this.player.delete();
             this.bricks = null;
             this.enemies = null;
             this.player = null;
+            setTimeout(() => {
+                document.getElementById("gameover").style.display="none";
+                document.getElementById("gamewin").style.display="none";
+                document.getElementById("menu").style.display="";
+            }, 2000);
             return true;
         }
         if (this.minigamePlaying){
@@ -869,7 +913,6 @@ document.getElementById("playbutton").addEventListener("click",function(){
             break;
         case "2":
             g.createByTileset(-3, -8, lvl1);
-            g.createSign(5,7,"Welcome to the game! Your goal? Navigate the massive map and have more points than everyone else when you die! Also, always hover these signs. They won't always be labeled, and will usually be useful!","Hover me");
             break;
         case "3":
             g.createByTileset(-4, -12, ethan_lvl);
@@ -880,11 +923,11 @@ document.getElementById("playbutton").addEventListener("click",function(){
         case "5":
             g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
             break;
-    }//*///-2.5,-112,lvl1); // -5, -6 // -4, -12, ethan_lvl
+        case "T":
+            g.createByTileset(0, 0, testing);
+            break;
+    }
     document.getElementById("menu").style.display="none";
-    //g.createByTileset(0, 1, `r er\nrrrr\n`);
-    /**/
-    // And now more Crap!
     Array.from(document.getElementsByClassName("tencoin")).forEach((item, i) => {
         item.innerHTML="<p class='coin_text'>10</p>";
     });
@@ -894,7 +937,6 @@ document.getElementById("playbutton").addEventListener("click",function(){
 
     c=setInterval(function(){
         if (g.run()){
-            g = null; // GC g.
             clearInterval(c);
         }
     }, 20);

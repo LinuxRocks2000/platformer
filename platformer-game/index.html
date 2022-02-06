@@ -8,11 +8,11 @@
     <body>
         <div id = "menu">
             <div id="levelselect">
-                <select>
-                    <option value="2">Labyrinth</option>
-                    <option value="1">The Plains</option>
-                    <option value="4">The Basement</option>
-                    <option value="5">An actual maze this time</option>
+                <select id="dropdown">
+                    <option value="1" id="1">The Plains</option>
+                    <option value="4" id="4">The Basement</option>
+                    <option value="5" id="5">Testing</option>
+                    <!-- Modders: this is (as of my latest commit) the base phase. You can add to it all you want. If you want to add to other phases, or create your own, please talk to me. -->
                 </select>
             </div>
             <div id = "mobileOrNot" style="display: none;">
@@ -26,6 +26,9 @@
         </div>
         <div id = "gameover" style="display: none;">
             Game over.
+        </div>
+        <div id = "gamewin" style = "display: none">
+            You win! Your score:
         </div>
         <div id="game-main"></div>
         <script src="js/joystick.js" type="text/javascript"></script>
