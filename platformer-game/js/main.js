@@ -799,7 +799,7 @@ class Game{
                     window.levelsBeaten = 0;
                     alert("You have unlocked phase " + window.phase + "!");
                     if (window.phase == 2){
-                        document.getElementById("dropdown").innerHTML += "<option value=\"2\" id=\"2\">Labyrinth</option><option value=\"5\" id=\"5\">An actual maze this time</option>";
+                        document.getElementById("dropdown").innerHTML += "<option value=\"2\" id=\"2\">Labyrinth</option><option value=\"1\" id=\"1\">The Plains</option>";
                     }
                 }
                 var variab = document.getElementById(document.querySelector("#levelselect > select").value);
