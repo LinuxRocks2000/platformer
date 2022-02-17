@@ -63,10 +63,10 @@ var lvl1=
  rzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz    r
  rr            l           l     l                         l
  rrl rl rl rl rl rl   rrl rl rl rl rll rrrrrrrrrrrrlllllllll
- l
- lllllIIIlllIIIllllIIIlllllIIIlllIIIlIIIll
-
- CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCn
+v
+v llllIIIlllIIIllllIIIlllllIIIlllIIIlIIIll
+v
+vCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCn
 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 `
 
@@ -320,6 +320,52 @@ r    r      l        ele        l       ele     l nr
 rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 `
 
+var office = `
+       llllllllrrrrrrrrnr
+       r               Cr
+       r               Cr
+       r               Cr
+       r       l       rr
+       r v         e   rr
+       rvrrrrrrrrrrrrrrrr
+       r  E             r
+       r         e      r
+       rvvvvvvvvvvvvvvvvr
+       rr               r
+       rr l    l    l   r
+       rrrrrrrrrrrrrrrrvr
+       r                r
+       r                r
+       r                r
+       r               rr
+       r  r E    E     rr
+       rvrrrrrrrrrrrrrrrr
+       rC               r
+       rC               r
+       r                r
+       rr  E            r
+       rrvvlvvvvlvvvvlvvr
+       rrrrrrrrrrrrrrrrvr
+       r                r
+       r                r
+       r               Cr
+       r               rr
+       r  e   e   e    rr
+       rvrrrrrrrrrrrrrrrr
+       r                r
+       r                r
+       rc               r
+       rr               r
+       rr    e     e    r
+       rrrrrrrrrrrrrrrrvr
+       r                r
+       r                r
+       r               cr
+                       rr
+    s  v      e        rr
+rrrrrrrrrrrrrrrrrrrrrrrrr
+`
+
 
 window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
@@ -327,41 +373,71 @@ window.phases = [
     [
         {
             id: 7,
-            name: "Training"
+            name: "Training",
+            func: function(){
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
+            }
         },
         {
             id: 6,
-            name: "Tiny Maze"
+            name: "Tiny Maze",
+            func: function(){
+                g.createByTileset(-2, 0, tinymaze);
+            }
         },
         {
             id: 8,
-            name: "Fortress"
+            name: "Fortress",
+            func: function(){
+                g.createByTileset(-2, -5, fortress);
+            }
+        },
+        {
+            id: 10,
+            name: "Office",
+            func: function(){
+                g.createByTileset(0, 0, office, ["Well, it's bad. It looks like the lavas have taken over the office complex! Get to the top as fast as possible, so you can dump all of these lavas to Garbage Collection."]);
+            }
         }
     ],
     [
         {
             id: 2,
-            name: "Labyrinth"
+            name: "Labyrinth",
+            func: function(){
+                g.createByTileset(-3, -8, lvl1);
+            }
         },
         {
             id: 5,
-            name: "An Actual Maze This Time"
+            name: "An Actual Maze This Time",
+            func: function(){
+                g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
+            }
         }
     ],
     [
         {
             id: 1,
-            name: "The Plains"
+            name: "The Plains",
+            func: function(){
+                g.createByTileset(-5, 6, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);
+            }
         },
         {
             id: 4,
-            name: "The Basement"
+            name: "The Basement",
+            func: function(){
+                g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
+            }
         }
     ]
 ];
 
 function loadPhase(phasenum){
     window.phases[phasenum - 1].forEach((item, i) => {
+        console.log(item.name);
         var el = document.createElement("option");
         el.id = item.id.toString();
         el.value = item.id.toString();
@@ -701,6 +777,11 @@ class Game{
             case "e":
                 this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), 5, 0]);
                 break;
+            case "E":
+                this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), 10, 0]);
+                break;
+            case "L":
+                this.createBrick(x, y, width, height, "lava", "killu_nocol")
             case "ǝ":
                 this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), -5, 0]);
                 break;
@@ -865,6 +946,7 @@ class Game{
                 if (window.levelsBeaten == window.phases[window.phase - 1].length){
                     window.phase ++;
                     loadPhase(window.phase);
+                    window.levelsBeaten = 0;
                 }
                 var variab = document.getElementById(document.querySelector("#levelselect > select").value);
                 variab.parentNode.removeChild(variab);
@@ -971,33 +1053,12 @@ document.getElementById("playbutton").addEventListener("click",function(){
     g=new Game(document.querySelector("#mobileOrNot > input").checked);
 
     // Drawing here!
-    switch(document.querySelector("#levelselect > select").value){
-        case "1":
-            g.createByTileset(-5, 6, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);
-            break;
-        case "2":
-            g.createByTileset(-3, -8, lvl1);
-            break;
-        case "3":
-            g.createByTileset(-4, -12, ethan_lvl);
-            break;
-        case "4":
-            g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
-            break;
-        case "5":
-            g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
-            break;
-        case "6":
-            g.createByTileset(-2, 0, tinymaze);
-            break;
-        case "7":
-            g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
-            g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
-            break;
-        case "8":
-            g.createByTileset(-2, -5, fortress);
-            break;
-    }
+    window.phases[window.phase - 1].forEach((item, i) => {
+        if (item.id == document.querySelector("#levelselect > select").value){
+            item.func();
+        }
+    });
+
     document.getElementById("menu").style.display="none";
     Array.from(document.getElementsByClassName("tencoin")).forEach((item, i) => {
         item.innerHTML="<p class='coin_text'>10</p>";
