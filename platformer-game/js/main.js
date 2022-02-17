@@ -392,21 +392,14 @@ window.phases = [
             func: function(){
                 g.createByTileset(-2, -5, fortress);
             }
-        },
+        }
+    ],
+    [
         {
             id: 10,
             name: "Office",
             func: function(){
                 g.createByTileset(0, 0, office, ["Well, it's bad. It looks like the lavas have taken over the office complex! Get to the top as fast as possible, so you can dump all of these lavas to Garbage Collection."]);
-            }
-        }
-    ],
-    [
-        {
-            id: 2,
-            name: "Labyrinth",
-            func: function(){
-                g.createByTileset(-3, -8, lvl1);
             }
         },
         {
@@ -430,6 +423,13 @@ window.phases = [
             name: "The Basement",
             func: function(){
                 g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
+            }
+        },
+        {
+            id: 2,
+            name: "Labyrinth",
+            func: function(){
+                g.createByTileset(-3, -8, lvl1);
             }
         }
     ]
