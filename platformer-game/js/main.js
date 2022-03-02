@@ -775,15 +775,15 @@ class Game{
                 this.createBrick(x, y, width, height, "lava", "solid");
                 break;
             case "e":
-                this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), 5, 0]);
+                this.enemies.push([this.createBrick(x, y, width, height, "lava enemy", "killu"), 5, 0]);
                 break;
             case "E":
-                this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), 10, 0]);
+                this.enemies.push([this.createBrick(x, y, width, height, "lava enemy", "killu"), 10, 0]);
                 break;
             case "L":
                 this.createBrick(x, y, width, height, "lava", "killu_nocol")
             case "ǝ":
-                this.enemies.push([this.createBrick(x, y, width, height, "lava", "killu"), -5, 0]);
+                this.enemies.push([this.createBrick(x, y, width, height, "lava enemy", "killu"), -5, 0]);
                 break;
             case "z":
                 this.createBrick(x, y, width, height, "invisible", "elevator");

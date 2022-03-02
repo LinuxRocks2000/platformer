@@ -177,6 +177,9 @@ body{
 }
 .end{
     background-color: green;
+    background-image: url("../res/ukraine_sunflower.jpg");
+    background-size: cover;
+    background-position: center;
 }
 #annoyingbanner {
     width: 100%;
@@ -184,7 +187,8 @@ body{
     border-radius: 30px;
     z-index: 9999999999;
     position: absolute;
-    background-color: #EEEEEE;
+    background-color: #0057b7;
+    color: #ffd700;
     text-align: center;
     font-family: monospace;
     font-size: 2em;
@@ -197,4 +201,10 @@ body{
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE10+/Edge */
     user-select: none; /* Standard */
+}
+.enemy{
+    background-image:url("../res/enemy_head.png");
+    background-size: contain;
+    background-repeat:no-repeat;
+    background-position:center;
 }
