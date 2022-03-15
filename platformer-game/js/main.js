@@ -333,37 +333,37 @@ var office = `
        r               Cr
        r       l       rr
        r v         e   rr
-       rvrrrrrrrrrrrrrrrr
+       rjrrrrrrrrrrrrrrrr
        r  E             r
        r         e      r
        rvvvvvvvvvvvvvvvvr
        rr               r
        rr l    l    l   r
-       rrrrrrrrrrrrrrrrvr
+       rrrrrrrrrrrrrrrrjr
        r                r
        r                r
        r                r
        r               rr
        r  r E    E     rr
-       rvrrrrrrrrrrrrrrrr
+       rjrrrrrrrrrrrrrrrr
        rC               r
        rC               r
        r                r
        rr  E            r
        rrvvlvvvvlvvvvlvvr
-       rrrrrrrrrrrrrrrrvr
+       rrrrrrrrrrrrrrrrjr
        r                r
        r                r
        r               Cr
        r               rr
        r  e   e   e    rr
-       rvrrrrrrrrrrrrrrrr
+       rjrrrrrrrrrrrrrrrr
        r                r
        r                r
        rc               r
        rr               r
        rr    e     e    r
-       rrrrrrrrrrrrrrrrvr
+       rrrrrrrrrrrrrrrrjr
        r                r
        r                r
        r               cr
@@ -1439,7 +1439,7 @@ class Game{
 
 var g=null;
 document.getElementById("playbutton").addEventListener("click",function(){
-    g=new Game(document.querySelector("#mobileOrNot > input").checked, TinymazeRobot);
+    g=new Game(document.querySelector("#mobileOrNot > input").checked);//, TrainingRobot);
 
     // Drawing here!
     window.phases[window.phase - 1].forEach((item, i) => {
