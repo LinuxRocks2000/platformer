@@ -211,3 +211,10 @@ body{
 .jumpthrough{
     background-color: yellow;
 }
+.ice {
+    background-color: lightblue;
+}
+.bat {
+    background-color: black;
+    border-radius: 20px;
+}

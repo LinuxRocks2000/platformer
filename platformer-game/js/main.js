@@ -296,9 +296,11 @@ rrrrrrrrrrrrrllrrrr                                r
                                                        r
                                                        r
                                                  rrrrrrr
+                                                               s
+                                                             rrrSSSSS
 
-                                                         s  n
-                                                       rrrrrrr
+                                                                         s  n
+                                                                       rrrrrrr
 `
 
 var tinymaze = `
@@ -372,7 +374,35 @@ var office = `
 rrrrrrrrrrrrrrrrrrrrrrrrr
 `
 
-var test = "\n\nrrrrjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n   rjjr\n\n\n\n  rrjjrrrr\n\n\n\nrrrrrrr\n";
+var platformer_robotics_competition = `
+r            l
+r
+r            c               22C 22  22  llc                       CCC
+r                            rrrrrrrrrrrrrr  333   333   333   333 rrr
+r                          rrr
+r
+r     c      l  22222  c
+rrrrrrrrlllrrrrrrrrrrrrrrrr
+                         r
+                         r
+                         r
+                         r
+                         r
+                         r
+                         rc
+                         rc
+                         rllrrrrrrrrrr
+
+`;
+
+var test = `
+            ǝ
+
+r            r
+rrr rrrrrrrrrrr
+r
+rrrrrrrrrrrrrrr
+`
 
 
 window.phase = 1; // Unlock new levels by doing a good job.
@@ -383,7 +413,7 @@ window.phases = [
             id: 7,
             name: "Training",
             func: function(){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "The blue tiles are ice. You'll find they're very slippery!", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
         },
@@ -442,6 +472,47 @@ window.phases = [
         }
     ]
 ];
+function getLevelmakerContext(g) {
+    return {
+        game: g,
+        xOffset: 0,
+        yOffset: 0,
+        setOffset: function(x, y){
+            this.xOffset = x;
+            this.yOffset = y;
+        },
+        makeNormal: function(x, y, width, height){
+            this.game.createBrick(x + this.xOffset, y + this.yOffset, width, height, "regular", "solid");
+        },
+        makeToothbrushTrap: function(x, y, prongs, alignment = 1){
+            var height = prongs * 3 + 2;
+            this.game.createBrick(x + this.xOffset, y - height + this.yOffset, 1, height, "lava", "killu");
+            for (var i = 0; i < prongs; i ++){
+                this.game.createBrick(x + alignment + this.xOffset, y - ((i + 1) * 3) - 1 + this.yOffset, 1, 1, "regular", "solid");
+            }
+        },
+        makeSquaretrap: function(x, y, width, height){
+            this.game.createBrick(x + this.xOffset,         y + this.yOffset - 1, 1, 1, "lava", "killu");
+            this.game.createBrick(x + this.xOffset,         y + this.yOffset - 1 - height, 1, 1, "lava", "killu");
+            this.game.createBrick(x + this.xOffset + width, y + this.yOffset - 1 - height, 1, 1, "lava", "killu");
+            this.game.createBrick(x + this.xOffset + width, y + this.yOffset - 1, 1, 1, "lava", "killu");
+        },
+        makeCupTrap: function(x, y, width, height){
+            this.makeNormal(x, y, 1, height);
+            this.makeNormal(x, y + height, width - 1, 1);
+            this.makeNormal(x + width, y, 1, height);
+            this.game.createBrick(x - 1 + width + this.xOffset, y + this.yOffset + height, 2, 1, "lava", "killu");
+        }
+    }
+}
+
+function testLevel(context){
+    context.setOffset(0, 4);
+    context.makeNormal(0, 0, 14, 1);
+    context.makeToothbrushTrap(4, 0, 1, -1);
+    context.makeSquaretrap(8, 0, 3, 100);
+    context.makeCupTrap(14, 0, 5, 5);
+}
 
 function loadPhase(phasenum){
     window.phases[phasenum - 1].forEach((item, i) => {
@@ -549,6 +620,7 @@ class Player {
         this.touchingBlock = false;
         this.touchingX = false;
         this.touchingY = false;
+        this.slipping = false;
     }
     delete(){
         this.element.parentNode.removeChild(this.element);
@@ -564,10 +636,10 @@ class Player {
         else{
             this.checkPointNum = 0;
         }
-        if (event.keyCode==37){
+        if (event.key == "a" || event.key == "ArrowLeft"){
             this.leftpressed=false;
         }
-        else if (event.keyCode==39){
+        else if (event.key == "d" || event.key == "ArrowRight"){
             this.rightpressed=false;
         }
         if (this.#cheat.active){
@@ -610,19 +682,19 @@ class Player {
     }
     onkeydown(event){
         console.log(event.key);
-        if (event.keyCode==38){
+        if (event.key == "w" || event.key == "ArrowUp"){
             this.Jump();
         }
         else if (event.key == "ArrowDown" && this.#cheat.flying){
             this.#yv = 20 * this.gravity;
         }
-        else if (event.keyCode==37){
+        else if (event.key == "a" || event.key == "ArrowLeft"){
             this.leftpressed=true;
         }
-        else if (event.keyCode==39){
+        else if (event.key == "d" || event.key == "ArrowRight"){
             this.rightpressed=true;
         }
-        if (event.key == "ArrowDown"){
+        if (event.key == "ArrowDown" || event.key == "s"){
             this.DropThrough();
         }
     }
@@ -639,6 +711,9 @@ class Player {
         }
         this.game.move(0,this.#yv);
         colis=this.game.checkCollision();
+        if (colis["end"] > 0){
+            this.game.win = true;
+        }
         if (colis["tencoin"] > 0){
             this.score+=colis["tencoin"]*10;
             this.refreshscore();
@@ -667,6 +742,12 @@ class Player {
                     this.onground=true;
                 }
                 this.#yv=0;
+                if (colis["ice"] > 0){
+                    this.slipping = true;
+                }
+                else{
+                    this.slipping = false;
+                }
             }
             this.touchingBlock = true;
             this.touchingY = true;
@@ -677,9 +758,13 @@ class Player {
         else{
             this.touchingBlock = false;
             this.touchingY = false;
+            this.slipping = false;
         }
         this.game.move(this.#xv,0);
         var colis=this.game.checkCollision();
+        if (colis["win"] > 0){
+            this.game.win = true;
+        }
         if (colis["tencoin"] > 0){
             this.score+=colis["tencoin"]*10;
             this.refreshscore();
@@ -714,7 +799,7 @@ class Player {
         else {
             this.touchingX = false;
         }
-        this.#xv*=0.8;
+        this.#xv*=this.slipping ? 0.97 : 0.8;
         if (this.#cheat.flying){
             this.#yv *= 0.8
         }
@@ -795,6 +880,20 @@ class RobotPlayer extends Player {
                 this.y2 + 100 > item.y1 &&
                 item.type == "killu"    &&
                 item.element.classList.contains("enemy")){
+                    ret.push([item.x1 - this.x1, item.y1 - this.y1, item.x2 - this.x1, item.y2 - this.y1, thing[1]]);
+                }
+        });
+        return ret;
+    }
+    LookForBlocks(){
+        var ret = [];
+        this.game.enemies.forEach((thing, i) => {
+            var item = thing[0];
+            if (this.x1 - 100 < item.x2 &&
+                this.x2 + 100 > item.x1 &&
+                this.y1 - 100 < item.y2 &&
+                this.y2 + 100 > item.y1 &&
+                item.type == "solid"){
                     ret.push([item.x1 - this.x1, item.y1 - this.y1, item.x2 - this.x1, item.y2 - this.y1, thing[1]]);
                 }
         });
@@ -1068,6 +1167,102 @@ class TinymazeRobot extends RobotPlayer{
 }
 
 
+class PrivateTestRobot extends RobotPlayer{
+    pidTo(pos){
+        if (this.game.x > pos){
+            this.Right();
+        }
+        else{
+            this.Left();
+        }
+        if (this.game.x > pos - 2 && this.game.x < pos + 2){
+            return true;
+        }
+        return false;
+    }
+    RobotInit(){
+        this.phase = 0;
+        this.ticker = 0;
+    }
+    RobotRun(){
+        if (this.phase == 0){
+            if (this.pidTo(-200)){ // pidTo uses the limited functions I made available (this is for a virtual robotics competition I'm hosting) to get as close to a certain point as possible.
+                this.phase = 1;
+            }
+        }
+        else if (this.phase == 1){
+            this.Jump();
+            this.phase = 2;
+        }
+        else if (this.phase == 2){
+            if (this.pidTo(-430) && this.touchingY){ // Each block is 50, so this goes 4 blocks forwards. All the coordinates are reversed.
+                this.phase = 3;
+            }
+        }
+        else if (this.phase == 3){
+            this.ticker ++;
+            this.Jump();
+            if (this.ticker > 10){
+                this.phase = 4;
+                this.ticker = 0;
+            }
+        }
+        else if (this.phase == 4){
+            if (this.pidTo(-700)){
+                this.phase = 5;
+            }
+        }
+        else if (this.phase == 5){
+            this.Jump();
+            this.phase = 6;
+        }
+        else if (this.phase == 6){
+            this.Right();
+            if (this.touchingY){
+                this.phase = 7;
+            }
+        }
+        else if (this.phase == 7){
+            this.Right();
+            if (!this.touchingY){
+                this.phase = 8;
+                console.log(this.gotCoin);
+            }
+        }
+        else if (this.phase == 8){
+            if (this.touchingY){
+                this.phase = 8.5;
+            }
+        }
+        else if (this.phase == 8.5){
+            this.Jump();
+            this.Left();
+            if (this.touchingX){
+                this.phase = 9;
+            }
+        }
+        else if (this.phase == 9){
+            this.Right();
+            if (this.touchingY){
+                this.phase = 10;
+            }
+        }
+        else if (this.phase == 10){
+            if (!this.gotCoin){
+                this.phase = 8;
+                //this.Right();
+            }
+            else{
+                this.phase = 11;
+            }
+        }
+        else if (this.phase == 11){
+            this.Right();
+        }
+    }
+}
+
+
 class Game{
     constructor(mobile, playerClass = Player, xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
         this.die = false;
@@ -1097,6 +1292,7 @@ class Game{
         this.y = 0;
         this.x = 0;
         this.scale = 1;
+        this.minExtent = 6000;
     }
     arbitraryRestructure(){
 
@@ -1154,15 +1350,30 @@ class Game{
                 this.createBrick(x, y, width, height, "lava", "solid");
                 break;
             case "e":
-                this.enemies.push([this.createBrick(x, y, width, height, "lava enemy", "killu"), 5, 0]);
+                this.enemies.push({
+                    type: "normal",
+                    brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
+                    speed: 5,
+                    yv: 0
+                });
                 break;
             case "E":
-                this.enemies.push([this.createBrick(x, y, width, height, "lava enemy", "killu"), 10, 0]);
+                this.enemies.push({
+                    type: "normal",
+                    brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
+                    speed: 10,
+                    yv: 0
+                });
                 break;
             case "L":
                 this.createBrick(x, y, width, height, "lava", "killu_nocol")
             case "ǝ":
-                this.enemies.push([this.createBrick(x, y, width, height, "lava enemy", "killu"), -5, 0]);
+                this.enemies.push({
+                    type: "normal",
+                    brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
+                    speed: -5,
+                    yv: 0
+                });
                 break;
             case "z":
                 this.createBrick(x, y, width, height, "invisible", "elevator");
@@ -1193,47 +1404,59 @@ class Game{
                 break;
             case "j":
                 this.createBrick(x, y, width, height, "jumpthrough", "jumpthrough")
+                break;
+            case "1":
+                this.enemies.push({
+                    brick: this.createBrick(x + Math.random() * (width - 1), y, 1, 1, "lava enemy", "killu"),
+                    speed: -5,
+                    yv: 0
+                });
+                break;
+            case "2":
+                this.createBrick(x + Math.random() * (width - 1), y, 1, 1, "lava", "killu");
+                break;
+            case "3":
+                this.createBrick(x + Math.random() * (width - 1), y, 1, 1, "regular", "solid");
+                break;
+            case "S":
+                this.createBrick(x, y, width, height, "ice", "ice");
+                break;
+            case "b":
+                this.enemies.push({
+                    type: "bat",
+                    brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
+                    speed: -5,
+                    yv: 0
+                });
+                break;
         }
     }
     createByTileset(x,y,tileset, signs){
         var ix=x;
         var iy=y;
         var curHoriz = 0;
-        var curHorizType = "";
+        var curHorizType = undefined;
         var signNum = 0;
-        tileset.split("").forEach((item, i) => { // Types that cannot be chained: C, c, e, ǝ.
-            /*    if (curVerts[ix][0] == item){
-                    curVerts[ix][1] ++;
-                }
-                else if (curVerts[ix][1] != 0){
-                    this.createByLetter(iy - curVerts[ix][1], ix, 1, curVerts[ix][1]);
-                }
+        tileset.split("").forEach((item, i) => {
+            if (item == "s"){
+                this.createSign(ix, iy, signs[signNum]);
+                signNum ++;
             }
-            else*/{/*
-                if (tileset[i - 1] != item && tileset[i + 1] != item && curHoriz == 0){
-                    curVerts[ix] = [item,1];
+            else {
+                if (curHorizType == item && ["e", "E", "c", "C"].indexOf(item) == -1){
+                    curHoriz ++;
                 }
-                else*/{
-                    if (item == "s"){
-                        this.createSign(ix, iy, signs[signNum]);
-                        signNum ++;
-                    }
-                    if (item == tileset[i - 1] && ["e", "c", "C"].indexOf(tileset[i - 1]) == -1){
-                        curHoriz ++;
-                    }
-                    else{
-                        if (curHoriz != 0){
-                            this.createByLetter(ix - curHoriz, iy, curHoriz, 1, tileset[i - 1]);
-                            curHoriz = 0;
-                        }
-                        this.createByLetter(ix, iy, 1, 1, item); // This has to happen anyways, so may as well let it happen now
-                    }
+                else {
+                    this.createByLetter(ix - curHoriz, iy, curHoriz, 1, curHorizType);
+                    curHorizType = item;
+                    curHoriz = 1;
                 }
             }
             ix++;
             if (item == "\n"){
                 ix = x;
                 iy ++;
+                this.minExtent = (iy + 2) * 50;
             }
         });
     }
@@ -1251,6 +1474,9 @@ class Game{
         });
         this.x += xm;
         this.y -= ym;
+        if (this.y < -this.minExtent){
+            this.die = true;
+        }
     }
     apply(){
         this.bricks.forEach((item, i) => {
@@ -1270,6 +1496,7 @@ class Game{
             "end":0,
             "jumpthrough":0,
             "pedanticsolid":0,
+            "ice": 0,
             "all":0
         };
         var passers = 0;
@@ -1303,13 +1530,14 @@ class Game{
                     if (!(item.type=="elevator" || (item.type == "bigElevator") || item.type == "enemyFlipper")){
                         dictionary["all"]++;
                     }
-                    if (item.type == "end"){
-                        this.win = true;
-                    }
                     if (item.type == "jumpthrough"){
                         dictionary.pedanticsolid ++;
                     }
                     if (item.type == "solid"){
+                        dictionary.pedanticsolid ++;
+                    }
+                    if (item.type == "ice"){
+                        dictionary.solid ++;
                         dictionary.pedanticsolid ++;
                     }
                 }
@@ -1382,41 +1610,21 @@ class Game{
         }
         if (this.runningEnemies){
             this.enemies.forEach((item, i) => {
-                item[2] ++;
-                item[0].move(0, item[2]);
-                var df = this.checkCollision(item[0], true);
-                if (df["all"] > 1){
-                    while (this.checkCollision(item[0], true, true)["all"] > 1){item[0].move(0, item[2] / Math.abs(item[2]) * -1)};
-                    item[2] = 0;
+                item.yv ++;
+                item.brick.move(0, item.yv);
+                if (this.checkCollision(item.brick, true)["all"] > 1){
+                    while (this.checkCollision(item.brick, true)["all"] > 1){
+                        item.brick.move(0, -Math.abs(item.yv)/item.yv);
+                    }
+                    item.yv = 0;
                 }
-                for (var i = 0; i < Math.abs(item[1]); i++){
-                    var loofa = false;
-                    item[0].move(0, 1);
-                    if (this.checkCollision(item[0], true, true)["all"] > 1){
-                        item[0].move(0, -1);
-                    }
-                    else{
-                        loofa = true;
-                    }
-                    item[0].move(item[1] / Math.abs(item[1]), 0);
-                    var df = this.checkCollision(item[0], true, true);
-                    if (df["all"] > 1){
-                        item[0].move(item[1] / Math.abs(item[1]) * -1, 0);
-                        if (loofa == false){
-                            item[1] *= -1;
+                for (var i = 0; i < Math.abs(item.speed); i ++){
+                    item.brick.move(Math.abs(item.speed)/item.speed, 0);
+                    if (this.checkCollision(item.brick, true)["all"] > 1){
+                        while (this.checkCollision(item.brick, true)["all"] > 1){
+                            item.brick.move(-Math.abs(item.speed)/item.speed, 0);
                         }
-                    }
-                    else if (loofa == true){
-                        item[0].move(0, -1);
-                    }
-                    if (df["elevator"] > 0){ // Elevator bricks make them hop
-                        item[2] = -15;
-                    }
-                    if (df["bigElevator"] > 0){
-                        item[2] = -40;
-                    }
-                    if (df["enemyFlipper"] > 0){
-                        item[1] *= -1;
+                        item.speed *= -1;
                     }
                 }
             });
@@ -1439,7 +1647,8 @@ class Game{
 
 var g=null;
 document.getElementById("playbutton").addEventListener("click",function(){
-    g=new Game(document.querySelector("#mobileOrNot > input").checked);//, TrainingRobot);
+    g=new Game(document.querySelector("#mobileOrNot > input").checked);//, PrivateTestRobot);//, TrainingRobot);
+    window.levelMakerContext = getLevelmakerContext(g);
 
     // Drawing here!
     window.phases[window.phase - 1].forEach((item, i) => {
