@@ -395,14 +395,29 @@ rrrrrrrrlllrrrrrrrrrrrrrrrr
 
 `;
 
-var test = `
-            ǝ
-
-r            r
-rrr rrrrrrrrrrr
-r
-rrrrrrrrrrrrrrr
-`
+var new_features_wonderland = `
+            r
+            r
+            r               r
+            r               r
+            r               r
+r           rrjjrrSSSSS SSSSS
+r                r         vb
+r                r         v
+rSSSSSSSSSSrrrrrrr         v
+            b              v
+                           v
+                   rrrrrrrrrvvv
+                   r b
+    rjjSSSSSrrrrrrrrvv
+    r                v
+                     v
+                     v
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr     llll
+                                  r        l
+                                  r       nl
+                                  rrrrrrrrrl
+`;
 
 
 window.phase = 1; // Unlock new levels by doing a good job.
@@ -433,6 +448,13 @@ window.phases = [
         }
     ],
     [
+        {
+            id: 20,
+            name: "New Features Wonderland",
+            func: function(){
+                g.createByTileset(-2, -5, new_features_wonderland)
+            }
+        },
         {
             id: 10,
             name: "Office",
@@ -1407,6 +1429,7 @@ class Game{
                 break;
             case "1":
                 this.enemies.push({
+                    type: "normal",
                     brick: this.createBrick(x + Math.random() * (width - 1), y, 1, 1, "lava enemy", "killu"),
                     speed: -5,
                     yv: 0
@@ -1424,7 +1447,7 @@ class Game{
             case "b":
                 this.enemies.push({
                     type: "bat",
-                    brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
+                    brick: this.createBrick(x, y, 1, 1, "lava bat", "killu"),
                     speed: -5,
                     yv: 0
                 });
@@ -1553,6 +1576,22 @@ class Game{
         }
         return dictionary;
     }
+    horizontalBetween(object, object2 = this.player){
+        var isBetween = false;
+        this.bricks.forEach((item, i) => {
+            if (item != object && item != object2){
+                var val1 = item.y1 - object.y1;
+                var val2 = item.y1 - object2.y1;
+                if (val1 * val2 < 0){
+                    if ((item.x2 > object.x1 && item.x1 < object.x2) ||
+                        (item.x2 > object2.x1 && item.x1 < object2.x2)){
+                        isBetween = true;
+                    }
+                }
+            }
+        });
+        return isBetween;
+    }
 
     run(){
         if (this.die || this.win){
@@ -1610,21 +1649,85 @@ class Game{
         }
         if (this.runningEnemies){
             this.enemies.forEach((item, i) => {
-                item.yv ++;
-                item.brick.move(0, item.yv);
-                if (this.checkCollision(item.brick, true)["all"] > 1){
-                    while (this.checkCollision(item.brick, true)["all"] > 1){
-                        item.brick.move(0, -Math.abs(item.yv)/item.yv);
-                    }
-                    item.yv = 0;
-                }
-                for (var i = 0; i < Math.abs(item.speed); i ++){
-                    item.brick.move(Math.abs(item.speed)/item.speed, 0);
-                    if (this.checkCollision(item.brick, true)["all"] > 1){
-                        while (this.checkCollision(item.brick, true)["all"] > 1){
-                            item.brick.move(-Math.abs(item.speed)/item.speed, 0);
+                if (item.type == "normal"){
+                    item.yv ++;
+                    item.brick.move(0, item.yv);
+                    if (this.checkCollision(item.brick, true, true)["all"] > 1){
+                        while (this.checkCollision(item.brick, true, true)["all"] > 1){
+                            item.brick.move(0, -Math.abs(item.yv)/item.yv);
                         }
-                        item.speed *= -1;
+                        item.yv = 0;
+                    }
+                    for (var i = 0; i < Math.abs(item.speed); i ++){
+                        item.brick.move(Math.abs(item.speed)/item.speed, 0);
+                        var coll = this.checkCollision(item.brick, true);
+                        if (coll["elevator"] > 0){
+                            item.yv = -20;
+                        }
+                        if (coll["bigElevator"] > 0){
+                            item.yv = -40;
+                        }
+                        if (coll["all"] > 1){
+                            while (this.checkCollision(item.brick, true)["all"] > 1){
+                                item.brick.move(-Math.abs(item.speed)/item.speed, 0);
+                            }
+                            item.speed *= -1;
+                        }
+                    }
+                }
+                else if (item.type == "bat"){
+                    if (!this.horizontalBetween(item.brick)){
+                        item.active = true;
+                    }
+                    if (item.active){ // It's undefined until it's true, ya know?
+                        item.yv ++;
+                        item.brick.move(0, item.yv);
+                        if (this.checkCollision(item.brick, true, true)["all"] > 1){
+                            while (this.checkCollision(item.brick, true, true)["all"] > 1){
+                                item.brick.move(0, -Math.abs(item.yv)/item.yv);
+                            }
+                            item.yv = 0;
+                            item.type = "flyer";
+                        }
+                        item.brick.move(0, item.yv);
+                    }
+                }
+                else if (item.type == "flyer"){
+                    if (this.player.y2 < item.brick.y1){
+                        item.yv --;
+                    }
+                    else if (this.player.y1 > item.brick.y2){
+                        item.yv ++;
+                    }
+                    if (this.player.x2 < item.brick.x1){
+                        item.speed --;
+                    }
+                    else if (this.player.x1 > item.brick.x2){
+                        item.speed ++;
+                    }
+                    item.speed *= 0.9;
+                    item.brick.move(0, item.yv);
+                    if (this.checkCollision(item.brick, true, true)["all"] > 1){
+                        while (this.checkCollision(item.brick, true, true)["all"] > 1){
+                            item.brick.move(0, -Math.abs(item.yv)/item.yv);
+                        }
+                        item.yv = 0;
+                    }
+                    for (var i = 0; i < Math.abs(item.speed); i ++){
+                        item.brick.move(Math.abs(item.speed)/item.speed, 0);
+                        var coll = this.checkCollision(item.brick, true);
+                        if (coll["elevator"] > 0){
+                            item.yv = -20;
+                        }
+                        if (coll["bigElevator"] > 0){
+                            item.yv = -40;
+                        }
+                        if (coll["all"] > 1){
+                            while (this.checkCollision(item.brick, true)["all"] > 1){
+                                item.brick.move(-Math.abs(item.speed)/item.speed, 0);
+                            }
+                            item.speed *= -1;
+                        }
                     }
                 }
             });
