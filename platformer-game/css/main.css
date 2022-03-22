@@ -227,3 +227,12 @@ body{
 .tar{
     background-color: black;
 }
+
+.ghostly{
+    background-color: rgba(1, 1, 1, 0.2);
+}
+
+.gunner {
+    border-radius: 100%;
+    background-color: grey;
+}

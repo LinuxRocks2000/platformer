@@ -297,14 +297,16 @@ rrrrrrrrrrrrrllrrrr                                r
                                                        r
                                                  rrrrrrr
                                                                s
-                                                             rrrSSSSS     s
-                                                                        rrrrrr
-                                                                          b  r
-                                                                             r
-                                                                        rrrrrrrr
+                                                             rrrSSSSS       s
+                                                                         rrrrrrrrrr
+                                                                        rr    b   V
+                                                                        V         V
+                                                                        V         V
+                                                                        Vc       cV
+                                                                      rrrrrrrrrrrrrrr
 
-                                                                                 s  n
-                                                                                rrrrrrr
+                                                                                        s  n
+                                                                                       rrrrrrr
 `
 
 var tinymaze = `
@@ -346,11 +348,11 @@ var office = `
        rr               r
        rr l    l    l   r
        rrrrrrrrrrrrrrrr r
-       r          b     r
-       r v              r
-       r v              r
-       r v             rr
-       r v             rr
+       r V              r
+       r V              r
+       r V              r
+       r V             rr
+       r V        g    rr
        rjrrrrrrrrrrrrrrrr
        rC               r
        rC               r
@@ -400,46 +402,52 @@ rrrrrrrrlllrrrrrrrrrrrrrrrr
 `;
 
 var new_features_wonderland = `
-            r
-            r
-            r               r
-            r               r
-            r               r
+r           r               r
+r           r               r
+r           r               r
+r           r               r
+r           r               r
 r           rrjjrrSSSSS SSSSS
 r                r         v
-r                r         vb
+rc      c       cr         vb
 rSSSSSSSSSSrrrrrrr         v
             b              v
                            v
-                   rrrrrrttt
-                   r                      r
+            c     crrrrrrttt             C
+                   r                c    r
     rjjSSSSSrrrrrrrr                r
     r              v            r   r       rr
                    v
-                   v              r l
-rrrrrttttttttttrrrrrrrrrrrrrrrrrrrrrrrrlllllllll  rr
+                   v              r
+rrrrrttttttttttrrrrrrrrrrrrrrrrrrrrrrrrrrrrlllll  rr
                                       r
                                       r       n
-                                      rrrrrrrrrrr
+                                      rrrrrrrrrrrrrr
 `;
 
 var test = `
-   rrrr
 
-      b
-rrrrrrrrr
+r      g       r
+rrrrrrrrrrrrrrrrrrr
 `
 
 
 window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
 window.phases = [
-    [
+    [/*
+        {
+            id: 2000,
+            name: "test",
+            func: function(){
+                g.createByTileset(0, 0, test);
+            }
+        },*/
         {
             id: 7,
             name: "Training",
             func: function(){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
         },
@@ -1473,6 +1481,17 @@ class Game{
             case "t":
                 this.createBrick(x, y, width, height, "tar", "tar");
                 break;
+            case "V":
+                this.createBrick(x, y, width, height, "ghostly", "notsolid");
+                break;
+            case "g":
+                this.enemies.push({
+                    type: "gunner",
+                    brick: this.createBrick(x, y, width, height, "gunner", "killu"),
+                    mkx: x,
+                    mky: y
+                });
+                break;
         }
     }
     createByTileset(x,y,tileset, signs){
@@ -1737,6 +1756,14 @@ class Game{
                     }
                 }
                 else if (item.type == "flyer"){
+                    if (item.limit > 0){
+                        item.limit --;
+                        if (item.limit == 0){
+                            this.bricks.splice(this.bricks.indexOf(item.brick), 1);
+                            item.brick.delete();
+                            this.enemies.splice(i, 1);
+                        }
+                    }
                     if (this.player.y2 < item.brick.y1){
                         item.yv --;
                     }
@@ -1772,6 +1799,22 @@ class Game{
                             }
                             item.speed *= -1;
                         }
+                    }
+                }
+                else if (item.type == "gunner"){
+                    if (item.phase == undefined){
+                        item.phase = 0;
+                    }
+                    item.phase ++;
+                    if (!(this.verticalBetween(item.brick) || this.horizontalBetween(item.brick)) && item.phase > 75){
+                        item.phase = 0;
+                        this.enemies.push({
+                            type: "flyer",
+                            brick: this.createBrick(item.mkx + (this.x / 50), item.mky + (this.y/50) - 1, 0.3, 0.3, "bat", "killu"),
+                            yv: -20,
+                            speed: 0,
+                            limit: 150
+                        });
                     }
                 }
             });
