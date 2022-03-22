@@ -297,10 +297,14 @@ rrrrrrrrrrrrrllrrrr                                r
                                                        r
                                                  rrrrrrr
                                                                s
-                                                             rrrSSSSS
+                                                             rrrSSSSS     s
+                                                                        rrrrrr
+                                                                          b  r
+                                                                             r
+                                                                        rrrrrrrr
 
-                                                                         s  n
-                                                                       rrrrrrr
+                                                                                 s  n
+                                                                                rrrrrrr
 `
 
 var tinymaze = `
@@ -341,12 +345,12 @@ var office = `
        rvvvvvvvvvvvvvvvvr
        rr               r
        rr l    l    l   r
-       rrrrrrrrrrrrrrrrjr
-       r                r
-       r                r
-       r                r
-       r               rr
-       r  r E    E     rr
+       rrrrrrrrrrrrrrrr r
+       r          b     r
+       r v              r
+       r v              r
+       r v             rr
+       r v             rr
        rjrrrrrrrrrrrrrrrr
        rC               r
        rC               r
@@ -402,22 +406,29 @@ var new_features_wonderland = `
             r               r
             r               r
 r           rrjjrrSSSSS SSSSS
-r                r         vb
 r                r         v
+r                r         vb
 rSSSSSSSSSSrrrrrrr         v
             b              v
                            v
-                   rrrrrrrrrvvv
-                   r b
-    rjjSSSSSrrrrrrrrvv
-    r                v
-                     v
-                     v
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr     llll
-                                  r        l
-                                  r       nl
-                                  rrrrrrrrrl
+                   rrrrrrttt
+                   r                      r
+    rjjSSSSSrrrrrrrr                r
+    r              v            r   r       rr
+                   v
+                   v              r l
+rrrrrttttttttttrrrrrrrrrrrrrrrrrrrrrrrrlllllllll  rr
+                                      r
+                                      r       n
+                                      rrrrrrrrrrr
 `;
+
+var test = `
+   rrrr
+
+      b
+rrrrrrrrr
+`
 
 
 window.phase = 1; // Unlock new levels by doing a good job.
@@ -428,7 +439,7 @@ window.phases = [
             id: 7,
             name: "Training",
             func: function(){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "The blue tiles are ice. You'll find they're very slippery!", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
         },
@@ -643,6 +654,7 @@ class Player {
         this.touchingX = false;
         this.touchingY = false;
         this.slipping = false;
+        this.stuck = false;
     }
     delete(){
         this.element.parentNode.removeChild(this.element);
@@ -770,6 +782,12 @@ class Player {
                 else{
                     this.slipping = false;
                 }
+                if (colis["tar"] > 0){
+                    this.stuck = true;
+                }
+                else {
+                    this.stuck = false;
+                }
             }
             this.touchingBlock = true;
             this.touchingY = true;
@@ -821,7 +839,7 @@ class Player {
         else {
             this.touchingX = false;
         }
-        this.#xv*=this.slipping ? 0.97 : 0.8;
+        this.#xv*=this.slipping ? 0.97 : (this.stuck ? 0.4 : 0.8);
         if (this.#cheat.flying){
             this.#yv *= 0.8
         }
@@ -1452,6 +1470,9 @@ class Game{
                     yv: 0
                 });
                 break;
+            case "t":
+                this.createBrick(x, y, width, height, "tar", "tar");
+                break;
         }
     }
     createByTileset(x,y,tileset, signs){
@@ -1520,7 +1541,8 @@ class Game{
             "jumpthrough":0,
             "pedanticsolid":0,
             "ice": 0,
-            "all":0
+            "all":0,
+            "tar":0
         };
         var passers = 0;
         this.bricks.forEach((item, i) => {
@@ -1563,6 +1585,10 @@ class Game{
                         dictionary.solid ++;
                         dictionary.pedanticsolid ++;
                     }
+                    if (item.type == "tar"){
+                        dictionary.solid ++;
+                        dictionary.pedanticsolid ++;
+                    }
                 }
                 else if (!this.probPassers.includes(object)){
                     this.probPassers.push(object);
@@ -1585,6 +1611,23 @@ class Game{
                 if (val1 * val2 < 0){
                     if ((item.x2 > object.x1 && item.x1 < object.x2) ||
                         (item.x2 > object2.x1 && item.x1 < object2.x2)){
+                        isBetween = true;
+                    }
+                }
+            }
+        });
+        return isBetween;
+    }
+
+    verticalBetween(object, object2 = this.player){
+        var isBetween = false;
+        this.bricks.forEach((item, i) => {
+            if (item != object && item != object2){
+                var val1 = item.x1 - object.x1;
+                var val2 = item.x1 - object2.x1;
+                if (val1 * val2 < 0){
+                    if ((item.y2 > object.y1 && item.y1 < object.y2) ||
+                        (item.y2 > object2.y1 && item.y1 < object2.y2)){
                         isBetween = true;
                     }
                 }
@@ -1676,7 +1719,7 @@ class Game{
                     }
                 }
                 else if (item.type == "bat"){
-                    if (!this.horizontalBetween(item.brick)){
+                    if (!(this.verticalBetween(item.brick) || this.horizontalBetween(item.brick))){
                         item.active = true;
                     }
                     if (item.active){ // It's undefined until it's true, ya know?
@@ -1688,6 +1731,7 @@ class Game{
                             }
                             item.yv = 0;
                             item.type = "flyer";
+                            item.brick.element.classList.add("bat-active");
                         }
                         item.brick.move(0, item.yv);
                     }
