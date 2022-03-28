@@ -347,12 +347,12 @@ var office = `
        rvvvvvvvvvvvvvvvvr
        rr               r
        rr l    l    l   r
-       rrrrrrrrrrrrrrrr r
+       rrrrrrrrrrrrrrrrjr
        r V              r
        r V              r
        r V              r
        r V             rr
-       r V        g    rr
+       r V       g     rr
        rjrrrrrrrrrrrrrrrr
        rC               r
        rC               r
@@ -413,7 +413,7 @@ rc      c       cr         vb
 rSSSSSSSSSSrrrrrrr         v
             b              v
                            v
-            c     crrrrrrttt             C
+                   rrrrrrttt             C
                    r                c    r
     rjjSSSSSrrrrrrrr                r
     r              v            r   r       rr
