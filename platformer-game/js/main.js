@@ -447,7 +447,7 @@ window.phases = [
             id: 7,
             name: "Training",
             func: function(){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, but cannot go back!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
         },
@@ -858,7 +858,7 @@ class Player {
         this.wentRight = false;
     }
     end(){
-        window.alert(this.score);
+        window.alert("Your final score: " + this.score);
         this.game.die = true;
     }
     refreshscore(){
