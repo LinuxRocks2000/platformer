@@ -6,6 +6,21 @@
         transform:rotateY(359deg) perspective(400px);
     }
 }
+@keyframes powerup {
+    0%{
+        /*transform: scale(calc(1 - 7px), calc(1 - 7px));*/
+        border-width: 25px;
+        transform: scale(0.5, 0.5);
+    }
+    75%{
+        transform: scale(0.6, 0.6);
+        border-width: 0px;
+    }
+    100%{
+        transform: scale(1, 1);
+        border-width: 0px;
+    }
+}
 .brick{
     position:absolute;
 }
@@ -235,4 +250,68 @@ body{
 .gunner {
     border-radius: 100%;
     background-color: grey;
+}
+
+.shadows{
+    background-color: black;
+    opacity: 0.5;
+}
+
+.green{
+    background-color: green;
+    opacity: 0.3;
+}
+.powerup{
+    border-radius: 100%;
+    background-color: blue;
+    box-sizing: border-box;
+    border: 5px solid teal;
+    animation-name: powerup;
+    animation-duration: 0.5s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-timing-function: linear;
+}
+
+#game-main.playing > #playerstats{
+    width: 0px;
+    padding-right: 20px;
+    background-color: darkgrey;
+    font-family: monospace;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 10px;
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    white-space: nowrap;
+    min-width: 0px;
+    transition: min-width 1s, background-color 1s;
+    transition-timing-function: linear;
+}
+
+#game-main.playing > #playerstats:hover{
+    padding-right: 10px;
+    min-width: 10%;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+#playerstats{
+    display: none;
+}
+
+.bomb{
+    background-color: lightgreen;
+    opacity: 1;
+    transition: opacity 1s, transform 1s;
+}
+
+.bomb.explode{
+    opacity: 0.2;
+    transform: scale(10, 10);
+}
+
+.umbra{
+    box-shadow: lightblue 10px 10px 10px, lightblue -10px 10px 10px, lightblue -10px -10px 10px, lightblue 10px -10px 10px;
 }

@@ -36,7 +36,7 @@ var lvl1=
 
  v                                      v
  r    e    e     e     e     e          vZ
- rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr  r
+ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr rr
  r                                    r r
  r                                    r  r
  r                                    r   r
@@ -304,9 +304,19 @@ rrrrrrrrrrrrrllrrrr                                r
                                                                         V         V
                                                                         Vc       cV
                                                                       rrrrrrrrrrrrrrr
+                                                                                                s    uuu
+                                                                                              rrrrrrrrr
+                                                                                             rr b   b rr
+                                                                                             V         V
+                                                                                             V         V
+                                                                                             V         V
+                                                                                           rrrrVVVVVVVrrrr
+                                                                                             r         r          s
+                                                                                             r  ccCcc  r   r @  l r
+                                                                                             rrrrrrrrrrr   rrrrrrrr
 
-                                                                                        s  n
-                                                                                       rrrrrrr
+                                                                                                                s  n
+                                                                                                               rrrrrrr
 `
 
 var tinymaze = `
@@ -409,45 +419,91 @@ r           r               r
 r           r               r
 r           rrjjrrSSSSS SSSSS
 r                r         v
-rc      c       cr         vb
+rc      c   u   cr         vb
 rSSSSSSSSSSrrrrrrr         v
             b              v
                            v
                    rrrrrrttt             C
                    r                c    r
-    rjjSSSSSrrrrrrrr                r
+    rjjSSSSSrrrrrrrr                r    b
     r              v            r   r       rr
                    v
-                   v              r
+        u          v              r
 rrrrrttttttttttrrrrrrrrrrrrrrrrrrrrrrrrrrrrlllll  rr
                                       r
                                       r       n
                                       rrrrrrrrrrrrrr
 `;
 
-var test = `
+var cave_1 = `
+                                   VVV
+r                                  VbV                                V             V
+r                                                                     V             V
+r            V B C   C   C BV     c   c                               V c        c  V
+r            VrrrrrrrrrrrrrrV                                         V             V
+r            V              V                                         V             V
+r     s      V              V                                         V   g     g   V  cccc n
+rrrrrrrrrr   V              V   rrrrrrrrr                            rrrrrrrrrrrrrrrrrrrrrrrr
+         r   V              V   r       r    c                       r
+         r c V       B      Vcccr       r    GG      GG      GG      r
+         rrrrrrrrrrrrrrrrrrrrrrrr       r    GG      GG      GG      r
+                                        r    GG      GG  c   GG      r
+                                        r    GG      GGGGGGGGGG      r
+                                        r    GG              GG      r
+                                        r c  GG         c    GG      r
+                                        rrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+`
 
-r      g       r
-rrrrrrrrrrrrrrrrrrr
+var cave_2 = `
+r                    V        C                            r   V                                                                     r
+r                    V b      r     C                          V                                                                     r
+r                    V       C      r              r        r  V                                                                     r
+r                    V       r    c     c                      V                                                                     r
+r                    V    c       r     r               r      V                                                                     r
+r                    V    r   c                 rrr            V                                                                     r
+r              i     V    VVVVr        c                       V                                                                     r
+r   s                V                rr                       V                                                                     r
+r   V                V                                   r     V                                                                     r
+r   V   u      s     V          r                              V                                                                     r
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+`
+
+var test = `
+V             V
+V             V
+V             V
+V             V
+V             V   b
+V             V
+V             V     b
+r    @   l e  V
+rrrrrrrrrrrrrrrrrrrrrr
 `
 
 
 window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
 window.phases = [
-    [/*
+    [
         {
-            id: 2000,
+            id: 2500,
             name: "test",
             func: function(){
                 g.createByTileset(0, 0, test);
+            }
+        },/*
+        {
+            id: 178,
+            name: "Town of Arimoria, Gunther's Waste",
+            func: function(){
+                g.createByTileset(-5, -5, cave_2, ["<h2>Unwelcome to sunny Arimoria!</h2> <br /> 'The sooner you leave, the less likely you are to die here.' <br /><br />Read the signs for explanations.", "This is the famous Fountain of Pain and Suffering. From it's murky depths spring the waters of unholy pestilince, colored red and chasing after you for your convenience."]);
             }
         },*/
         {
             id: 7,
             name: "Training",
             func: function(){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you, and will eat your coins if it touches them. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "You see the blue things? If you run into them, you'll eat them and increase your bomb count (hover the grey thing in the corner to see your bomb count). Then, you can click space and drop a Bomb that kills active Bats and Vladimirs. Use a bomb's explosion to kill the bats before they eat your coins, but remember to wake them up first!", "Some blue orbs give Shielding instead of Bombs. This is one of them! Pick it up, you'll see a blue glow and shielding in the stats menu (grey thing) will turn ON. Try and hit the lava while shielded; you'll touch it like it is a normal Solid brick! Do be careful fighting more persistent enemies like Bats with shielding, the shield eventually drops and you'll be in big trouble.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
         },
@@ -486,6 +542,17 @@ window.phases = [
             name: "An Actual Maze This Time",
             func: function(){
                 g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
+            }
+        }
+    ],
+    [
+        {
+            id: 177,
+            name: "Entrance to Gunther's Wastes",
+            func: function(){
+                g.createBrick(9, 0, 14, 6, "shadows", "");
+                g.createBrick(48, 9, 8, 2, "shadows", "");
+                g.createByTileset(-5, -5, cave_1, ["<h2>Welcome to Gunther's Wastes (home of Gunther's Cave)</h2>Population: whoever is dumb enough to enter <br />Exports: plague, mutant enemies, grapefruit<br />Imports: shadows, death-mites, human souls<br />Motto: 'DEAR GOD PLEASE HELP ME I'VE BEEN STUCK FOR YEARS'<br />Accomodations: Trees, rocks, and racks are to be found all throughout.<br /><h4>Enjoy your stay!</h4>"]);
             }
         }
     ],
@@ -609,7 +676,7 @@ class Brick{
             this.needsDomRefresh = false;
         }
     }
-    delete(){
+    remove(){
         this.element.parentNode.removeChild(this.element);
     }
 }
@@ -624,6 +691,7 @@ class Player {
         if (mobile){
             this.joystick = new JoyStick({radius: window.innerHeight/8, x: window.innerWidth - window.innerHeight/8, y: window.innerHeight * 7/8, inner_radius: window.innerHeight/8 - 10})
         }
+        this.shieldDuration = 0;
         this.width=width
         this.height=height
         this.game=game
@@ -640,6 +708,7 @@ class Player {
         this.leftpressed=false;
         this.onground=true;
         this.score=0;
+        this.bombs = 0;
         var rect=this.element.getBoundingClientRect();
         this.x1 = rect.left;
         this.y1 = rect.top;
@@ -663,9 +732,12 @@ class Player {
         this.touchingY = false;
         this.slipping = false;
         this.stuck = false;
+        this.touchingGreen = false;
     }
-    delete(){
+    remove(){
         this.element.parentNode.removeChild(this.element);
+        this.bombs = 0; // Reset the stats section.
+        this.refreshstats();
     }
     onkeyup(event){
         if (event.key == this.lock[this.checkPointNum]){
@@ -683,6 +755,9 @@ class Player {
         }
         else if (event.key == "d" || event.key == "ArrowRight"){
             this.rightpressed=false;
+        }
+        else if (event.key == " "){
+            this.DropBomb();
         }
         if (this.#cheat.active){
             switch (event.key){
@@ -741,6 +816,12 @@ class Player {
         }
     }
     run(){
+        if (this.shieldDuration > 0){
+            this.shieldDuration --; // This is the same thing as the phase code in the enemies; it ticks down one every pass until it reaches zero.
+            if (this.shieldDuration == 0){
+                this.refreshstats(); // If it reaches 0 after tickind down, it will never come back here again.
+            }
+        }
         if (this.leftpressed || (this.joystick && this.joystick.left)){
             this.Left();
         }
@@ -771,6 +852,12 @@ class Player {
         if (colis["fiftycoin"] > 0){
             this.score+=colis["fiftycoin"]*50;
             this.refreshscore();
+        }
+        if (colis["green"] > 0){
+            this.touchingGreen = true;
+        }
+        else{
+            this.touchingGreen = false;
         }
         if ((colis["pedanticsolid"] > 0 || (colis["killu"] > 0 && this.#cheat.invincible)) && !this.jumpThroughing){
             if (this.#cheat.phaser == 1){
@@ -825,6 +912,14 @@ class Player {
             this.score+=colis["fiftycoin"]*50;
             this.refreshscore();
         }
+        if (colis["shieldPowerup"] > 0){
+            this.shieldDuration = 250;
+            this.refreshstats();
+        }
+        if (colis["powerup"] > 0){
+            this.bombs ++;
+            this.refreshstats();
+        }
         if (colis["solid"] > 0/* && !this.jumpThroughing*/){
             if (this.#cheat.phaser == 1){
                 this.#cheat.phaser = 2;
@@ -833,7 +928,7 @@ class Player {
                 // Nothing!
             }
             else{
-                while (this.game.checkCollision()["solid"] > 0){
+                while (this.game.checkCollision()["solid"] > 0){ // If it made it this far, treat killu as solid. This is the patch for another bug, actually, so everybody is happy.
                     this.game.move(this.#xv/Math.abs(this.#xv) * -1, 0);
                 }
                 this.#xv=0;
@@ -852,7 +947,7 @@ class Player {
             this.#yv *= 0.8
         }
         else{
-            this.#yv += this.gravity;
+            this.#yv += this.touchingGreen ? -1 * this.gravity : this.gravity;
         }
         this.wentLeft = false;
         this.wentRight = false;
@@ -863,6 +958,16 @@ class Player {
     }
     refreshscore(){
         this.element.innerText=this.score.toString();
+    }
+    refreshstats(){
+        document.getElementById("ammocount").innerHTML = "Bombs: " + this.bombs;
+        document.getElementById("shieldbool").innerHTML = "Shielding: " + ((this.shieldDuration > 0) ? "on" : "off");
+        if (this.shieldDuration > 0){
+            this.element.classList.add("umbra");
+        }
+        else {
+            this.element.classList.remove("umbra");
+        }
     }
     Jump(){
         if (this.onground || this.#cheat.flying){
@@ -880,6 +985,18 @@ class Player {
         if (!this.wentRight){
             this.#xv-=2
             this.wentRight = true;
+        }
+    }
+    DropBomb(){ // Drop a bomb.
+        if (this.bombs > 0){
+            this.bombs --;
+            this.refreshstats();
+            this.game.specials.push({
+                type: "bomb",
+                brick: this.game.createBrick(-0.5, 0, 1, 1, "bomb", "bomb"),
+                timeLeft: 50,
+                yv: 0
+            });
         }
     }
     DropThrough(){
@@ -1313,8 +1430,8 @@ class PrivateTestRobot extends RobotPlayer{
 
 class Game{
     constructor(mobile, playerClass = Player, xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
-        this.die = false;
         this.win = false;
+        this.die = false;
         this.bricks=[];
         this.minigames=[];
         this.xoffset=0;
@@ -1333,7 +1450,7 @@ class Game{
         this.minigame = document.getElementById("minigame");
         this.minigameTick = 0;
         this.minigamePlaying = null;
-        this.enemies = [];
+        this.specials = [];
         this.probPassers = [];
         this.runningEnemies = true;
         this.checkPoints = [];
@@ -1341,6 +1458,7 @@ class Game{
         this.x = 0;
         this.scale = 1;
         this.minExtent = 6000;
+        document.getElementById("game-main").classList.add("playing");
     }
     arbitraryRestructure(){
 
@@ -1388,17 +1506,11 @@ class Game{
             case "F":
                 this.createBrick(x, y, width, height, "regular", "notsolid");
                 break;
-            case "i":
-                this.createBrick(x, y, width, height, "invisible", "solid");
-                break;
             case "I":
                 this.createBrick(x, y, width, height, "invisible", "killu");
                 break;
-            case "G":
-                this.createBrick(x, y, width, height, "lava", "solid");
-                break;
             case "e":
-                this.enemies.push({
+                this.specials.push({
                     type: "normal",
                     brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
                     speed: 5,
@@ -1406,7 +1518,7 @@ class Game{
                 });
                 break;
             case "E":
-                this.enemies.push({
+                this.specials.push({
                     type: "normal",
                     brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
                     speed: 10,
@@ -1416,7 +1528,7 @@ class Game{
             case "L":
                 this.createBrick(x, y, width, height, "lava", "killu_nocol")
             case "ǝ":
-                this.enemies.push({
+                this.specials.push({
                     type: "normal",
                     brick: this.createBrick(x, y, 1, 1, "lava enemy", "killu"),
                     speed: -5,
@@ -1433,7 +1545,7 @@ class Game{
                 this.createBrick(x, y, width, height, "invisible", "notsolid");
                 break;
             case "p":
-                this.createBrick(x, y, width, height, "regular", "solid", 0.1);
+                this.createBrick(x, y, width, height, "invisible", "zapwall");
                 break;
             case "P":
                 this.createBrick(x, y, width, height, "regular", "solid", 0.5);
@@ -1454,7 +1566,7 @@ class Game{
                 this.createBrick(x, y, width, height, "jumpthrough", "jumpthrough")
                 break;
             case "1":
-                this.enemies.push({
+                this.specials.push({
                     type: "normal",
                     brick: this.createBrick(x + Math.random() * (width - 1), y, 1, 1, "lava enemy", "killu"),
                     speed: -5,
@@ -1471,7 +1583,7 @@ class Game{
                 this.createBrick(x, y, width, height, "ice", "ice");
                 break;
             case "b":
-                this.enemies.push({
+                this.specials.push({
                     type: "bat",
                     brick: this.createBrick(x, y, 1, 1, "lava bat", "killu"),
                     speed: -5,
@@ -1485,12 +1597,45 @@ class Game{
                 this.createBrick(x, y, width, height, "ghostly", "notsolid");
                 break;
             case "g":
-                this.enemies.push({
+                this.specials.push({
                     type: "gunner",
                     brick: this.createBrick(x, y, width, height, "gunner", "killu"),
                     mkx: x,
                     mky: y
                 });
+                break;
+            case "B":
+                this.specials.push({
+                    type: "blaze",
+                    brick: this.createBrick(x, y, width, height, "lava", "solid"),
+                    mkx: x,
+                    mky: y,
+                    spurtLength: 100,
+                    spurtSpacing: 125,
+                    lifetime: 40,
+                    phaseLength: 3
+                });
+                break;
+            case "i":
+                this.specials.push({
+                    type: "blaze",
+                    brick: this.createBrick(x, y, width, height, "lava", "solid"),
+                    mkx: x,
+                    mky: y,
+                    spurtLength: Infinity,
+                    spurtSpacing: 0,
+                    lifetime: 10,
+                    phaseLength: 7
+                });
+                break;
+            case "G":
+                this.createBrick(x, y, width, height, "green", "green");
+                break;
+            case "u":
+                this.createBrick(x, y, width, height, "powerup", "powerup");
+                break;
+            case "@":
+                this.createBrick(x, y, width, height, "powerup", "shieldPowerup");
                 break;
         }
     }
@@ -1506,7 +1651,7 @@ class Game{
                 signNum ++;
             }
             else {
-                if (curHorizType == item && ["e", "E", "c", "C"].indexOf(item) == -1){
+                if (curHorizType == item && ["e", "E", "c", "C", "u"].indexOf(item) == -1){
                     curHoriz ++;
                 }
                 else {
@@ -1561,9 +1706,17 @@ class Game{
             "pedanticsolid":0,
             "ice": 0,
             "all":0,
-            "tar":0
+            "green": 0,
+            "zapwall": 0,
+            "powerup": 0,
+            "shieldPowerup": 0,
+            "tar":0,
+            "elements": []
         };
         var passers = 0;
+        if (this.player.shieldDuration > 0){
+            this.bricks.push(this.player);
+        }
         this.bricks.forEach((item, i) => {
             if (item.probprob != 1){
                 passers ++;
@@ -1581,18 +1734,19 @@ class Game{
                         item.y2 > object.y1 &&
                         item.y1 < object.y2 && supercilious)))
             {
-                if (item.probprob > Math.random()){
+                if (item.probprob > Math.random() || item.probprob == undefined){
                     dictionary[item.type]++;
-                    if (item.type=="tencoin" || item.type=="fiftycoin"){
-                        item.element.parentNode.removeChild(item.element);
+                    if (item.type=="tencoin" || item.type=="fiftycoin" || item.type=="powerup" || item.type == "shieldPowerup"){
+                        item.remove();//element.parentNode.removeChild(item.element);
                         this.bricks.splice(i,1);
                     }
                     if (item.type=="minigame"){
                         dictionary["solid"]++;
                         this.playMinigame(item.element.getAttribute("data-minigame"));
                     }
-                    if (!(item.type=="elevator" || (item.type == "bigElevator") || item.type == "enemyFlipper")){
+                    if (!(item.type=="elevator" || (item.type == "bigElevator") || item.type == "enemyFlipper" || item.type == "")){
                         dictionary["all"]++;
+                        dictionary["elements"].push(item);
                     }
                     if (item.type == "jumpthrough"){
                         dictionary.pedanticsolid ++;
@@ -1608,6 +1762,14 @@ class Game{
                         dictionary.solid ++;
                         dictionary.pedanticsolid ++;
                     }
+                    if (item.type == "killu" && object.shieldDuration > 0){ // When shielded, everything becomes Solid. This works for any shielded object.
+                        dictionary.solid ++;
+                        dictionary.pedanticsolid ++;
+                        dictionary.killu --;
+                    }
+                    if (item == this.player){
+                        dictionary.all ++;
+                    }
                 }
                 else if (!this.probPassers.includes(object)){
                     this.probPassers.push(object);
@@ -1618,6 +1780,9 @@ class Game{
             this.probPassers = this.probPassers.filter(function(value, index, arr){
                 return value == object;
             });
+        }
+        if (this.player.shieldDuration > 0){
+            this.bricks.pop();
         }
         return dictionary;
     }
@@ -1671,19 +1836,20 @@ class Game{
             }
             if (this.die){
                 document.getElementById("gameover").style.display="block";
+                document.getElementById("game-main").classList.remove("playing");
             }
             window.removeEventListener('keydown', this.onkeydown);
             window.removeEventListener("keyup", this.onkeyup);
             this.bricks.forEach((item, i) => {
-                item.delete();
+                item.remove();
                 item = null;
             });
-            this.enemies.forEach((item, i) => {
+            this.specials.forEach((item, i) => {
                 item = null;
             });
-            this.player.delete();
+            this.player.remove();
             this.bricks = null;
-            this.enemies = null;
+            this.specials = null;
             this.player = null;
             setTimeout(() => {
                 document.getElementById("gameover").style.display="none";
@@ -1710,7 +1876,8 @@ class Game{
             this.apply();
         }
         if (this.runningEnemies){
-            this.enemies.forEach((item, i) => {
+            var die = [];
+            this.specials.forEach((item, i) => {
                 if (item.type == "normal"){
                     item.yv ++;
                     item.brick.move(0, item.yv);
@@ -1759,9 +1926,7 @@ class Game{
                     if (item.limit > 0){
                         item.limit --;
                         if (item.limit == 0){
-                            this.bricks.splice(this.bricks.indexOf(item.brick), 1);
-                            item.brick.delete();
-                            this.enemies.splice(i, 1);
+                            item.die = true;
                         }
                     }
                     if (this.player.y2 < item.brick.y1){
@@ -1808,7 +1973,7 @@ class Game{
                     item.phase ++;
                     if (!(this.verticalBetween(item.brick) || this.horizontalBetween(item.brick)) && item.phase > 75){
                         item.phase = 0;
-                        this.enemies.push({
+                        this.specials.push({
                             type: "flyer",
                             brick: this.createBrick(item.mkx + (this.x / 50), item.mky + (this.y/50) - 1, 0.3, 0.3, "bat", "killu"),
                             yv: -20,
@@ -1817,6 +1982,83 @@ class Game{
                         });
                     }
                 }
+                else if (item.type == "blaze"){
+                    if (item.phase == undefined){
+                        item.phase = 0;
+                    }
+                    if (item.sputterperiod == undefined){
+                        item.sputterperiod = 0;
+                    }
+                    item.phase ++;
+                    item.sputterperiod ++;
+                    if (item.sputterperiod > item.spurtLength + item.spurtSpacing){
+                        item.sputterperiod = 0;
+                    }
+                    if (!(this.verticalBetween(item.brick) || this.horizontalBetween(item.brick)) && item.phase > item.phaseLength && item.sputterperiod < item.spurtLength){
+                        item.phase = 0;
+                        this.specials.push({
+                            type: "flyer",
+                            brick: this.createBrick(item.mkx + (this.x / 50) + 0.5, item.mky + (this.y/50) - 0.5, 0.3, 0.3, "lava", "killu"),
+                            yv: (Math.random() * 10) - 20,
+                            speed: (Math.random() * 20) - 10,
+                            limit: item.lifetime + 20
+                        });
+                        this.specials.push({
+                            type: "flyer",
+                            brick: this.createBrick(item.mkx + (this.x / 50), item.mky + (this.y/50) - 0.5, 0.3, 0.3, "lava", "killu"),
+                            yv: (Math.random() * 10) - 20,
+                            speed: (Math.random() * 20) - 10,
+                            limit: item.lifetime
+                        });
+                        this.specials.push({
+                            type: "flyer",
+                            brick: this.createBrick(item.mkx + (this.x / 50) + 1, item.mky + (this.y/50) - 0.5, 0.3, 0.3, "lava", "killu"),
+                            yv: (Math.random() * 10) - 20,
+                            speed: (Math.random() * 20) - 10,
+                            limit: item.lifetime
+                        });
+                    }
+                }
+                else if (item.type == "bomb"){
+                    item.yv ++;
+                    item.brick.move(0, item.yv);
+                    if (this.checkCollision(item.brick, true, true)["solid"] > 0){
+                        while (this.checkCollision(item.brick, true, true)["solid"] > 0){
+                            item.brick.move(0, -Math.abs(item.yv)/item.yv);
+                        }
+                        item.yv = 0;
+                    }
+                    item.timeLeft --;
+                    if (item.timeLeft == 0){
+                        item.brick.element.classList.add("explode");
+                    }
+                    if (item.timeLeft == -50){
+                        die.push(i);
+                        this.specials.forEach((item2, i2) => {
+                            if (item2.type == "normal" || item2.type == "flyer"){
+                                console.log(item2);
+                                var x2 = item.brick.x2 + 5 * this.brickWidth;
+                                var x1 = item.brick.x1 - 5 * this.brickWidth;
+                                var y2 = item.brick.y2 + 5 * this.brickHeight;
+                                var y1 = item.brick.y1 - 5 * this.brickHeight;
+                                if (x2 > item2.brick.x1 &&
+                                    x1 < item2.brick.x2 &&
+                                    y2 > item2.brick.y1 &&
+                                    y1 < item2.brick.y2){
+                                    die.push(i2);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+            die.forEach((item, i) => {
+                var x = item;
+                console.log(x + ", item: " + item + ", index: " + i)
+                console.log(this.specials[x]);
+                this.specials[x].brick.remove();
+                this.bricks.splice(this.bricks.indexOf(this.specials[x].brick), 1);
+                this.specials.splice(x, 1);
             });
         }
     }
