@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>About Platformer</title>
+        <style>
+            #main {
+                margin-left: 10%;
+                margin-right: 10%;
+                min-height: 100vh;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                padding: 1px;
+                box-sizing: border-box;
+            }
+            body{
+                background:
+                    radial-gradient(yellow 15%, transparent 16%) 0 0,
+                    radial-gradient(yellow 15%, transparent 16%) 8px 8px,
+                    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 0 1px,
+                    radial-gradient(rgba(255,255,255,.1) 15%, transparent 20%) 8px 9px;
+                background-color:rgb(200, 200, 150);
+                background-size: 5px 5px;
+                padding: 0px;
+                margin: 0px;
+            }
+            html{
+                padding: 0px;
+                margin: 0px;
+            }
+            p, .dropbox{
+                margin-bottom: 20px;
+                background-color: white;
+                padding: 10px;
+            }
+            #introductory{
+                font-size: 1.2em;
+            }
+            .dropbox > input[type="checkbox"]{
+                display: none;
+            }
+            .dropbox > input[type="checkbox"] ~ label{
+                background-color: blue;
+                padding: 10px;
+                box-sizing: border-box;
+                display: inline-block;
+            }
+            .dropbox > input[type="checkbox"] ~ label:hover{
+                opacity: 0.6;
+            }
+            .dropbox > input[type="checkbox"] ~ div{
+                display: none;
+                border: 1px solid black;
+                padding: 10px;
+            }
+            .dropbox > input[type="checkbox"]:checked ~ div{
+                display: block;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <p id="introductory"><a href="index.html">Platformer</a>
+                is a very simple game, but with all the new additions (and my discovery that some people, notably
+                my robotics team, struggle with it), I have decided to put together this simple, CSS-based about page.
+                (The challenge is no-JS because I write a lot of JS already and want to be less dependent on it).<br/><br/>I've prepared a file folder of sorts for Platformer information:</p>
+            <div class="dropbox">
+                <input type="checkbox" id="droppa"></input>
+                <label for="droppa">How to play</label>
+                <div class="content">In Platformer, you begin playing by <a href="index.html">loading the page</a>, creating a new game (the button on the bottom right), and selecting that game (the button on the bottom left). Your current phase will be saved every time you advance.<h2>Wait, what's a phase?</h2>A phase is a collection of levels. You can choose whatever level to play in that phase, but you must beat every level to progress.<h2>Hold on, how do I actually play?</h2>You click play and use the arrow keys. When you see little tan blocks, put your mouse on them and you'll see more instructions.</div>
+            </div>
+            <div class="dropbox">
+                <input type="checkbox" id="dropp"></input>
+                <label for="dropp">Tips and Tricks</label>
+                <div class="content">
+                    <ol>
+                        <li><b>Get all coins on that first Bat in Training</b>: Jump down on the side with a step and move through the forcewall until you get the coin. If you do it right, you won't wake the Bat, then you can use the step to go to the other side and grab the coin in the same way!</li>
+                    </ol>
+                </div>
+            </div>
+            <p>
+                Join the official <a href="https://discord.gg/QG9ePsVBKT">discord server</a>!
+            </p>
+        </div>
+    </body>
+</html>

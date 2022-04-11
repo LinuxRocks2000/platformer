@@ -2103,8 +2103,6 @@ class Game{
             });
             die.forEach((item, i) => {
                 var x = item;
-                console.log(x + ", item: " + item + ", index: " + i)
-                console.log(this.specials[x]);
                 this.specials[x].brick.remove();
                 this.bricks.splice(this.bricks.indexOf(this.specials[x].brick), 1);
                 this.specials.splice(x, 1);
@@ -2112,7 +2110,7 @@ class Game{
         }
         this.endings.forEach((item, i) => {
             if (this.keysCount > 0){
-                item.element.style.opacity = "0.5";
+                item.element.style.opacity = "0.3";
             }
             else {
                 item.element.style.opacity = "";
