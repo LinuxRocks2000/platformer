@@ -89,8 +89,8 @@ r
 r
 r                                                                        r
 r
-r      ie
-lfllllllllllllllllllllllllllllllllGffGlllllllllllllllllllllllllllll llllllllllllllr            l
+r       e
+lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll llllllllllllllr            l
                                                                     v                          l
                                                                     v                          l
                      c    c                                         v                  c       l
@@ -304,19 +304,21 @@ rrrrrrrrrrrrrllrrrr                                r
                                                                         V         V
                                                                         Vc       cV
                                                                       rrrrrrrrrrrrrrr
-                                                                                                s    uuu
-                                                                                              rrrrrrrrr
-                                                                                             rr b   b rr
-                                                                                             V         V
-                                                                                             V         V
-                                                                                             V         V
-                                                                                           rrrrVVVVVVVrrrr
-                                                                                             r         r          s
-                                                                                             r  ccCcc  r   r @  l r
-                                                                                             rrrrrrrrrrr   rrrrrrrr
+                                                                                            s    uuu
+                                                                                          rrrrrrrrr
+                                                                                         rr b   b rr
+                                                                                         V         V
+                                                                                         V         V
+                                                                                         V         V
+                                                                                       rrrrVVVVVVVrrrr
+                                                                                         r         r          s
+                                                                                         r  ccCcc  r   r @  l r
+                                                                                         rrrrrrrrrrr   rrrrrrrr
+                                                                                                                   s #
+                                                                                                                 rrrrrrr
 
-                                                                                                                s  n
-                                                                                                               rrrrrrr
+                                                                                                                          k  s  n
+                                                                                                                        rrrrrrrrrr
 `
 
 var tinymaze = `
@@ -428,7 +430,7 @@ rSSSSSSSSSSrrrrrrr         v
     rjjSSSSSrrrrrrrr                r    b
     r              v            r   r       rr
                    v
-        u          v              r
+           @       v              r
 rrrrrttttttttttrrrrrrrrrrrrrrrrrrrrrrrrrrrrlllll  rr
                                       r
                                       r       n
@@ -445,7 +447,7 @@ r            V              V                                         V         
 r     s      V              V                                         V   g     g   V  cccc n
 rrrrrrrrrr   V              V   rrrrrrrrr                            rrrrrrrrrrrrrrrrrrrrrrrr
          r   V              V   r       r    c                       r
-         r c V       B      Vcccr       r    GG      GG      GG      r
+         r c V      g       Vcccr       r    GG      GG      GG      r
          rrrrrrrrrrrrrrrrrrrrrrrr       r    GG      GG      GG      r
                                         r    GG      GG  c   GG      r
                                         r    GG      GGGGGGGGGG      r
@@ -455,17 +457,22 @@ rrrrrrrrrr   V              V   rrrrrrrrr                            rrrrrrrrrrr
 `
 
 var cave_2 = `
-r                    V        C                            r   V                                                                     r
-r                    V b      r     C                          V                                                                     r
-r                    V       C      r              r        r  V                                                                     r
-r                    V       r    c     c                      V                                                                     r
-r                    V    c       r     r               r      V                                                                     r
-r                    V    r   c                 rrr            V                                                                     r
-r              i     V    VVVVr        c                       V                                                                     r
-r   s                V                rr                       V                                                                     r
-r   V                V                                   r     V                                                                     r
-r   V   u      s     V          r                              V                                                                     r
-rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+    n
+r  rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+rjjr                     V           r
+r  r                     V           r
+r  r                     V           r
+r  rkC                   V           r
+rjjrrrrrrrrrVVVVVVVVVVVVVV           r
+r  r   b   r             Vl   l   l  r
+r  r       r             V           r
+r  r       r             V  l   l    r
+rjjr       rb  b     b  bV           r
+r  r       r             Vl   l   l  r
+r         VVV            V           r
+r         VVV@           V  l   l Ck#r
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
+
 `
 
 var test = `
@@ -485,13 +492,13 @@ window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
 window.phases = [
     [
-        {
+        /*{
             id: 2500,
             name: "test",
             func: function(){
                 g.createByTileset(0, 0, test);
             }
-        },/*
+        },
         {
             id: 178,
             name: "Town of Arimoria, Gunther's Waste",
@@ -503,7 +510,7 @@ window.phases = [
             id: 7,
             name: "Training",
             func: function(){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you, and will eat your coins if it touches them. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "You see the blue things? If you run into them, you'll eat them and increase your bomb count (hover the grey thing in the corner to see your bomb count). Then, you can click space and drop a Bomb that kills active Bats and Vladimirs. Use a bomb's explosion to kill the bats before they eat your coins, but remember to wake them up first!", "Some blue orbs give Shielding instead of Bombs. This is one of them! Pick it up, you'll see a blue glow and shielding in the stats menu (grey thing) will turn ON. Try and hit the lava while shielded; you'll touch it like it is a normal Solid brick! Do be careful fighting more persistent enemies like Bats with shielding, the shield eventually drops and you'll be in big trouble.", "That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you, and will eat your coins if it touches them. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "You see the blue things? Those are bomb power-up orbs. If you run into them, you'll eat them and increase your bomb count (hover the grey thing in the corner to see your bomb count). Then, you can click space and drop a Bomb that kills active Bats and Vladimirs. Use a bomb's explosion to kill the bats before they eat your coins, but remember to wake them up first!", "Some power-up orbs (orange instead of blue) give Shielding instead of Bombs. This is one of them! Pick it up, you'll see a blue glow and the shielding statbar will turn partially red, and start declining. Try and hit the lava while shielded; you'll touch it like it is a normal Solid brick! Do be careful fighting more persistent enemies like Bats with shielding, the shield eventually drops and you'll be in big trouble, and they can hold you in place.", "The maroon power-up orb is for flight! You'll be able to jump infinitely in mid-air while the bar remains.", "See the gold power-up orb? That's a key! Grab it to unlock the ending. Now see how the sunflower is opaque again? That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
         },
@@ -554,6 +561,13 @@ window.phases = [
                 g.createBrick(48, 9, 8, 2, "shadows", "");
                 g.createByTileset(-5, -5, cave_1, ["<h2>Welcome to Gunther's Wastes (home of Gunther's Cave)</h2>Population: whoever is dumb enough to enter <br />Exports: plague, mutant enemies, grapefruit<br />Imports: shadows, death-mites, human souls<br />Motto: 'DEAR GOD PLEASE HELP ME I'VE BEEN STUCK FOR YEARS'<br />Accomodations: Trees, rocks, and racks are to be found all throughout.<br /><h4>Enjoy your stay!</h4>"]);
             }
+        },
+        {
+            id: 20000,
+            name: "Flats of Gunther's Waste",
+            func: function(){
+                g.createByTileset(-3, 5, cave_2);
+            }
         }
     ],
     [
@@ -570,14 +584,14 @@ window.phases = [
             func: function(){
                 g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
             }
-        },
+        }/*,
         {
             id: 2,
             name: "Labyrinth",
             func: function(){
                 g.createByTileset(-3, -8, lvl1);
             }
-        }
+        }*/
     ]
 ];
 function getLevelmakerContext(g) {
@@ -622,7 +636,10 @@ function testLevel(context){
     context.makeCupTrap(14, 0, 5, 5);
 }
 
+window.gameID = "";
+
 function loadPhase(phasenum){
+    document.getElementById("dropdown").innerHTML = "";
     window.phases[phasenum - 1].forEach((item, i) => {
         console.log(item.name);
         var el = document.createElement("option");
@@ -630,8 +647,13 @@ function loadPhase(phasenum){
         el.value = item.id.toString();
         el.innerText = item.name;
         document.getElementById("dropdown").appendChild(el);
+        console.log("I think it worked...");
     });
-    console.log(window.phases[phasenum - 1]);
+    if (window.gameID != ""){
+        if (phasenum > window.localStorage[window.gameID]){
+            window.localStorage[window.gameID] = phasenum;
+        }
+    }
 }
 
 class Brick{
@@ -692,6 +714,7 @@ class Player {
             this.joystick = new JoyStick({radius: window.innerHeight/8, x: window.innerWidth - window.innerHeight/8, y: window.innerHeight * 7/8, inner_radius: window.innerHeight/8 - 10})
         }
         this.shieldDuration = 0;
+        this.flightDuration = 0;
         this.width=width
         this.height=height
         this.game=game
@@ -733,10 +756,13 @@ class Player {
         this.slipping = false;
         this.stuck = false;
         this.touchingGreen = false;
+        this.maxShielding = 750;
+        this.maxFlight = 750;
     }
     remove(){
         this.element.parentNode.removeChild(this.element);
         this.bombs = 0; // Reset the stats section.
+        //this.shieldDuration = 0;
         this.refreshstats();
     }
     onkeyup(event){
@@ -802,7 +828,7 @@ class Player {
         if (event.key == "w" || event.key == "ArrowUp"){
             this.Jump();
         }
-        else if (event.key == "ArrowDown" && this.#cheat.flying){
+        else if (event.key == "ArrowDown" && (this.#cheat.flying || this.flightDuration > 0)){
             this.#yv = 20 * this.gravity;
         }
         else if (event.key == "a" || event.key == "ArrowLeft"){
@@ -818,9 +844,9 @@ class Player {
     run(){
         if (this.shieldDuration > 0){
             this.shieldDuration --; // This is the same thing as the phase code in the enemies; it ticks down one every pass until it reaches zero.
-            if (this.shieldDuration == 0){
-                this.refreshstats(); // If it reaches 0 after tickind down, it will never come back here again.
-            }
+        }
+        if (this.flightDuration > 0){
+            this.flightDuration --;
         }
         if (this.leftpressed || (this.joystick && this.joystick.left)){
             this.Left();
@@ -834,12 +860,19 @@ class Player {
         }
         this.game.move(0,this.#yv);
         colis=this.game.checkCollision();
-        if (colis["end"] > 0){
+        if (colis["end"] > 0 && this.game.keysCount == 0){
             this.game.win = true;
         }
         if (colis["tencoin"] > 0){
             this.score+=colis["tencoin"]*10;
             this.refreshscore();
+        }
+        if (colis["shieldPowerup"] > 0){
+            this.shieldDuration = 250;
+            this.refreshstats();
+        }
+        if (colis["flightPowerup"] > 0){
+            this.flightDuration = 250;
         }
         if (colis["jumpthrough"] > 0 && colis["solid"] == 0){
             if (this.#yv < 0){
@@ -897,7 +930,7 @@ class Player {
         }
         this.game.move(this.#xv,0);
         var colis=this.game.checkCollision();
-        if (colis["win"] > 0){
+        if (colis["end"] > 0 && this.game.keysCount == 0){
             this.game.win = true;
         }
         if (colis["tencoin"] > 0){
@@ -914,7 +947,9 @@ class Player {
         }
         if (colis["shieldPowerup"] > 0){
             this.shieldDuration = 250;
-            this.refreshstats();
+        }
+        if (colis["flightPowerup"] > 0){
+            this.flightDuration = 250;
         }
         if (colis["powerup"] > 0){
             this.bombs ++;
@@ -942,7 +977,7 @@ class Player {
         else {
             this.touchingX = false;
         }
-        this.#xv*=this.slipping ? 0.97 : (this.stuck ? 0.4 : 0.8);
+        this.#xv*=this.slipping ? 1 : (this.stuck ? 0.4 : 0.8);
         if (this.#cheat.flying){
             this.#yv *= 0.8
         }
@@ -951,6 +986,7 @@ class Player {
         }
         this.wentLeft = false;
         this.wentRight = false;
+        this.refreshstats();
     }
     end(){
         window.alert("Your final score: " + this.score);
@@ -961,7 +997,8 @@ class Player {
     }
     refreshstats(){
         document.getElementById("ammocount").innerHTML = "Bombs: " + this.bombs;
-        document.getElementById("shieldbool").innerHTML = "Shielding: " + ((this.shieldDuration > 0) ? "on" : "off");
+        document.querySelector("#shielding > div > span").style.width = (200 * this.shieldDuration/this.maxShielding) + "px";
+        document.querySelector("#flight > div > span").style.width = (200 * this.flightDuration/this.maxFlight) + "px";
         if (this.shieldDuration > 0){
             this.element.classList.add("umbra");
         }
@@ -970,20 +1007,20 @@ class Player {
         }
     }
     Jump(){
-        if (this.onground || this.#cheat.flying){
+        if (this.onground || this.#cheat.flying || this.flightDuration > 0){
             this.#yv=-20 * this.gravity;
             this.onground=false;
         }
     }
     Left(){
         if (!this.wentLeft){
-            this.#xv+=2
+            this.#xv+= this.slipping ? 0.75 : 2;
             this.wentLeft = true;
         }
     }
     Right(){
         if (!this.wentRight){
-            this.#xv-=2
+            this.#xv-=this.slipping ? 0.75 : 2;
             this.wentRight = true;
         }
     }
@@ -1459,6 +1496,8 @@ class Game{
         this.scale = 1;
         this.minExtent = 6000;
         document.getElementById("game-main").classList.add("playing");
+        this.keysCount = 0;
+        this.endings = [];
     }
     arbitraryRestructure(){
 
@@ -1557,10 +1596,11 @@ class Game{
                 this.createBrick(x, y, width, height, "invisible", "enemyFlipperLeft");
                 break;
             case "k":
-                this.checkPoints.push([x, y]);
+                this.keysCount ++;
+                this.createBrick(x, y, width, height, "powerup", "keyPowerup");
                 break;
             case "n":
-                this.createBrick(x, y, width, height, "end", "end");
+                this.endings.push(this.createBrick(x, y, width, height, "end", "end"));
                 break;
             case "j":
                 this.createBrick(x, y, width, height, "jumpthrough", "jumpthrough")
@@ -1637,6 +1677,9 @@ class Game{
             case "@":
                 this.createBrick(x, y, width, height, "powerup", "shieldPowerup");
                 break;
+            case "#":
+                this.createBrick(x, y, width, height, "powerup", "flightPowerup");
+                break;
         }
     }
     createByTileset(x,y,tileset, signs){
@@ -1711,6 +1754,8 @@ class Game{
             "powerup": 0,
             "shieldPowerup": 0,
             "tar":0,
+            "flightPowerup": 0,
+            "keyPowerup": 0,
             "elements": []
         };
         var passers = 0;
@@ -1736,9 +1781,12 @@ class Game{
             {
                 if (item.probprob > Math.random() || item.probprob == undefined){
                     dictionary[item.type]++;
-                    if (item.type=="tencoin" || item.type=="fiftycoin" || item.type=="powerup" || item.type == "shieldPowerup"){
+                    if (item.type=="tencoin" || item.type=="fiftycoin" || item.type=="powerup" || item.type == "shieldPowerup" || item.type == "flightPowerup" || (item.type == "keyPowerup" && object == this.player)){
                         item.remove();//element.parentNode.removeChild(item.element);
                         this.bricks.splice(i,1);
+                        if (item.type == "keyPowerup"){
+                            this.keysCount --;
+                        }
                     }
                     if (item.type=="minigame"){
                         dictionary["solid"]++;
@@ -1822,6 +1870,7 @@ class Game{
 
     run(){
         if (this.die || this.win){
+            document.getElementById("game-main").classList.remove("playing");
             if (this.win){
                 document.getElementById("gamewin").style.display="block";
                 document.getElementById("gamewin").innerText = "You beat the level! Your score: " + this.player.score;
@@ -1830,13 +1879,13 @@ class Game{
                     window.phase ++;
                     loadPhase(window.phase);
                     window.levelsBeaten = 0;
+                    window.localStorage[window.gameID] = window.phase;
                 }
                 var variab = document.getElementById(document.querySelector("#levelselect > select").value);
                 variab.parentNode.removeChild(variab);
             }
             if (this.die){
                 document.getElementById("gameover").style.display="block";
-                document.getElementById("game-main").classList.remove("playing");
             }
             window.removeEventListener('keydown', this.onkeydown);
             window.removeEventListener("keyup", this.onkeyup);
@@ -1926,7 +1975,7 @@ class Game{
                     if (item.limit > 0){
                         item.limit --;
                         if (item.limit == 0){
-                            item.die = true;
+                            die.push(i);
                         }
                     }
                     if (this.player.y2 < item.brick.y1){
@@ -2061,6 +2110,14 @@ class Game{
                 this.specials.splice(x, 1);
             });
         }
+        this.endings.forEach((item, i) => {
+            if (this.keysCount > 0){
+                item.element.style.opacity = "0.5";
+            }
+            else {
+                item.element.style.opacity = "";
+            }
+        });
     }
 
     registerMinigame(name, play){ // Register minigame functions. All should take the element to draw on (dynamic!), play should also take the tick value.
@@ -2104,4 +2161,33 @@ document.getElementById("playbutton").addEventListener("click",function(){
     }, 20);
 });
 
-loadPhase(window.phase);
+loadPhase(window.localStorage["phase"] || window.phase);
+
+
+function newgame(){
+    if (window.localStorage.gamenum == undefined){
+        window.localStorage.gamenum = 0;
+    }
+    window.localStorage["game-" + window.localStorage["gamenum"]] = 1;
+    window.localStorage["gamenum"] ++;
+    loadGames();
+}
+
+function loadGames(){
+    var el = document.getElementById("gameselectDropdown");
+    el.innerHTML = "";
+    for (var x = 0; x < window.localStorage["gamenum"]; x ++){
+        var itm = document.createElement("option");
+        itm.innerText = "game-" + x;
+        el.appendChild(itm);
+    }
+}
+
+function selectGame(){
+    window.gameID = document.getElementById("gameselectDropdown").value;
+    window.phase = window.localStorage[window.gameID];
+    loadPhase(window.phase);
+    window.levelsBeaten = 0;
+}
+
+loadGames();

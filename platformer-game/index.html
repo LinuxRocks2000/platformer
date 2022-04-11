@@ -19,6 +19,14 @@
                     Play
                 </button>
             </div>
+            <div id="gameselect">
+                <select id="gameselectDropdown"></select>
+                <br />
+                <button id="selectbutton" onclick="selectGame()">Select</button>
+            </div>
+            <button id="newgame" onclick="newgame()">
+                New Game
+            </button>
         </div>
         <div id = "gameover" style="display: none;">
             Game over.
@@ -27,9 +35,21 @@
             You win! Your score:
         </div>
         <div id="game-main">
+            <ul id="stuffs">
+                <li id="shielding">
+                    Shielding:
+                    <div>
+                        <span class="bar"></span>
+                    </div>
+                </li>
+                <li id="flight">
+                    Flight:
+                    <div>
+                        <span class="bar"></span>
+                    </div>
+            </ul>
             <div id="playerstats">
                 <span id="ammocount">Bombs: 0</span>
-                <span id="shieldbool">Shielding: Off</span>
             </div>
         </div>
         <div id="minigame" style = "display: none;"></div>
