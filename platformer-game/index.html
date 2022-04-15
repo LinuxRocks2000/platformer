@@ -22,7 +22,7 @@
             <div id="gameselect">
                 <select id="gameselectDropdown"></select>
             </div>
-            <button id="newgame" onclick="newgame()">
+            <button id="newgame" onclick="window.gm.newGame(prompt('New game name:', ''));window.gm.displayGameMenu()">
                 New Game
             </button>
             <div id="multiplayerCheckbox">
@@ -30,11 +30,14 @@
             </div>
             <a href="about.html" id="aboutlink">About Platformer (and instructions)</a>
         </div>
-        <div id = "gameover" style="display: none;">
+        <div class = "endbanner" id = "gameover" style="display: none;">
             Game over.
         </div>
-        <div id = "gamewin" style = "display: none">
+        <div class = "endbanner" id = "gamewin" style = "display: none">
             You win! Your score:
+        </div>
+        <div class = "endbanner" id = "gamebeat" style = "display: none">
+            You've beaten all of Platformer! I'll reset your saved game now. Good job!
         </div>
         <div id="game-main">
             <ul id="stuffs">

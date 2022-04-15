@@ -637,14 +637,7 @@ window.phases = [
             func: function(g){
                 g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
             }
-        }/*,
-        {
-            id: 2,
-            name: "Labyrinth",
-            func: function(g){
-                g.createByTileset(-3, -8, lvl1);
-            }
-        }*/
+        }
     ]
 ];
 
@@ -2219,6 +2212,7 @@ class GameManager{
 
     displayGameMenu(){
         var gamesDropdownEl = document.querySelector("#gameselectDropdown");
+        gamesDropdownEl.innerHTML = "";
         gamesDropdownEl.addEventListener("change", (event) => {
             this.loadLevels();
         });
@@ -2250,6 +2244,7 @@ class GameManager{
 
     loadLevels(){
         var dropdown = document.querySelector("#dropdown");
+        dropdown.innerHTML = "";
         this.phases[this.getCurrentPhase()].forEach((item, i) => {
             var el = document.createElement("option");
             el.innerHTML = item.name;
@@ -2295,6 +2290,14 @@ class GameManager{
         variab.parentNode.removeChild(variab);
         if (this.levelsRemaining == 0){
             this.settings.games[this.curGameIndex].phase ++;
+            if (this.settings.games[this.curGameIndex].phase >= this.phases.length){
+                document.getElementById("gamebeat").style.display = "";
+                document.getElementById("gamewin").style.display = "none"; // Stop it from rendering that one.
+                setInterval(function(){
+                    document.getElementById("gamebeat").style.display = "none";
+                }, 2000);
+                this.settings.games[this.curGameIndex].phase = 0;
+            }
             this.loadLevels();
             this.game = undefined; // Undef it!
         }

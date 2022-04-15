@@ -117,14 +117,7 @@
     background-color:white;
     overflow:scroll;
 }
-#gameover{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 40px;
-}
-#gamewin{
+.endbanner{
     position: absolute;
     top: 50%;
     left: 50%;
