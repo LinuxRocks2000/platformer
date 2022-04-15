@@ -2323,9 +2323,10 @@ document.getElementById("playbutton").addEventListener("click",function(){
     }*/
 
     gm.play();
-    c=setInterval(function(){
-        if (gm.run()){
-            clearInterval(c);
+    var fun = function(){
+        if (!gm.run()){
+            window.requestAnimationFrame(fun);
         }
-    }, 20);
+    }
+    window.requestAnimationFrame(fun);
 });
