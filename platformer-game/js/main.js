@@ -252,30 +252,30 @@ rrrrrrrrrrrrrrrr r rrlrrlrrlrrrrrrrrrrr r
        lr      rlrllllrlllllrllllrlllrr r v                          r
        l                                r v                          r
        l                                rCv   e                      r
-s      l                                rrrrrrrr                     v  r
-l rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr       rz     l      ele     v r
+s      l                                rrrrrrrr                     V  r
+l rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr       rz     l      ele    V r
 l                                                rrrrrrrrrrrrrrrrrrrrrrr
 l                                         rlr                         r
 rrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrrrrrrlClr c c c                 sr
 r                                             rrrrrrrrrrrrrrrrrrrrrrrrr
 rc c c c c c c c c c C c C c C c C c C c C c
 rrrrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrrrr
-r                                             r r rrrrrrrrrrrrrrrrrrrrrrrrrrrr
-r                       C                     r r                            r
-r rrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrr r r          rrrrr             r
-r                                               rrr rrrrrr r           r rrr rrrrrrrrrrrrrr
-r                                           c   r        r r     rrrrrrr r                r
-rrrrrrrrrrrrrrrrrrrrrrrlllrrrrrrrrrrrrrrrrrrrrrrrc      lr   rrrr        r                r
-                                            r    rrrrrr rr   r           r                r
-                                            r         r rrrrrc    rrrrrrrrFFFFFFFFFFFFFFFFr
+r                                             r r rrrrrrrrrrrrrrrrrrrrrrrr
+r                       C                     r r                        r
+r rrrrrrrrrrrrrrrrrrrrrr rrrrrrrrrrrrrrrrrrrr r r          rrrrr         r
+r                                               rrr rrrrrr r           r r
+r                                           c   r        r r     rrrrrrr r
+rrrrrrrrrrrrrrrrrrrrrrrlllrrrrrrrrrrrrrrrrrrrrrrrc      lr   rrrr        r
+                                            r    rrrrrr rr   r           r
+                                            r         r rrrrrc    rrrrrrrr
                                             rCCCCCCCCCCCr      r         r
                                             rCCCCCCCCCCCr       r        r
                                             r           l       rrrrrrrr r
                                             r           lCCCCCCCCCCCCCCr r
                                             rrrrrrrrrrrrrrrrrr         r r
                                                         r              r r
-                                                        r     c c c c cr rCC
-                                                        r    rrrrrrrrrrr rrrlllllllllllllll
+                                                        r     c c c c cr r
+                                                        r    rrrrrrrrrrr rrr
                                                         r              rCCCl
                                                         r         cccccrCCnl
                                                         r              rrrrr
@@ -475,6 +475,29 @@ rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
 `
 
+var hunt = `
+
+
+             rrrrrrrrrr              rrrJJJrrr
+                b                    r       r
+    rrrrrrrr                  k      r       r
+                             rrr     rk     nr
+             rr                      rrrJJJrrr
+rrr
+                          rrr
+                   k
+rr            rrrrrrrrrrr
+           rrrr                                    k
+    rrr                        rrr                rrr
+
+                                                       r
+r                                                     r
+                                                     r
+             rr         rr                          r
+ rr   rrr                                          r
+                  rrr         rrr       rrrrr
+`
+
 var test = `
 V             V
 V             V
@@ -487,6 +510,29 @@ r    @   l e  V
 rrrrrrrrrrrrrrrrrrrrrr
 `
 
+function Easter(Y) { // Thank'y stackoverflow!
+    var C = Math.floor(Y/100);
+    var N = Y - 19*Math.floor(Y/19);
+    var K = Math.floor((C - 17)/25);
+    var I = C - Math.floor(C/4) - Math.floor((C - K)/3) + 19*N + 15;
+    I = I - 30*Math.floor((I/30));
+    I = I - Math.floor(I/28)*(1 - Math.floor(I/28)*Math.floor(29/(I + 1))*Math.floor((21 - N)/11));
+    var J = Y + Math.floor(Y/4) + I + 2 - C + Math.floor(C/4);
+    J = J - 7*Math.floor(J/7);
+    var L = I - J;
+    var M = 3 + Math.floor((L + 40)/44);
+    var D = L + 28 - 31*Math.floor(M/4);
+
+    return [M, D]
+}
+
+window.isEaster = false;
+
+var now = new Date();
+var easter = Easter(now.getFullYear());
+if (now.getMonth() + 1 == easter[0] && now.getDate() >= easter[1] - 7 && now.getDate() <= easter[1]){
+    isEaster = true;
+}
 
 window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
@@ -495,21 +541,28 @@ window.phases = [
         /*{
             id: 2500,
             name: "test",
-            func: function(){
+            func: function(g){
                 g.createByTileset(0, 0, test);
             }
         },
         {
             id: 178,
             name: "Town of Arimoria, Gunther's Waste",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-5, -5, cave_2, ["<h2>Unwelcome to sunny Arimoria!</h2> <br /> 'The sooner you leave, the less likely you are to die here.' <br /><br />Read the signs for explanations.", "This is the famous Fountain of Pain and Suffering. From it's murky depths spring the waters of unholy pestilince, colored red and chasing after you for your convenience."]);
+            }
+        },*/
+        /*{
+            id: 6578,
+            name: "Hunt",
+            func: function(g){
+                g.createByTileset(-5, 5, hunt);
             }
         },*/
         {
             id: 7,
             name: "Training",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you, and will eat your coins if it touches them. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "You see the blue things? Those are bomb power-up orbs. If you run into them, you'll eat them and increase your bomb count (hover the grey thing in the corner to see your bomb count). Then, you can click space and drop a Bomb that kills active Bats and Vladimirs. Use a bomb's explosion to kill the bats before they eat your coins, but remember to wake them up first!", "Some power-up orbs (orange instead of blue) give Shielding instead of Bombs. This is one of them! Pick it up, you'll see a blue glow and the shielding statbar will turn partially red, and start declining. Try and hit the lava while shielded; you'll touch it like it is a normal Solid brick! Do be careful fighting more persistent enemies like Bats with shielding, the shield eventually drops and you'll be in big trouble, and they can hold you in place.", "The maroon power-up orb is for flight! You'll be able to jump infinitely in mid-air while the bar remains.", "See the gold power-up orb? That's a key! Grab it to unlock the ending. Now see how the sunflower is opaque again? That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
             }
@@ -517,14 +570,14 @@ window.phases = [
         {
             id: 6,
             name: "Tiny Maze",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-2, 0, tinymaze);
             }
         },
         {
             id: 8,
             name: "Fortress",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-2, -5, fortress);
             }
         }
@@ -533,21 +586,21 @@ window.phases = [
         {
             id: 20,
             name: "New Features Wonderland",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-2, -5, new_features_wonderland)
             }
         },
         {
             id: 10,
             name: "Office",
-            func: function(){
+            func: function(g){
                 g.createByTileset(0, 0, office, ["Well, it's bad. It looks like the lavas have taken over the office complex! Get to the top as fast as possible, so you can dump all of these lavas to Garbage Collection."]);
             }
         },
         {
             id: 5,
             name: "An Actual Maze This Time",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-5, -5, actual_maze, ["This one is a real maze. There is only one way out. Best of luck!", "Ah yes. Looks like you've found the less painful way out! I recommend you take a temporary detour, you'll get plenty coins that way.", "You didn't find the easy route at all. Haha!", "This is the end of the level."]);
             }
         }
@@ -556,7 +609,7 @@ window.phases = [
         {
             id: 177,
             name: "Entrance to Gunther's Wastes",
-            func: function(){
+            func: function(g){
                 g.createBrick(9, 0, 14, 6, "shadows", "");
                 g.createBrick(48, 9, 8, 2, "shadows", "");
                 g.createByTileset(-5, -5, cave_1, ["<h2>Welcome to Gunther's Wastes (home of Gunther's Cave)</h2>Population: whoever is dumb enough to enter <br />Exports: plague, mutant enemies, grapefruit<br />Imports: shadows, death-mites, human souls<br />Motto: 'DEAR GOD PLEASE HELP ME I'VE BEEN STUCK FOR YEARS'<br />Accomodations: Trees, rocks, and racks are to be found all throughout.<br /><h4>Enjoy your stay!</h4>"]);
@@ -565,7 +618,7 @@ window.phases = [
         {
             id: 20000,
             name: "Flats of Gunther's Waste",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-3, 5, cave_2);
             }
         }
@@ -574,26 +627,27 @@ window.phases = [
         {
             id: 1,
             name: "The Plains",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-5, 6, the_plains, ["Beware! This is a junction! The original creator designed what you will find if you go down, another designed what you will find if you keep on going this way. Neither play is revocable. Choose your poison!"]);
             }
         },
         {
             id: 4,
             name: "The Basement",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-3, -6, lvl2, ["You have a superpower. An extra jump! Slide off a platform without jumping and you can jump in mid-air to fly."]);
             }
         }/*,
         {
             id: 2,
             name: "Labyrinth",
-            func: function(){
+            func: function(g){
                 g.createByTileset(-3, -8, lvl1);
             }
         }*/
     ]
 ];
+
 function getLevelmakerContext(g) {
     return {
         game: g,
@@ -636,25 +690,6 @@ function testLevel(context){
     context.makeCupTrap(14, 0, 5, 5);
 }
 
-window.gameID = "";
-
-function loadPhase(phasenum){
-    document.getElementById("dropdown").innerHTML = "";
-    window.phases[phasenum - 1].forEach((item, i) => {
-        console.log(item.name);
-        var el = document.createElement("option");
-        el.id = item.id.toString();
-        el.value = item.id.toString();
-        el.innerText = item.name;
-        document.getElementById("dropdown").appendChild(el);
-        console.log("I think it worked...");
-    });
-    if (window.gameID != ""){
-        if (phasenum > window.localStorage[window.gameID]){
-            window.localStorage[window.gameID] = phasenum;
-        }
-    }
-}
 
 class Brick{
     constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability){
@@ -725,6 +760,13 @@ class Player {
         this.element.style.top=(window.innerHeight/2 - height/2).toString()+"px";
         this.element.style.left=(window.innerWidth/2 - width/2).toString()+"px";
         this.element.id="player";
+        if (window.isEaster){
+            var el = document.createElement("img");
+            el.src="res/bunny_ears.png";
+            el.classList.add("bunny");
+            this.element.appendChild(el);
+        }
+        this.element.appendChild(document.createElement("span"));
         this.#xv=0;
         this.#yv=0;
         this.rightpressed=false;
@@ -993,7 +1035,7 @@ class Player {
         this.game.die = true;
     }
     refreshscore(){
-        this.element.innerText=this.score.toString();
+        this.element.querySelector("span").innerText=this.score.toString();
     }
     refreshstats(){
         document.getElementById("ammocount").innerHTML = "Bombs: " + this.bombs;
@@ -1466,7 +1508,7 @@ class PrivateTestRobot extends RobotPlayer{
 
 
 class Game{
-    constructor(mobile, playerClass = Player, xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
+    constructor(mobile, multiplayer, playerClass = Player, xoffset=0,yoffset=0,brickwidth=50,brickheight=50){
         this.win = false;
         this.die = false;
         this.bricks=[];
@@ -1498,6 +1540,7 @@ class Game{
         document.getElementById("game-main").classList.add("playing");
         this.keysCount = 0;
         this.endings = [];
+        this.unstables = []; // Unstables delete when all keys are collected.
     }
     arbitraryRestructure(){
 
@@ -1597,13 +1640,16 @@ class Game{
                 break;
             case "k":
                 this.keysCount ++;
-                this.createBrick(x, y, width, height, "powerup", "keyPowerup");
+                this.createBrick(x, y, width, height, "powerup" + (window.isEaster ? " bunny" : ""), "keyPowerup");
                 break;
             case "n":
                 this.endings.push(this.createBrick(x, y, width, height, "end", "end"));
                 break;
             case "j":
                 this.createBrick(x, y, width, height, "jumpthrough", "jumpthrough")
+                break;
+            case "J":
+                this.unstables.push(this.createBrick(x, y, width, height, "jumpthrough", "jumpthrough"));
                 break;
             case "1":
                 this.specials.push({
@@ -1874,15 +1920,7 @@ class Game{
             if (this.win){
                 document.getElementById("gamewin").style.display="block";
                 document.getElementById("gamewin").innerText = "You beat the level! Your score: " + this.player.score;
-                window.levelsBeaten ++;
-                if (window.levelsBeaten == window.phases[window.phase - 1].length){
-                    window.phase ++;
-                    loadPhase(window.phase);
-                    window.levelsBeaten = 0;
-                    window.localStorage[window.gameID] = window.phase;
-                }
-                var variab = document.getElementById(document.querySelector("#levelselect > select").value);
-                variab.parentNode.removeChild(variab);
+                window.gm.beat();
             }
             if (this.die){
                 document.getElementById("gameover").style.display="block";
@@ -2114,6 +2152,11 @@ class Game{
             }
             else {
                 item.element.style.opacity = "";
+                this.unstables.forEach((item, i) => {
+                    this.unstables[0].remove();
+                    this.bricks.splice(this.bricks.indexOf(this.unstables[0]), 1);
+                    this.unstables.splice(0, 1);
+                });
             }
         });
     }
@@ -2132,60 +2175,154 @@ class Game{
     }
 }
 
-var g=null;
-document.getElementById("playbutton").addEventListener("click",function(){
-    g=new Game(document.querySelector("#mobileOrNot > input").checked);//, PrivateTestRobot);//, TrainingRobot);
-    window.levelMakerContext = getLevelmakerContext(g);
 
-    // Drawing here!
-    window.phases[window.phase - 1].forEach((item, i) => {
-        if (item.id == document.querySelector("#levelselect > select").value){
-            item.func();
+class GameManager{
+    constructor(phases){
+        this.phases = phases;
+        if (window.localStorage.localSettings == undefined){
+            console.log("No local settings. Creating a localSettings profile now.");
+            window.localStorage["localSettings"] = JSON.stringify({
+                games: [],
+                topGameID: 0
+            });
         }
-    });
+        this.proxyValidator = {
+            gameManager: this,
+            set(obj, prop, value){
+                obj[prop] = value;
+                window.localStorage["localSettings"] = JSON.stringify(this.gameManager.settings);
+                return true;
+            },
+            get(obj, prop){
+                return (typeof(obj[prop]) == "object" ? (new Proxy(obj[prop], this.gameManager.proxyValidator)) : obj[prop]);
+            }
+        };
 
-    document.getElementById("menu").style.display="none";
-    Array.from(document.getElementsByClassName("tencoin")).forEach((item, i) => {
-        item.innerHTML="<p class='coin_text'>10</p>";
-    });
-    Array.from(document.getElementsByClassName("fiftycoin")).forEach((item, i) => {
-        item.innerHTML="<p class='coin_text big'>50</p>";
-    });
+        this._settings = JSON.parse(window.localStorage["localSettings"]);
+        this.settings = new Proxy(this._settings, this.proxyValidator);
+        if (this.settings.games.length == 0){
+            this.newGame("Default");
+        }
+        this.game = null;
+        this.curGameIndex = 0;
+        this.levelsRemaining = -1;
+    }
 
+    newGame(gameName){
+        this.settings.games.push({
+            name: gameName,
+            phase: 0,
+            id: this.settings.topGameID
+        });
+        this.settings.topGameID ++;
+    }
+
+    displayGameMenu(){
+        var gamesDropdownEl = document.querySelector("#gameselectDropdown");
+        gamesDropdownEl.addEventListener("change", (event) => {
+            this.loadLevels();
+        });
+        this.settings.games.forEach((item, i) => {
+            var el = document.createElement("option");
+            el.innerHTML = item.name;
+            el.id = item.id;
+            gamesDropdownEl.appendChild(el);
+        });
+        this.loadLevels();
+    }
+
+    getCurrentPhase(getCurrentGame = false){
+        var dropdown = document.querySelector("#gameselectDropdown");
+        var id = dropdown.options[dropdown.options.selectedIndex].id;
+        var ret = undefined;
+        this.settings.games.forEach((item, i) => {
+            if (item.id == id){
+                if (getCurrentGame){
+                    ret = [item.phase, item.id];
+                }
+                else{
+                    ret = item.phase;
+                }
+            }
+        });
+        return ret;
+    }
+
+    loadLevels(){
+        var dropdown = document.querySelector("#dropdown");
+        this.phases[this.getCurrentPhase()].forEach((item, i) => {
+            var el = document.createElement("option");
+            el.innerHTML = item.name;
+            el.id = item.id;
+            dropdown.appendChild(el);
+        });
+        this.levelsRemaining = this.phases[this.getCurrentPhase()].length;
+        this.curGameIndex = this.getCurrentPhase(true)[1];
+    }
+
+    createLevel(){
+        var dropdown = document.querySelector("#dropdown");
+        var id = dropdown.options[dropdown.options.selectedIndex].id;
+        this.phases[this.getCurrentPhase()].forEach((item, i) => {
+            if (item.id == id){
+                item.func(this.game);
+            }
+        });
+    }
+
+    play(){
+        this.game = new Game(false);
+
+        this.createLevel();
+
+        document.getElementById("menu").style.display="none";
+        Array.from(document.getElementsByClassName("tencoin")).forEach((item, i) => {
+            item.innerHTML="<p class='coin_text'>10</p>";
+        });
+        Array.from(document.getElementsByClassName("fiftycoin")).forEach((item, i) => {
+            item.innerHTML="<p class='coin_text big'>50</p>";
+        });
+    }
+
+    run(){
+        return this.game.run();
+    }
+
+    beat(){
+        this.levelsRemaining --;
+        var dropdown = document.querySelector("#dropdown");
+        var variab = dropdown.options[dropdown.options.selectedIndex];
+        variab.parentNode.removeChild(variab);
+        if (this.levelsRemaining == 0){
+            this.settings.games[this.curGameIndex].phase ++;
+            this.loadLevels();
+            this.game = undefined; // Undef it!
+        }
+    }
+}
+
+
+var gm = new GameManager(window.phases);
+gm.displayGameMenu();
+document.getElementById("playbutton").addEventListener("click",function(){
+    /*if (!document.querySelector("#multiplayerCheckbox > input").checked)
+        g=new Game(document.querySelector("#mobileOrNot > input").checked);//, PrivateTestRobot);//, TrainingRobot);
+        window.levelMakerContext = getLevelmakerContext(g);
+
+        window.phases[window.phase - 1].forEach((item, i) => {
+            if (item.id == document.querySelector("#levelselect > select").value){
+                item.func();
+            }
+        });
+    }
+    else{
+        g = new Game(document.querySelector("#mobileOrNot > input".checked), true);
+    }*/
+
+    gm.play();
     c=setInterval(function(){
-        if (g.run()){
+        if (gm.run()){
             clearInterval(c);
         }
     }, 20);
 });
-
-loadPhase(window.localStorage["phase"] || window.phase);
-
-
-function newgame(){
-    if (window.localStorage.gamenum == undefined){
-        window.localStorage.gamenum = 0;
-    }
-    window.localStorage["game-" + window.localStorage["gamenum"]] = 1;
-    window.localStorage["gamenum"] ++;
-    loadGames();
-}
-
-function loadGames(){
-    var el = document.getElementById("gameselectDropdown");
-    el.innerHTML = "";
-    for (var x = 0; x < window.localStorage["gamenum"]; x ++){
-        var itm = document.createElement("option");
-        itm.innerText = "game-" + x;
-        el.appendChild(itm);
-    }
-}
-
-function selectGame(){
-    window.gameID = document.getElementById("gameselectDropdown").value;
-    window.phase = window.localStorage[window.gameID];
-    loadPhase(window.phase);
-    window.levelsBeaten = 0;
-}
-
-loadGames();

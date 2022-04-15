@@ -148,9 +148,9 @@ body{
     font-size: 40px;
     height: 100vh;
     display: grid;
-    grid-template-areas: ".          level      ."
-                         ".          playbutton ."
-                         "gameselect aboutlink  newgame";
+    grid-template-areas: "multiplayerCheckbox level      ."
+                         ".                   playbutton ."
+                         "gameselect          aboutlink  newgame";
     grid-template-rows: auto auto min-content;
     grid-template-columns: min-content auto min-content;
 }
@@ -372,4 +372,25 @@ div.flightPowerup{
 
 #aboutlink{
     grid-area: aboutlink;
+}
+#player > img.bunny{
+    position: absolute;
+    width: 75px;
+    bottom: 90px;
+    left: -12.5px;
+}
+#player{
+    overflow: visible;
+}
+
+.keyPowerup.bunny{
+    background-image: url("../res/easteregg.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+#multiplayerCheckbox{
+    grid-area: multiplayerCheckbox;
+    font-size: 16px;
 }
