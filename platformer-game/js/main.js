@@ -869,8 +869,8 @@ class Player {
         if (mobile){
             this.joystick = new JoyStick({radius: window.innerHeight/8, x: window.innerWidth - window.innerHeight/8, y: window.innerHeight * 7/8, inner_radius: window.innerHeight/8 - 10})
         }
-        this.shieldDuration = 0;
-        this.flightDuration = 0;
+        this._shieldDuration = 0;
+        this._flightDuration = 0;
         this.width=width
         this.height=height
         this.game=game
@@ -919,8 +919,30 @@ class Player {
         this.slipping = false;
         this.stuck = false;
         this.touchingGreen = false;
-        this.maxShielding = 750;
-        this.maxFlight = 750;
+        this.maxShielding = 1000;
+        this.maxFlight = 1000;
+    }
+    set shieldDuration(newVal){
+        if (newVal < this.maxShielding){
+            this._shieldDuration = newVal;
+        }
+        else{
+            this._shieldDuration = this.maxShielding;
+        }
+    }
+    get shieldDuration(){
+        return this._shieldDuration;
+    }
+    set flightDuration(newVal){
+        if (newVal < this.maxFlight){
+            this._flightDuration = newVal;
+        }
+        else{
+            this._flightDuration = this.maxFlight;
+        }
+    }
+    get flightDuration(){
+        return this._flightDuration;
     }
     remove(){
         this.element.parentNode.removeChild(this.element);
@@ -960,7 +982,7 @@ class Player {
                     }
                     break;
                 case "i":
-                    this.#cheat.invincible = !this.#cheat.invincible;
+                    this.shieldDuration = Infinity;//this.#cheat.invincible = !this.#cheat.invincible;
                     break;
                 case "g":
                     this.gravity *= -1;
@@ -972,7 +994,7 @@ class Player {
                     this.#yv = -5 * this.gravity;
                     break;
                 case "f":
-                    this.#cheat.flying = !this.#cheat.flying;
+                    this.flightDuration = Infinity;
                     break;
                 case ".":
                     this.#xv *= 10;
@@ -1339,7 +1361,7 @@ class FortressRobot extends RobotPlayer{
                 else{
                     this.Left();
                 }
-                didLava = true;
+                didLava = true;this.maxShielding
             }
         });
     }
@@ -1639,6 +1661,7 @@ class Game{
         this.brickWidth=brickwidth;
         this.brickHeight=brickheight;
         this.player=new playerClass(mobile, 49,99,this);
+        window.player = this.player;
         this.onkeyup = (event) => {
             this.player.onkeyup(event);
         };
@@ -2433,6 +2456,7 @@ class GameManager{
 
     play(){
         this.game = new Game(false);
+        window.game = this.game;
 
         this.createLevel();
 
@@ -2466,6 +2490,7 @@ class GameManager{
             }
             this.loadLevels();
             this.game = undefined; // Undef it!
+            window.game = undefined;
         }
     }
 }
