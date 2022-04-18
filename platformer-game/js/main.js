@@ -2199,7 +2199,7 @@ class Game{
                         item.limit --;
                         if (item.limit == 0){
                             console.log("Deleting " + i);
-                            die.push(i);
+                            die.push(item);
                         }
                     }
                     if (this.player.y2 < item.brick.y1){
@@ -2306,7 +2306,7 @@ class Game{
                         item.brick.element.classList.add("explode");
                     }
                     if (item.timeLeft == -50){
-                        die.push(i);
+                        die.push(item);
                         this.specials.forEach((item2, i2) => {
                             if (item2.type == "normal" || item2.type == "flyer"){
                                 console.log(item2);
@@ -2318,7 +2318,7 @@ class Game{
                                     x1 < item2.brick.x2 &&
                                     y2 > item2.brick.y1 &&
                                     y1 < item2.brick.y2){
-                                    die.push(i2);
+                                    die.push(item2);
                                 }
                             }
                         });
@@ -2326,7 +2326,7 @@ class Game{
                 }
             });
             die.forEach((item, i) => {
-                var x = item - i;
+                var x = this.specials.indexOf(item);
                 this.specials[x].brick.remove();
                 this.bricks.splice(this.bricks.indexOf(this.specials[x].brick), 1);
                 this.specials.splice(x, 1);
