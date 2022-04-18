@@ -387,3 +387,11 @@ div.flightPowerup{
     grid-area: multiplayerCheckbox;
     font-size: 16px;
 }
+
+.sensor{
+    background-color: purple;
+}
+
+.transparent{
+    opacity: 0.5;
+}

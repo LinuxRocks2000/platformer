@@ -304,7 +304,7 @@ rrrrrrrrrrrrrllrrrr                                r
                                                                         V         V
                                                                         Vc       cV
                                                                       rrrrrrrrrrrrrrr
-                                                                                            s    uuu
+                                                                                            s   uuu
                                                                                           rrrrrrrrr
                                                                                          rr b   b rr
                                                                                          V         V
@@ -316,9 +316,11 @@ rrrrrrrrrrrrrllrrrr                                r
                                                                                          rrrrrrrrrrr   rrrrrrrr
                                                                                                                    s #
                                                                                                                  rrrrrrr
+                                                                                                                           s
+                                                                                                                         rrrrrrr
 
-                                                                                                                          k  s  n
-                                                                                                                        rrrrrrrrrr
+                                                                                                                                   k  s  n
+                                                                                                                                  rrrrrrrrr
 `
 
 var tinymaze = `
@@ -498,17 +500,7 @@ r                                                     r
                   rrr         rrr       rrrrr
 `
 
-var test = `
-V             V
-V             V
-V             V
-V             V
-V             V   b
-V             V
-V             V     b
-r    @   l e  V
-rrrrrrrrrrrrrrrrrrrrrr
-`
+var test =``
 
 function Easter(Y) { // Thank'y stackoverflow!
     var C = Math.floor(Y/100);
@@ -532,6 +524,10 @@ var now = new Date();
 var easter = Easter(now.getFullYear());
 if (now.getMonth() + 1 == easter[0] && now.getDate() >= easter[1] - 7 && now.getDate() <= easter[1]){
     isEaster = true;
+}
+
+window.randint = function(a, b){
+    return Math.floor(a + (Math.random() * (b - a)));
 }
 
 window.phase = 1; // Unlock new levels by doing a good job.
@@ -559,12 +555,62 @@ window.phases = [
                 g.createByTileset(-5, 5, hunt);
             }
         },*/
+        /*{
+            id: 2545653,
+            name: "Flappy",
+            func: function(g){
+                context = getLevelmakerContext(g);
+                context.offset(-2, 5);
+                context.flightPowerup(1, -1);
+                context.flightPowerup(2, -1);
+                context.flightPowerup(3, -1);
+                context.box(0, -21, 130, 21);
+                for (var i = 0; i < 4; i ++){
+                    context.holePylon(10 + (i * 10), -20, 20, window.randint(3, 10), 7);
+                }
+                for (var i = 0; i < 5; i ++){
+                    context.holePylon(50 + (i * 10), -20, 20, window.randint(3, 10), 6);
+                }
+                for (var i = 0; i < 3; i ++){
+                    context.holePylon(100 + (i * 10), -20, 20, window.randint(3, 10), 5);
+                }
+            }
+        },*/
         {
             id: 7,
             name: "Training",
             func: function(g){
-                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you, and will eat your coins if it touches them. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "You see the blue things? Those are bomb power-up orbs. If you run into them, you'll eat them and increase your bomb count (hover the grey thing in the corner to see your bomb count). Then, you can click space and drop a Bomb that kills active Bats and Vladimirs. Use a bomb's explosion to kill the bats before they eat your coins, but remember to wake them up first!", "Some power-up orbs (orange instead of blue) give Shielding instead of Bombs. This is one of them! Pick it up, you'll see a blue glow and the shielding statbar will turn partially red, and start declining. Try and hit the lava while shielded; you'll touch it like it is a normal Solid brick! Do be careful fighting more persistent enemies like Bats with shielding, the shield eventually drops and you'll be in big trouble, and they can hold you in place.", "The maroon power-up orb is for flight! You'll be able to jump infinitely in mid-air while the bar remains.", "See the gold power-up orb? That's a key! Grab it to unlock the ending. Now see how the sunflower is opaque again? That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
+                g.createByTileset(-2, 0, training, ["Look - lava! Sail over it with the 'up' and 'right' keys to avoid dying.", "As you can see, these are coins. Run into them to claim them, you'll notice you gain a score counter!<br /> The moving lava below you will hurt you just as bad as normal lava, so you should make sure to dodge it when you try to get the coin.", "The yellow blocks are jump-through platforms. You pass through them when you hit them from the bottom, and you can fall back through them with the down arrow key!", "The blue tiles are ice. You'll find they're very slippery!", "This is a Bat. It clings to the cave walls until you drop next to it, then flies after you. It will kill you if it touches you, and will eat your coins if it touches them. I put a force field in place that keeps it from touching you up here, so you can try activating it.", "You see the blue things? Those are bomb power-up orbs. If you run into them, you'll eat them and increase your bomb count (hover the grey thing in the corner to see your bomb count). Then, you can click space and drop a Bomb that kills active Bats and Vladimirs. Use a bomb's explosion to kill the bats before they eat your coins, but remember to wake them up first!", "Some power-up orbs (orange instead of blue) give Shielding instead of Bombs. This is one of them! Pick it up, you'll see a blue glow and the shielding statbar will turn partially red, and start declining. Try and hit the lava while shielded; you'll touch it like it is a normal Solid brick! Do be careful fighting more persistent enemies like Bats with shielding, the shield eventually drops and you'll be in big trouble, and they can hold you in place.", "The maroon power-up orb is for flight! You'll be able to jump infinitely in mid-air while the bar remains.", "The purple thing is a switchblock. It doesn't do much, but when you go through it, some other blocks turn transparent and stop blocking your way, allowing you to touch the power-ups on the next platform!", "See the gold power-up orb? That's a key! Grab it to unlock the ending. Now see how the sunflower is opaque again? That's the end of the level. Run into it to exit back to the main menu, you'll notice this level will be gone! Once you beat every level on the menu, you will advance to phase 2 and more will appear."])
                 g.createSign(1, 1, "Welcome to Platformer! This is a short, simple training level designed to get you on your feet.<br />What you have hovered is a sign. You should always hover them, they have useful information.<br />To start out, try moving the player with the left and right arrow keys", "Mouse Over Me")
+                var cont = window.getLevelmakerContext(g);
+                cont.offset(-2, 0);
+                cont.sensorDoors(
+                    [
+                        {
+                            x: 125,
+                            y: 32
+                        }
+                    ],
+                    [
+                        {
+                            x: 130,
+                            y: 32,
+                            height: 4
+                        },
+                        {
+                            x: 131,
+                            y: 32,
+                            height: 1,
+                            width: 8
+                        },
+                        {
+                            x: 138,
+                            y: 33,
+                            height: 3,
+                            width: 1,
+                        }
+                    ], true
+                )
             }
         },
         {
@@ -646,31 +692,112 @@ function getLevelmakerContext(g) {
         game: g,
         xOffset: 0,
         yOffset: 0,
-        setOffset: function(x, y){
+        offset: function(x, y){
             this.xOffset = x;
             this.yOffset = y;
         },
-        makeNormal: function(x, y, width, height){
+        normal: function(x, y, width, height){
             this.game.createBrick(x + this.xOffset, y + this.yOffset, width, height, "regular", "solid");
         },
-        makeToothbrushTrap: function(x, y, prongs, alignment = 1){
+        toothbrushTrap: function(x, y, prongs, alignment = 1){
             var height = prongs * 3 + 2;
             this.game.createBrick(x + this.xOffset, y - height + this.yOffset, 1, height, "lava", "killu");
             for (var i = 0; i < prongs; i ++){
                 this.game.createBrick(x + alignment + this.xOffset, y - ((i + 1) * 3) - 1 + this.yOffset, 1, 1, "regular", "solid");
             }
         },
-        makeSquaretrap: function(x, y, width, height){
+        squaretrap: function(x, y, width, height){
             this.game.createBrick(x + this.xOffset,         y + this.yOffset - 1, 1, 1, "lava", "killu");
             this.game.createBrick(x + this.xOffset,         y + this.yOffset - 1 - height, 1, 1, "lava", "killu");
             this.game.createBrick(x + this.xOffset + width, y + this.yOffset - 1 - height, 1, 1, "lava", "killu");
             this.game.createBrick(x + this.xOffset + width, y + this.yOffset - 1, 1, 1, "lava", "killu");
         },
-        makeCupTrap: function(x, y, width, height){
-            this.makeNormal(x, y, 1, height);
-            this.makeNormal(x, y + height, width - 1, 1);
-            this.makeNormal(x + width, y, 1, height);
+        cupTrap: function(x, y, width, height){
+            this.normal(x, y, 1, height);
+            this.normal(x, y + height, width - 1, 1);
+            this.normal(x + width, y, 1, height);
             this.game.createBrick(x - 1 + width + this.xOffset, y + this.yOffset + height, 2, 1, "lava", "killu");
+        },
+        holePylon: function(x, y, height, holePos, holeSize, renderType="lava", type="killu"){
+            this.game.createBrick(x + this.xOffset, y + this.yOffset,                      1, holePos,                     renderType, type);
+            this.game.createBrick(x + this.xOffset, y + this.yOffset + holePos + holeSize, 1, height - holeSize - holePos, renderType, type);
+        },
+        shieldPowerup: function(x, y){
+            x += this.xOffset;
+            y += this.yOffset;
+            this.game.createBrick(x, y, 1, 1, "powerup", "shieldPowerup");
+        },
+        flightPowerup: function(x, y){
+            x += this.xOffset;
+            y += this.yOffset;
+            this.game.createBrick(x, y, 1, 1, "powerup", "flightPowerup");
+        },
+        box: function(x, y, w, h, type="solid", renderType="regular"){
+            x += this.xOffset;
+            y += this.yOffset;
+            this.game.createBrick(x, y, w, 1, renderType, type);
+            this.game.createBrick(x, y, 1, h, renderType, type);
+            this.game.createBrick(x + w - 1, y, 1, h, renderType, type);
+            this.game.createBrick(x, y + h, w, 1, renderType, type);
+        },
+        sensorDoor: function(sensorConf, doorConf){
+            doorConf.type = doorConf.type || "solid";
+            doorConf.renderType = doorConf.renderType || "regular";
+            doorConf.width = doorConf.width || 1;
+            doorConf.height = doorConf.height || 2;
+            sensorConf.x += this.xOffset;
+            sensorConf.y += this.yOffset;
+            doorConf.x += this.xOffset;
+            doorConf.y += this.yOffset;
+            var item = this.game.createBrick(sensorConf.x, sensorConf.y, 1, 1, "sensor", "sensor", undefined, {
+                slave: this.game.createBrick(doorConf.x, doorConf.y, doorConf.width, doorConf.height, doorConf.renderType, doorConf.type)
+            });
+            console.log(item.options);
+            item.options.slave.options.master = item;
+        },
+        sensorDoors: function(sensors, doors, isOpen = false){
+            var doorBricks = [];
+            doors.forEach((door) => {
+                door.x += this.xOffset;
+                door.y += this.yOffset;
+                door.type = door.type || "solid";
+                door.renderType = door.renderType || "regular";
+                door.width = door.width || 1;
+                door.height = door.height || 2;
+                var doorBrick = this.game.createBrick(door.x, door.y, door.width, door.height, door.renderType, door.type);
+                if (isOpen){
+                    doorBrick.element.classList.remove("transparent");
+                }
+                else{
+                    //console.log(slave);
+                    doorBrick.element.classList.add("transparent");
+                }
+                doorBricks.push(doorBrick);
+            });
+            var switchBlocks = [];
+            sensors.forEach((sensor) => {
+                sensor.x += this.xOffset;
+                sensor.y += this.yOffset;
+                var switchBlock = this.game.createBrick(sensor.x, sensor.y, 1, 1, "sensor", "sensor", undefined, {
+                    slave: doorBricks,
+                    state: isOpen
+                });
+                switchBlocks.push(switchBlock);
+            });
+            switchBlocks.forEach((item, i) => {
+                item.options.comrades = switchBlocks;
+            });
+            doorBricks.forEach((item, i) => {
+                item.options.master = switchBlocks[0];
+            });
+        },
+        normalEnemy: function(x, y, width=1, height=1){
+            this.game.specials.push({
+                type: "normal",
+                brick: this.game.createBrick(x, y, width, height, "lava enemy", "killu"),
+                speed: 5,
+                yv: 0
+            });
         }
     }
 }
@@ -685,7 +812,8 @@ function testLevel(context){
 
 
 class Brick{
-    constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability){
+    constructor(x,y,width,height, scale,renderclass,type,text,visibleText,probability, options){
+        this.options = options || {}; // If options == undefined, use an empty object.
         this.x1=x;
         this.y1=y;
         this.x2=x+width; // For collisions
@@ -981,10 +1109,10 @@ class Player {
             this.refreshscore();
         }
         if (colis["shieldPowerup"] > 0){
-            this.shieldDuration = 250;
+            this.shieldDuration += 250;
         }
         if (colis["flightPowerup"] > 0){
-            this.flightDuration = 250;
+            this.flightDuration += 250;
         }
         if (colis["powerup"] > 0){
             this.bombs ++;
@@ -1049,13 +1177,13 @@ class Player {
     }
     Left(){
         if (!this.wentLeft){
-            this.#xv+= this.slipping ? 0.75 : 2;
+            this.#xv += this.slipping ? 0.75 : (this.flightDuration > 0 ? 4 : 2);
             this.wentLeft = true;
         }
     }
     Right(){
         if (!this.wentRight){
-            this.#xv-=this.slipping ? 0.75 : 2;
+            this.#xv -= this.slipping ? 0.75 : (this.flightDuration > 0 ? 4 : 2);
             this.wentRight = true;
         }
     }
@@ -1538,13 +1666,13 @@ class Game{
     arbitraryRestructure(){
 
     }
-    _createBrick(x,y,width,height,renderclass,type,text,visibleText, probability){
-        var x = new Brick(x+window.innerWidth/2+this.xoffset,y+window.innerHeight/2+this.yoffset,width,height, this.scale,renderclass,type,text,visibleText, probability);
+    _createBrick(x,y,width,height,renderclass,type,text,visibleText, probability, options){
+        var x = new Brick(x+window.innerWidth/2+this.xoffset,y+window.innerHeight/2+this.yoffset,width,height, this.scale,renderclass,type,text,visibleText, probability, options);
         this.bricks.push(x);
         return x;
     }
-    createBrick(x,y,horizLen, height, renderclass="regular",type="solid", probability){
-        return this._createBrick(x*this.brickWidth,y*this.brickHeight,this.brickWidth * horizLen,this.brickHeight * height,renderclass,type, undefined, undefined, probability);
+    createBrick(x,y,horizLen, height, renderclass="regular",type="solid", probability, options){
+        return this._createBrick(x*this.brickWidth,y*this.brickHeight,this.brickWidth * horizLen,this.brickHeight * height,renderclass,type, undefined, undefined, probability, options);
     }
     createHorizontal(x,y,width,renderclass="regular",type="solid"){
         this._createBrick(x*this.brickWidth,y*this.brickHeight,width*this.brickWidth,this.brickHeight,renderclass,type);
@@ -1733,7 +1861,7 @@ class Game{
                 signNum ++;
             }
             else {
-                if (curHorizType == item && ["e", "E", "c", "C", "u"].indexOf(item) == -1){
+                if (curHorizType == item && ["e", "E", "c", "C", "u", "#", "@"].indexOf(item) == -1){
                     curHoriz ++;
                 }
                 else {
@@ -1795,6 +1923,7 @@ class Game{
             "tar":0,
             "flightPowerup": 0,
             "keyPowerup": 0,
+            "sensor": 0,
             "elements": []
         };
         var passers = 0;
@@ -1819,47 +1948,56 @@ class Game{
                         item.y1 < object.y2 && supercilious)))
             {
                 if (item.probprob > Math.random() || item.probprob == undefined){
-                    dictionary[item.type]++;
-                    if (item.type=="tencoin" || item.type=="fiftycoin" || item.type=="powerup" || item.type == "shieldPowerup" || item.type == "flightPowerup" || (item.type == "keyPowerup" && object == this.player)){
-                        item.remove();//element.parentNode.removeChild(item.element);
-                        this.bricks.splice(i,1);
-                        if (item.type == "keyPowerup"){
-                            this.keysCount --;
+                    if (item.options == undefined || item.options.master == undefined || item.options.master.options.state){ // Check undefined, then check state
+                        dictionary[item.type]++;
+                        if (item.type=="tencoin" || item.type=="fiftycoin" || item.type=="powerup" || item.type == "shieldPowerup" || item.type == "flightPowerup" || (item.type == "keyPowerup" && object == this.player)){
+                            item.remove();//element.parentNode.removeChild(item.element);
+                            this.bricks.splice(i,1);
+                            if (item.type == "keyPowerup"){
+                                this.keysCount --;
+                            }
+                        }
+                        if (item.type=="minigame"){
+                            dictionary["solid"]++;
+                            this.playMinigame(item.element.getAttribute("data-minigame"));
+                        }
+                        if (!(item.type=="elevator" || (item.type == "bigElevator") || item.type == "enemyFlipper" || item.type == "")){
+                            if (item.type != "sensor"){
+                                dictionary["all"]++;
+                            }
+                            dictionary["elements"].push(item);
+                        }
+                        if (item.type == "jumpthrough"){
+                            dictionary.pedanticsolid ++;
+                        }
+                        if (item.type == "solid"){
+                            dictionary.pedanticsolid ++;
+                        }
+                        if (item.type == "ice"){
+                            dictionary.solid ++;
+                            dictionary.pedanticsolid ++;
+                        }
+                        if (item.type == "tar"){
+                            dictionary.solid ++;
+                            dictionary.pedanticsolid ++;
+                        }
+                        if (item.type == "killu" && object.shieldDuration > 0){ // When shielded, everything becomes Solid. This works for any shielded object.
+                            dictionary.solid ++;
+                            dictionary.pedanticsolid ++;
+                            dictionary.killu --;
+                        }
+                        if (item == this.player){
+                            dictionary.all ++;
+                        }
+                        if (item.type == "sensor"){
+                            if (object == this.player && !item.options.toggle){
+                                item.options.toggle = true;
+                            }
                         }
                     }
-                    if (item.type=="minigame"){
-                        dictionary["solid"]++;
-                        this.playMinigame(item.element.getAttribute("data-minigame"));
+                    else if (!this.probPassers.includes(object)){
+                        this.probPassers.push(object);
                     }
-                    if (!(item.type=="elevator" || (item.type == "bigElevator") || item.type == "enemyFlipper" || item.type == "")){
-                        dictionary["all"]++;
-                        dictionary["elements"].push(item);
-                    }
-                    if (item.type == "jumpthrough"){
-                        dictionary.pedanticsolid ++;
-                    }
-                    if (item.type == "solid"){
-                        dictionary.pedanticsolid ++;
-                    }
-                    if (item.type == "ice"){
-                        dictionary.solid ++;
-                        dictionary.pedanticsolid ++;
-                    }
-                    if (item.type == "tar"){
-                        dictionary.solid ++;
-                        dictionary.pedanticsolid ++;
-                    }
-                    if (item.type == "killu" && object.shieldDuration > 0){ // When shielded, everything becomes Solid. This works for any shielded object.
-                        dictionary.solid ++;
-                        dictionary.pedanticsolid ++;
-                        dictionary.killu --;
-                    }
-                    if (item == this.player){
-                        dictionary.all ++;
-                    }
-                }
-                else if (!this.probPassers.includes(object)){
-                    this.probPassers.push(object);
                 }
             }
         });
@@ -1871,6 +2009,34 @@ class Game{
         if (this.player.shieldDuration > 0){
             this.bricks.pop();
         }
+        this.bricks.forEach((item, i) => {
+            if (item.type == "sensor" && object == this.player){
+                if (dictionary.elements.indexOf(item) == -1){
+                    if (item.options.toggle){
+                        item.options.toggle = false;
+                        if (item.options.state == undefined){ // Safeguard
+                            item.options.state = true;
+                        }
+                        item.options.state = !item.options.state;
+                        item.options.comrades.forEach((comrade) => {
+                            comrade.options.state = item.options.state;
+                        });
+                        if (!Array.isArray(item.options.slave)){
+                            item.options.slave = [item.options.slave];
+                        }
+                        item.options.slave.forEach((slave) => {
+                            if (item.options.state){
+                                slave.element.classList.remove("transparent");
+                            }
+                            else{
+                                //console.log(slave);
+                                slave.element.classList.add("transparent");
+                            }
+                        });
+                    }
+                }
+            }
+        });
         return dictionary;
     }
     horizontalBetween(object, object2 = this.player){
@@ -2307,6 +2473,8 @@ class GameManager{
 
 var gm = new GameManager(window.phases);
 gm.displayGameMenu();
+
+
 document.getElementById("playbutton").addEventListener("click",function(){
     /*if (!document.querySelector("#multiplayerCheckbox > input").checked)
         g=new Game(document.querySelector("#mobileOrNot > input").checked);//, PrivateTestRobot);//, TrainingRobot);
@@ -2321,7 +2489,6 @@ document.getElementById("playbutton").addEventListener("click",function(){
     else{
         g = new Game(document.querySelector("#mobileOrNot > input".checked), true);
     }*/
-
     gm.play();
     var fun = function(){
         if (!gm.run()){
