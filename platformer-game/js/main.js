@@ -500,7 +500,10 @@ r                                                     r
                   rrr         rrr       rrrrr
 `
 
-var test =``
+var test =`
+    i
+rrrrrrrr
+`
 
 function Easter(Y) { // Thank'y stackoverflow!
     var C = Math.floor(Y/100);
@@ -2195,6 +2198,7 @@ class Game{
                     if (item.limit > 0){
                         item.limit --;
                         if (item.limit == 0){
+                            console.log("Deleting " + i);
                             die.push(i);
                         }
                     }
@@ -2322,7 +2326,7 @@ class Game{
                 }
             });
             die.forEach((item, i) => {
-                var x = item;
+                var x = item - i;
                 this.specials[x].brick.remove();
                 this.bricks.splice(this.bricks.indexOf(this.specials[x].brick), 1);
                 this.specials.splice(x, 1);
