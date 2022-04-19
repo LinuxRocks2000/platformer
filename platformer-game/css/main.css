@@ -117,12 +117,22 @@
     background-color:white;
     overflow:scroll;
 }
-.endbanner{
+.endbanner > span{
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 40px;
+}
+.endbanner{
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: white;
+    content: "";
+    display: block;
 }
 body{
     width: 100vw;
@@ -317,9 +327,13 @@ body{
     white-space: nowrap;
 }
 
-#newgame{
+#gameman{
     grid-area: newgame;
     white-space: nowrap;
+}
+
+#gameman > button{
+    display: block;
 }
 
 #game-main.playing > #stuffs{

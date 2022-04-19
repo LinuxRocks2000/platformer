@@ -22,22 +22,29 @@
             <div id="gameselect">
                 <select id="gameselectDropdown"></select>
             </div>
-            <button id="newgame" onclick="window.gm.newGame(prompt('New game name:', ''));window.gm.displayGameMenu()">
-                New Game
-            </button>
+            <div id="gameman">
+                <button id="newgame" onclick="window.gm.newGame(prompt('New game name:', ''));window.gm.displayGameMenu()">
+                    New Game
+                </button>
+                <button onclick="window.gm.settings.games[window.gm.curGameIndex].beaten = [];window.gm.loadLevels();">Replay Phase</button>
+                <button onclick="window.gm.settings.games[window.gm.curGameIndex].phase = 0;window.gm.loadLevels();">Reset Game</button>
+                <button onclick="window.gm.beat();">Skip Level</button>
+            </div>
             <div id="multiplayerCheckbox">
                 <input type="checkbox">Multiplayer mode?</input>
             </div>
             <a href="about.html" id="aboutlink">About Platformer (and instructions)</a>
         </div>
-        <div class = "endbanner" id = "gameover" style="display: none;">
-            Game over.
+        <div class="endbanner-wrapper">
+            <div class = "endbanner" id = "gameover" style="display: none;">
+                <span>Game over.</span>
+            </div>
         </div>
         <div class = "endbanner" id = "gamewin" style = "display: none">
-            You win! Your score:
+            <span>You win! Your score:</span>
         </div>
         <div class = "endbanner" id = "gamebeat" style = "display: none">
-            You've beaten all of Platformer! I'll reset your saved game now. Good job!
+            <span>You've beaten all of Platformer! I'll reset your saved game now. Good job!</span>
         </div>
         <div id="game-main">
             <ul id="stuffs">
