@@ -1599,6 +1599,7 @@ const levels = [
         skippable: false,
         difficulty: 1,
         phase: 0,
+        stage: 0,
         fallingIsSafe: true,
         oncreate(game){
             game.startX = 0;
@@ -1614,24 +1615,25 @@ const levels = [
             game.create(190, 5, 40, 1);
             game.create(190, -3, 1, 8);
             this.lastWall = game.create(229, -3, 1, 8);
+            this.stage = 0; // Javascript.
         },
         onloop(game){
-            if (this.phase == 0){
+            if (this.stage == 0){
                 if (game.player.x > 2000){
                     game.player.x = 10000;
-                    this.phase = 1;
+                    this.stage = 1;
                     var boss = game.create(220, -2, 1, 2, "lava", "enemy", PlayerbossBoss);
                     boss.onDie = () => {
-                        this.phase = 2;
+                        this.stage = 2;
                         game.player.clearWeapon();
                     };
                 }
             }
-            else if (this.phase == 2){
+            else if (this.stage == 2){
                 game.deleteBrick(this.lastWall);
-                this.phase ++
+                this.stage ++
             }
-            else if (this.phase == 3){
+            else if (this.stage == 3){
                 if (game.player.y > 800){
                     game.player.y = 0;
                     game.player.x = 0;
@@ -1704,6 +1706,8 @@ class GameManager{
     showLevels(){
         var options = "";
         this.levels.forEach((item, i) => {
+            console.log(item);
+            console.log(this.beaten.indexOf(item.name));
             if (item.phase == this.curPhase && this.beaten.indexOf(item.name) == -1){
                 options += `<option id="` + item.name + `">` + item.name + `</option>`;
             }
@@ -1855,7 +1859,6 @@ class GameManager{
                 setTimeout(() => {
                     this.youLoseEl.style.display = "none";
                 }, 500);
-                this.showMenu();
             }
             else if (retVal == 2){
                 this.beatLevel();
@@ -1883,12 +1886,12 @@ class GameManager{
                         this.beaten = [];
                     }
                 }
-                this.showMenu();
             }
             if (retVal > 0){
                 localStorage.storage = JSON.stringify(this.storage);
-                this.game.win = false;
-                this.game.die = false;
+                this.showMenu();
+                //this.game.win = false;
+                //this.game.die = false;
             }
         }
     }
