@@ -1,0 +1,274 @@
+@keyframes spin {
+    0%{
+        transform: perspective(300px) rotateY(0deg);
+    }
+
+    100%{
+        transform: perspective(300px) rotateY(360deg);
+    }
+}
+
+#game > div{
+    position: absolute;
+}
+
+.normal{
+    background-color: brown;
+}
+
+.player{
+    background-color: green;
+}
+
+body {
+    overflow: hidden;
+}
+
+.lava{
+    background-color: red;
+}
+
+.coin{
+    animation-name: spin;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-timing-function: linear;
+}
+
+.coin > span{
+    background-color: yellow;
+    border-radius: 100%;
+    display: inline-block;
+    position: relative; /* Relative is easier to read than absolute in this case - it should be placed *relative* to the outer brick */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.tencoin > span{
+    padding: 5px;
+}
+
+.fiftycoin > span{
+    padding: 10px;
+}
+
+.jumpthrough{
+    background-color: yellow;
+}
+
+.ice{
+    background-color: lightblue;
+}
+
+.tar{
+    background-color: black;
+}
+
+#menu {
+    display: flex;
+    flex-direction: column;
+    width: 100vw; /* VW = % viewport width */
+    height: 100vh; /* VH = % viewport height */
+    position: absolute; /* Remove it from the document flow so it isn't messed up by the margins on other elements */
+    top: 0px; /* position: absolute; doesn't take effect until we do this */
+    left: 0px; /* Ditto */
+    overflow: hidden; /* On some browsers, an element that perfectly fits the viewport will trip scrollbars; this prevents that. */
+}
+
+#levelname{
+    grid-area: levelname;
+    margin: auto; /* This wasn't added in the tutorial, but you should add it anyways. It will fix later issues. */
+}
+
+#playbutton{
+    grid-area: playbutton;
+    margin: auto;
+}
+
+h1{
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 3em;
+}
+
+#playbutton > button{
+    min-width: 100px;
+    min-height: 50px;
+    border-radius: 0px;
+    text-decoration: none;
+    border: none;
+}
+
+.end{
+    background-color: green;
+}
+
+.coverwall{
+    width: 100vw; /* Cover the entire width and height */
+    height: 100vh;
+    position: absolute; /* Remove it from normal document flow and set it to the top-left corner */
+    top: 0px;
+    left: 0px;
+    background-color: white; /* Set the background color to opaque white, the default is transparent */
+    overflow: hidden; /* Elements with width 100vw or height 100vh may trip unnecessary scrollbars, this prevents that. */
+}
+
+.coverwall > span{
+    position: absolute;
+    display: inline-block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2em;
+    font-family: sans-serif;
+}
+
+.swarm{
+    background-color: purple;
+    border-radius: 100%;
+}
+
+#healthbar{
+    top: 5px;
+    left: 5px;
+    height: 20px;
+    width: 300px;
+    background-color: grey;
+}
+
+#healthbar > span{
+    height: 100%;
+    display: inline-block;
+    background-color: red;
+    transition: width 1s;
+}
+
+.harmImmune{
+    opacity: 0.5;
+}
+
+#harm{
+    background-color: red;
+    transition: opacity 0.25s;
+    opacity: 0;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    z-index: 100000000000000000000000000;
+    pointer-events: none;
+}
+
+#levelname > *{
+    font-size: 1.5em;
+}
+
+.heal{
+    background-color: green;
+    animation-name: spin;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: alternate;
+    border-radius: 10%;
+}
+
+#highscore-wrapper{
+    text-align: center;
+}
+
+#highscores{
+    background-color: white;
+    border: 2px solid black;
+    text-align: center;
+    padding: 50px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    font-family: monospace;
+    font-size: 2em;
+}
+
+#highscores > div{
+    background-color: yellow;
+    margin: 5px;
+    font-size: 0.75em;
+}
+
+#highscores > div:first-child{
+    background-color: red !important;
+}
+
+#exit{
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.sign{
+    background-color: yellow;
+}
+
+.sign > p{
+    display: none;
+}
+
+.sign:hover > p{
+    display: inline-block;
+    width: 80vw;
+    height: 80vh;
+    background-color: rgba(240, 30, 30, 0.7);
+    border-radius: 50px;
+    padding: 50px;
+    box-sizing: border-box;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.glass{
+    background-color: silver;
+    opacity: 0.7;
+}
+
+.bullet{
+    background-color: black;
+    border-radius: 100%;
+}
+
+.pretty-average-sword{
+    background-color: black;
+    position: absolute;
+}
+
+.enemyhealthbar{
+    background-color: black;
+    height: 5px;
+}
+
+.enemyhealthbar > span{
+    background-color: red;
+    display: block;
+    height: 100%;
+}
+
+.cannon{
+    background-color: black;
+}
+
+#menu > a{
+    width: 100%;
+    text-align: center;
+}

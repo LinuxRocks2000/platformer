@@ -2,82 +2,41 @@
 <html lang="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <title>Platformer: the game of the name of the genre</title>
-        <link rel="stylesheet" href="css/main.css">
+        <title>Platformer From Scratch Tutorial chapter 6</title>
+        <link rel="stylesheet" href="main.css" />
     </head>
     <body>
-        <div id = "menu">
-            <div id="levelselect">
-                <select id="dropdown">
+        <div id="harm"></div>
+        <div id="game"></div>
+        <div id="menu" style="display: none;">
+            <h1>Platformer edition 2</h1>
+            <a href="../platformer-old">Play old platformer</a>
+            <div id="levelname">
+                <select id="levelselect">
+
                 </select>
-            </div>
-            <div id = "mobileOrNot" style="display: none;">
-                <input type = "checkbox">Mobile</input>
-            </div>
-            <div id = "playbutton-wrapper">
-                <button id="playbutton">
-                    Play
+                <button id="skipbutton" onclick="gm.skip()">
+                    Skip
                 </button>
             </div>
-            <div id="gameselect">
-                <select id="gameselectDropdown"></select>
+            <div id="playbutton">
+                <button onclick="gm.play()">Play</button>
             </div>
-            <div id="gameman">
-                <button id="newgame" onclick="window.gm.newGame(prompt('New game name:', ''));window.gm.displayGameMenu()">
-                    New Game
-                </button>
-                <button onclick="window.gm.settings.games[window.gm.curGameIndex].beaten = [];window.gm.loadLevels();">Replay Phase</button>
-                <button onclick="window.gm.settings.games[window.gm.curGameIndex].phase = 0;window.gm.loadLevels();">Reset Game</button>
-                <button onclick="window.gm.beat();">Skip Level</button>
-            </div>
-            <div id="multiplayerCheckbox">
-                <input type="checkbox">Multiplayer mode?</input>
-            </div>
-            <a href="about.html" id="aboutlink">About Platformer (and instructions)</a>
-        </div>
-        <div class="endbanner-wrapper">
-            <div class = "endbanner" id = "gameover" style="display: none;">
-                <span>Game over.</span>
+            <div id="highscore-wrapper">
+                <button id="highscore" onclick="gm.showHighscores();">Highscore table</button>
             </div>
         </div>
-        <div class = "endbanner" id = "gamewin" style = "display: none">
-            <span>You win! Your score:</span>
+        <div id="highscores" style="display: none;">
         </div>
-        <div class = "endbanner" id = "gamebeat" style = "display: none">
-            <span>You've beaten all of Platformer! I'll reset your saved game now. Good job!</span>
+        <div id="youwin" class="coverwall" style="display: none;">
+            <span>You win!</span>
         </div>
-        <div id="game-main">
-            <ul id="stuffs">
-                <li id="shielding">
-                    Shielding:
-                    <div>
-                        <span class="bar"></span>
-                    </div>
-                </li>
-                <li id="flight">
-                    Flight:
-                    <div>
-                        <span class="bar"></span>
-                    </div>
-            </ul>
-            <div id="playerstats">
-                <span id="ammocount">Bombs: 0</span>
-            </div>
+        <div id="youlose" class="coverwall" style="display: none;">
+            <span>You lose.</span>
         </div>
-        <div id="minigame" style = "display: none;"></div>
-        <div id="annoyingbanner" style="" onclick="this.style.display = 'none'">
-            <h1>This is important</h1>
-            <p>
-                Recently, Vladimir Putin, the evil oligarch of Russia ("evil" meaning "commits human rights violations", "violates the Genova treaty", and "tortures political opponents") invaded the Ukraine. <br />
-                True to his evil definition, he has targeted civilians and used illegal weaponry such as vacuum explosives on the public. America's lawmakers, especially our president, have failed to intervene beyond sanctions which will not effect them enough to stop the attack. <br />
-                <b>What does Russia care</b> if they are economically isolated? The Ukraine will not be left alone because America doesn't pay for Russian goods any more.<br />
-                Thus, as owner of LinuxRocks2000.github.io and as a citizen of the United States of America, I send a message to the inactive lawmakers of America:
-                <h2>STOP Russia from attacking the Ukraine. Provide them with all the equipment they need. Prevent a beautiful democracy from falling into the hands of evil oligarchs, and demonstrate yourself better than them.</h2>
-                <h2>Save Ukraine!</h2>
-                You can escape this box by clicking it.
-            </p>
+        <div id="youfinish" class="coverwall" style="display: none;">
+            <span>You've finished the entire game! You didn't set a high score, unfortunately. I'll reset you to bottom so you can try again.</span>
         </div>
-        <script src="js/joystick.js" type="text/javascript"></script>
-        <script src="js/main.js" charset="utf-8"></script>
+        <script type="text/javascript" src="main.js"></script>
     </body>
 </html>

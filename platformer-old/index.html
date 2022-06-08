@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Platformer: the game of the name of the genre</title>
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        <div id = "menu">
+            <a href="../platformer-game">Platformer edition 2</a>
+            <div id="levelselect">
+                <select id="dropdown">
+                </select>
+            </div>
+            <div id = "mobileOrNot" style="display: none;">
+                <input type = "checkbox">Mobile</input>
+            </div>
+            <div id = "playbutton-wrapper">
+                <button id="playbutton">
+                    Play
+                </button>
+            </div>
+            <div id="gameselect">
+                <select id="gameselectDropdown"></select>
+            </div>
+            <div id="gameman">
+                <button id="newgame" onclick="window.gm.newGame(prompt('New game name:', ''));window.gm.displayGameMenu()">
+                    New Game
+                </button>
+                <button onclick="window.gm.settings.games[window.gm.curGameIndex].beaten = [];window.gm.loadLevels();">Replay Phase</button>
+                <button onclick="window.gm.settings.games[window.gm.curGameIndex].phase = 0;window.gm.loadLevels();">Reset Game</button>
+                <button onclick="window.gm.beat();">Skip Level</button>
+            </div>
+            <div id="multiplayerCheckbox">
+                <input type="checkbox">Multiplayer mode?</input>
+            </div>
+            <a href="about.html" id="aboutlink">About Platformer (and instructions)</a>
+        </div>
+        <div class="endbanner-wrapper">
+            <div class = "endbanner" id = "gameover" style="display: none;">
+                <span>Game over.</span>
+            </div>
+        </div>
+        <div class = "endbanner" id = "gamewin" style = "display: none">
+            <span>You win! Your score:</span>
+        </div>
+        <div class = "endbanner" id = "gamebeat" style = "display: none">
+            <span>You've beaten all of Platformer! I'll reset your saved game now. Good job!</span>
+        </div>
+        <div id="game-main">
+            <ul id="stuffs">
+                <li id="shielding">
+                    Shielding:
+                    <div>
+                        <span class="bar"></span>
+                    </div>
+                </li>
+                <li id="flight">
+                    Flight:
+                    <div>
+                        <span class="bar"></span>
+                    </div>
+            </ul>
+            <div id="playerstats">
+                <span id="ammocount">Bombs: 0</span>
+            </div>
+        </div>
+        <script src="js/joystick.js" type="text/javascript"></script>
+        <script src="js/main.js" charset="utf-8"></script>
+    </body>
+</html>

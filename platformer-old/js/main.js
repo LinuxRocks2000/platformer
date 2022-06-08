@@ -501,8 +501,8 @@ r                                                     r
 `
 
 var test =`
-    i
-rrrrrrrr
+r       r
+rrrrrrrrr
 `
 
 function Easter(Y) { // Thank'y stackoverflow!
@@ -537,14 +537,14 @@ window.phase = 1; // Unlock new levels by doing a good job.
 window.levelsBeaten = 0; // Beat 2 levels to go to the next phase.
 window.phases = [
     [
-        /*{
+        {
             id: 2500,
             name: "test",
             func: function(g){
                 g.createByTileset(0, 0, test);
             }
         },
-        {
+        /*{
             id: 178,
             name: "Town of Arimoria, Gunther's Waste",
             func: function(g){
@@ -1704,6 +1704,7 @@ class Game{
         this.keysCount = 0;
         this.endings = [];
         this.unstables = []; // Unstables delete when all keys are collected.
+        this.dumpPoint = undefined;
     }
     arbitraryRestructure(){
 
