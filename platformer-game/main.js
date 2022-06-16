@@ -1009,7 +1009,7 @@ class PlayerbossBoss extends Brick{
         var hypotenuse = Math.sqrt(distY * distY + distX * distX);
         var xm = distX/hypotenuse * -1;
         var ym = distY/hypotenuse * -1;
-        this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "solid", BulletEnemy, {xv: xm * 15, yv: ym * 15, damage: 10});
+        this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "bullet", BulletEnemy, {xv: xm * 15, yv: ym * 15, damage: 10});
     }
 
     specialCollision(type){
@@ -1288,7 +1288,7 @@ class ShooterEnemy extends Brick{
     shoot(){
         var thingX = Math.cos((this.angle + 90) * Math.PI/180);
         var thingY = Math.sin((this.angle + 90) * Math.PI/180);
-        this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "bullet", "solid", BulletEnemy, {xv: thingX * 20, yv: thingY * 20});
+        this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "bullet", "bullet", BulletEnemy, {xv: thingX * 20, yv: thingY * 20});
     }
 }
 
@@ -1313,7 +1313,7 @@ class CannonEnemy extends Brick{
     }
 
     shoot(){
-        this.game._create(this.x - this.game.blockWidth/2 + this.width/2 + ((this.game.player.x < this.x ? -1 : 1) * this.game.blockWidth), this.y, this.game.blockWidth, this.game.blockHeight, "bullet", "solid", BulletEnemy, {
+        this.game._create(this.x - this.game.blockWidth/2 + this.width/2 + ((this.game.player.x < this.x ? -1 : 1) * this.game.blockWidth), this.y, this.game.blockWidth, this.game.blockHeight, "bullet", "bullet", BulletEnemy, {
             xv: ((this.game.player.x < this.x ? -1 : 1) * 15),
             yv: 0,
             damage: 50
@@ -1764,7 +1764,8 @@ class Game {
             "glass": [0, []],
             "field": [0, []],
             "water": [0, []],
-            "key": [0, []]
+            "key": [0, []],
+            "bullet": [0, []]
         }
         var iter = (item, i) => {
             if (item != object){ // Yes, this plagues me.
@@ -1828,11 +1829,12 @@ class PlayerFriendlyBullet extends Brick{
         this.friction = 1;
         this.frictionY = 1;
         this.specialCollisions.push("enemy");
+        this.specialCollisions.push("bullet");
         this.TTL = config.TTL || 50;
     }
 
     specialCollision(type, items){
-        if (type == "enemy"){
+        if (type == "enemy" || type == "bullet"){
             items.forEach((item, i) => {
                 item.damage(15);
                 this.game.deleteBrick(this);
@@ -2125,7 +2127,7 @@ const levels = [
         }
     },
     {
-        "name": "Climb of Death",
+        "name": "Scaffolding",
         skippable: false,
         cantCollect: false,
         difficulty: 0.7,
