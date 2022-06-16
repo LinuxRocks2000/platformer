@@ -66,6 +66,194 @@ function isLineOffRect(rect, line){
            (line[1] > rect[3] && line[3] > rect[3])
 }
 
+const BrickDrawer = {
+    coinPulse: 30,
+    coinPulseFlip: false,
+    drawBrick(ctx, x, y, width, height, style, type, game){
+        ctx.fillStyle = "transparent"; // Default
+        var isRect = false;
+        var isTransparent = false;
+        var isCircle = false;
+        switch(style){
+            case "normal":
+                ctx.fillStyle = "brown";
+                isRect = true;
+                break;
+            case "lava":
+                ctx.fillStyle = "red";
+                isRect = true;
+                break;
+            case "coin":
+                ctx.fillStyle = "yellow";
+                isCircle = true;
+                break;
+            case "sign":
+                ctx.fillStyle = "#AA4A44";
+                isRect = true;
+                break;
+            case "heal":
+                ctx.fillStyle = "green";
+                isRect = true;
+                break;
+            case "swarm":
+                ctx.fillStyle = "purple";
+                isCircle = true;
+                break;
+            case "jumpthrough":
+                ctx.fillStyle = "yellow";
+                isRect = true;
+                break;
+            case "end":
+                if (game.keyCount > 0){
+                    isTransparent = true;
+                }
+                ctx.fillStyle = "green";
+                isRect = true;
+                break;
+            case "glass":
+                ctx.fillStyle = "rgb(192, 192, 192, 0.7)";
+                isRect = true;
+                break;
+            case "bullet":
+                ctx.fillStyle = "black";
+                isCircle = true;
+                break;
+            case "pretty-average-sword":
+                ctx.fillStyle = "black";
+                isRect = true;
+                break;
+            case "cannon":
+                ctx.fillStyle = "black";
+                isRect = true;
+                break;
+            case "shooter":
+                ctx.fillStyle = "purple";
+                isCircle = true;
+                break;
+            case "water":
+                ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
+                isRect = true;
+                break;
+            case "fish":
+                ctx.fillStyle = "rgb(0, 0, 255)";
+                isRect = true;
+                break;
+            case "ourbullet":
+                ctx.fillStyle = "yellow";
+                isCircle = true;
+                break;
+            case "seabrick":
+                ctx.fillStyle = "rgb(0, 50, 0)";
+                isRect = true;
+                break;
+            case "key":
+                ctx.fillStyle = "yellow";
+                ctx.fillRect(x, y, width, height);
+                ctx.save();
+                ctx.beginPath();
+                ctx.fillStyle = "white";
+                ctx.translate(x + width/2, y + height/2);
+                ctx.arc(0, 7, 7, 0, Math.PI*2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(2, 0);
+                ctx.lineTo(2, -20);
+                ctx.lineTo(-2, -20);
+                ctx.lineTo(-2, -15);
+                ctx.lineTo(-8, -15);
+                ctx.lineTo(-8, -13);
+                ctx.lineTo(-2, -13);
+                ctx.lineTo(-2, -10);
+                ctx.lineTo(-8, -10);
+                ctx.lineTo(-8, -8);
+                ctx.lineTo(-2, -8);
+                ctx.lineTo(-2, 0);
+                ctx.fill();
+                ctx.closePath();
+                ctx.restore();
+                break;
+            case "ice":
+                ctx.fillStyle = "lightblue";
+                isRect = true;
+                break;
+            case "tar":
+                ctx.fillStyle = "black";
+                isRect = true;
+                break;
+        }
+        ctx.save();
+        if (isTransparent){
+            ctx.globalAlpha = 0.5;
+        }
+        if (type == "enemy"){
+            ctx.strokeStyle = "orange";
+            ctx.lineWidth = 2;
+        }
+        if (type == "tencoin" || type == "fiftycoin" || type == "heal"){
+            ctx.globalAlpha = this.coinPulse/255;
+            this.coinPulse += 5 * (this.coinPulseFlip ? -1 : 1);
+            if (this.coinPulse >= 255 || this.coinPulse <= 10){
+                this.coinPulseFlip = !this.coinPulseFlip;
+            }
+        }
+        if (isRect){
+            ctx.fillRect(x, y, width, height);
+            if (type == "enemy"){
+                ctx.strokeRect(x, y, width, height);
+            }
+        }
+        else if (isCircle){
+            ctx.beginPath();
+            ctx.arc(x + width/2, y + width/2, width/2, 0, 2 * Math.PI, false);
+            ctx.fill();
+            if (type == "enemy"){
+                ctx.stroke();
+            }
+        }
+        if (type == "tencoin" || type == "fiftycoin"){
+            ctx.font = "bold 20px serif";
+            ctx.fillStyle = "black";
+            ctx.textAlign = "center";
+        }
+        if (type == "tencoin"){
+            ctx.fillText("10", x + width/2, y + height/2 + 5);
+        }
+        if (type == "fiftycoin"){
+            ctx.fillText("50", x + width/2, y + height/2);
+        }
+        ctx.restore()
+    },
+    drawText(ctx, x, y, width, height, text, fontData = {}){
+        var fontSize = fontData.fontSize || 10;
+        var spacing = 1.1;
+
+        var curLine = "";
+        var curY = fontSize;
+        ctx.font = fontSize + 'px serif';
+        ctx.fillStyle = "black";
+        text.split(" ").forEach((item, i) => {
+            if (curLine == ""){
+                curLine += item;
+            }
+            else if (ctx.measureText(curLine + " " + item).width > width || item == "\n"){
+                if (curLine[0] == " "){
+                    curLine = "";
+                }
+                ctx.fillText(curLine, x, y + curY);
+                curLine = item;
+                curY += fontSize * spacing;
+            }
+            else {
+                curLine += " " + item;
+            }
+        });
+        if (curLine != ""){
+            ctx.fillText(curLine, x, y + curY);
+        }
+    }
+};
+
 class PhysicsObject{
     constructor(game, x, y, width, height, isStatic){
         this.game = game;
@@ -80,6 +268,7 @@ class PhysicsObject{
         this.frictionY = 1;
         this.frictionChangeX = 1;
         this.frictionChangeY = 1;
+        this.gravityChangeY = 1;
         this.isStatic = isStatic;
         this.collisions = ["solid"]; // Solid is always a collision!
         this.specialCollisions = []; // No default special collisions.
@@ -97,8 +286,6 @@ class PhysicsObject{
 
     loop(framesElapsed){
         if (!this.isStatic){
-            //this.x = Math.round(this.x * 10) / 10; // I hate this but it helps with the decimal precision bug.
-            //this.y = Math.round(this.y * 10) / 10; // I hate this but it helps with the decimal precision bug.
             this.touchingTop = false;
             this.touchingBottom = false;
             this.touchingLeft = false;
@@ -107,8 +294,8 @@ class PhysicsObject{
             this.yv *= Math.pow(this.frictionY * this.frictionChangeY, framesElapsed);
             this.frictionChangeX = 1;
             this.frictionChangeY = 1;
-            this.yv += (this.gravity * framesElapsed);
-
+            this.yv += (this.gravity * framesElapsed * this.gravityChangeY);
+            this.gravityChangeY = 1;
             this.move(0, this.yv * framesElapsed);
             var collY = this.doCollision(this.game.checkCollision(this));
             if (collY[0]){
@@ -132,7 +319,6 @@ class PhysicsObject{
             }
 
             this.move(this.xv * framesElapsed, 0);
-            //this.x = Math.round(this.x);
             var didCollide = false;
             var collX = this.doCollision(this.game.checkCollision(this));
             if (collX[0]){
@@ -235,18 +421,12 @@ class Brick extends PhysicsObject{
     constructor(game, x, y, width, height, style, type, isStatic){
         super(game, x, y, width, height, isStatic);
         this.game = game;
-        this.element = document.createElement("div");
-        document.getElementById("game").appendChild(this.element);
         this.type = type;
-        this.element.classList.add(style);
-        this.element.classList.add(type);
-        if (type == "tencoin"){
-            this.element.innerHTML = "<span>10</span>";
-        }
-        if (type == "fiftycoin"){
-            this.element.innerHTML = "<span>50</span>";
-        }
         // This happens last!
+        this.artPos = {
+            x: 0,
+            y: 0
+        };
         this.draw();
         this.dead = false; // I think there's some weird memory crap going on where things can die twice. Thus, this fixes it.
         this.isHealthbar = false;
@@ -256,42 +436,72 @@ class Brick extends PhysicsObject{
         this.harmImmune = 0;
         this.sightRange = 200;
         this.collisions.push("field"); // Fields repel enemies and blocks, but not players.
+        this.style = style;
+        this.signName = "";
+        this.signText = "";
+        this.artPos = {
+            x: 0,
+            y: 0
+        };
+        if (this.type == "key"){
+            this.game.keyCount ++;
+        }
+
+        this.transparents = ["glass", "none", "key", "water", "jumpthrough", "ice", "tar"];
     }
 
     draw(){
         if (!this.dead){
-            this.element.style.width = this.width + "px";
-            this.element.style.height = this.height + "px";
-            this.element.style.left = (this.x - this.game.player.x + (window.innerWidth - this.game.player.width) / 2) - this.game.viewPos.x + "px";
-            this.element.style.top = (this.y - this.game.player.y + (window.innerHeight - this.game.player.height) / 2) - this.game.viewPos.y + "px";
+            BrickDrawer.drawBrick(this.game.ctx, this.artPos.x,
+                                                 this.artPos.y,
+                                                 this.width,
+                                                 this.height,
+                                                 this.style,
+                                                 this.type,
+                                                 this.game);
+            if (this.style == "sign"){
+                if (this.game.mousePos.gameX > this.x && this.game.mousePos.gameY > this.y && this.game.mousePos.gameX < this.x + this.width && this.game.mousePos.gameY < this.y + this.height){
+                    if (!this.signActive){
+                        var sign = document.getElementById("sign");
+                        sign.innerHTML = this.signText;
+                        sign.classList.add("active");
+                        this.signActive = true;
+                    }
+                }
+                else if (this.signActive){
+                    this.signActive = false;
+                    var sign = document.getElementById("sign");
+                    sign.classList.remove("active");
+                }
+                BrickDrawer.drawText(this.game.ctx, this.artPos.x, this.artPos.y, this.width, this.height, this.signName);
+            }
         }
     }
 
     loop(framesElapsed){
         if (!this.dead){
+            this.artPos.x = Math.round(this.x - this.game.player.x + (window.innerWidth - this.game.player.width) / 2);
+            this.artPos.y = Math.round(this.y - this.game.player.y + (window.innerHeight - this.game.player.height) / 2);
+            if (this.harmImmune > 0){
+                this.game.ctx.globalAlpha = 0.5;
+            }
+            this.draw();
+            this.game.ctx.globalAlpha = 1;
             super.loop(framesElapsed);
         }
         if (this.isHealthbar){
             this.drawHealthBar();
         }
-        if (this.harmImmune > 0){
-            this.element.classList.add("harmImmune");
-        }
         var oldHarmImmune = this.harmImmune;
         this.harmImmune -= framesElapsed;
-        if (oldHarmImmune > 0 && this.harmImmune < 0){
-            this.element.classList.remove("harmImmune");
-        }
     }
 
     remove(){
         if (!this.dead){
-            this.element.style.display = "none"; // Just in case, we don't want lingering graphics assets in the case that death fails.
-            this.element.parentNode.removeChild(this.element);
             this.dead = true;
         }
-        if (this.isHealthbar){
-            this.healthbar.parentNode.removeChild(this.healthbar);
+        if (this.type == "key"){
+            this.game.keyCount --;
         }
     }
 
@@ -305,7 +515,7 @@ class Brick extends PhysicsObject{
             }
             if (canSee){
                 this.game.tileset.forEach((item, i) => {
-                    if (item.type != "glass" && item.type != "none"){ // They can see through glass and None.
+                    if (this.transparents.indexOf(item.type) == -1){ // They can see through anything in that list.
                         var rect = [item.x, item.y, item.x + item.width, item.y + item.height];
                         if (!isRectOffLine(rect, lineToPlayer) && !isLineOffRect(rect, lineToPlayer) && item != this){
                             canSee = false;
@@ -318,16 +528,10 @@ class Brick extends PhysicsObject{
     }
 
     drawHealthBar(){
-        if (!this.healthbar){
-            this.healthbar = document.createElement("div");
-            this.healthbar.classList.add("enemyhealthbar");
-            this.healthbar.innerHTML = "<span></span>";
-            this.healthbar.style.width = this.maxHealth + "px";
-            document.getElementById("game").appendChild(this.healthbar);
-        }
-        this.healthbar.children[0].style.width = this.health + "px";
-        this.healthbar.style.left = (this.x + this.width/2 - this.maxHealth/2 - this.game.player.x + (window.innerWidth - this.game.player.width) / 2) - this.game.viewPos.x + "px";
-        this.healthbar.style.top = (this.y - 20 - this.game.player.y + (window.innerHeight - this.game.player.height) / 2) - this.game.viewPos.y + "px";
+        this.game.ctx.fillStyle = "grey";
+        this.game.ctx.fillRect(this.artPos.x - this.maxHealth/2 + this.width/2, this.artPos.y - 10, this.maxHealth, 10);
+        this.game.ctx.fillStyle = "red";
+        this.game.ctx.fillRect(this.artPos.x - this.maxHealth/2 + this.width/2, this.artPos.y - 10, this.health, 10);
     }
 
     damage(amount){
@@ -510,7 +714,7 @@ class SwarmFlyer extends Brick{ // Averaging swarm
 
 
 class BatEnemy extends Brick{
-    constructor(game, x, y, width, height, style, type){
+    constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.state = 0;
         this.isStatic = true;
@@ -518,19 +722,24 @@ class BatEnemy extends Brick{
         this.collisions.push("player");
         this.elasticityX = 0;
         this.elasticityY = 0;
-        this.health = 30;
-        this.maxHealth = 30;
+        this.health = config.health || 30;
+        this.maxHealth = config.health || 30;
         this.isDamageable = true;
         this.swoop = 0;
     }
 
     onDie(){
         this.game._create(this.x, this.y, this.width, this.height, "heal", "heal");
+        this.game.player.collect(15);
     }
 
     onDamage(){
         this.xv *= -5;
         this.swoop = 1;
+        if (this.state == 0){ // Wake it up if it takes damage
+            this.state = 1;
+            this.isStatic = false;
+        }
     }
 
     specialCollision(type, items){
@@ -604,6 +813,93 @@ class BatEnemy extends Brick{
 }
 
 
+class FishEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.stage = 0;
+        this.goal = 0;
+        this.isStatic = false;
+        this.gravity = 0.75;
+        this.frictionY = 1;
+        this.friction = 0.9;
+        this.range = config.range || 500;
+        this.specialCollisions.push("water");
+        this.collisions.push("player");
+        this.specialCollisions.push("player");
+        this.inWater = true;
+        this.isDamageable = true;
+        this.health = 30;
+        this.maxHealth = 30;
+        this.sightRange = config.sightRange || 400; // 8 block activation field
+        this.frozen = true;
+    }
+
+    onDie(){
+        this.game.player.collect(5);
+    }
+
+    onDamage(){
+        this.frozen = false;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.frozen){
+            if (this.canSeePlayer()){
+                this.frozen = false;
+            }
+            else{
+                return;
+            }
+        }
+        if (this.stage == 0){
+            this.goal = this.x + Math.random() * this.range;
+            if (this.x > this.game.player.x){
+                this.goal *= -1;
+                gm.bumpTime();
+            }
+            this.stage = 1;
+        }
+        else if (this.stage == 1){
+            this.xv += 2 * framesElapsed * (this.x < this.goal ? 1 : -1);
+            if (Math.abs(this.x - this.goal) < 20){
+                this.stage = 0;
+            }
+        }
+        if (this.game.player.y < this.y && this.inWater){
+            this.yv --;
+        }
+        if (!this.inWater){
+            this.yv += 1;
+        }
+    }
+
+    specialCollision(type){
+        if (type == "water"){
+            this.inWater = true;
+        }
+        if (type == "player"){
+            this.game.player.harm(30);
+            this.stage = 0;
+        }
+    }
+
+    noSpecial(type){
+        if (type == "water"){
+            this.inWater = false;
+        }
+    }
+
+    hitLeft(){
+        this.stage = 0;
+    }
+
+    hitRight(){
+        this.stage = 0;
+    }
+}
+
+
 class PlayerbossBoss extends Brick{
     constructor(game, x, y, width, height, style, type){
         super(game, x, y, width, height, style, type);
@@ -618,6 +914,7 @@ class PlayerbossBoss extends Brick{
         this.shootPhase = 0;
         this.shotsFired = 0;
         this.waitTime = 0;
+        this.hasVolleyed = false;
     }
 
     seekPlayer(framesElapsed){
@@ -661,12 +958,16 @@ class PlayerbossBoss extends Brick{
         super.loop(framesElapsed);
         if (this.mode == 0){
             if (this.seekPlayer(framesElapsed)){
+                if (Math.random() < 0.8){
+                    this.shootBat();
+                }
                 var rand = Math.random();
                 if (rand < 0.3){
                     this.mode = 1;
                 }
-                else if (rand < 0.6){
+                else if (rand < 0.6 || !this.hasVolleyed){ // It can't go into freeze mode until it's fired a volley off.
                     this.mode = 2;
+                    this.hasVolleyed = true;
                 }
                 else{
                     this.mode = 3;
@@ -698,13 +999,17 @@ class PlayerbossBoss extends Brick{
         }
     }
 
+    shootBat(){
+        this.game._create(this.x + this.width/2 - this.game.blockWidth/2, this.y - this.game.blockHeight - 20, this.game.blockWidth, this.game.blockHeight, "bullet", "enemy", BatEnemy, {health: 10})
+    }
+
     shootSmall(){ // Same equations as for shooter enemies.
         var distX = this.x - (this.game.player.x + this.game.player.width/2);
         var distY = this.y - (this.game.player.y + this.game.player.height/2);
         var hypotenuse = Math.sqrt(distY * distY + distX * distX);
         var xm = distX/hypotenuse * -1;
         var ym = distY/hypotenuse * -1;
-        this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "enemy", BulletEnemy, {xv: xm * 15, yv: ym * 15, damage: 10});
+        this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "solid", BulletEnemy, {xv: xm * 15, yv: ym * 15, damage: 10});
     }
 
     specialCollision(type){
@@ -786,6 +1091,93 @@ class RaisingPlatform extends Brick{
 }
 
 
+class SideMovingPlatform extends Brick{
+    constructor(game, x, y, width, height, style, type){
+        super(game, x, y, width, height, style, type);
+        this.gravity = 0;
+        this.isStatic = false;
+        this.xv = 7;
+        this.friction = 1;
+        this.elasticityX = 1;
+        this.restrictInteger = true;
+        this.collisions.push("stopblock");
+        this.collisions.push("player");
+    }
+}
+
+
+class TrapperPlatformVertical extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.gravity = 0;
+        this.playerIn = false;
+        this.playerSide = false;
+        this.specialCollisions.push("player");
+        this.trapStyle = style;
+        this.trapType = type;
+        this.style = "";
+        this.type = "none";
+        this.onClose = config.onClose;
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            if (!this.playerIn){
+                this.playerSide = this.game.player.x > this.x; // Record what side the player entered by
+            }
+            this.playerIn = true;
+        }
+    }
+
+    noSpecial(type){
+        if (type == "player"){
+            if (this.playerIn){
+                this.playerIn = false;
+                if (this.game.player.x > this.x != this.playerSide){ // It only closes if the player enters on one side and exits on the other.
+                    this.style = this.trapStyle;
+                    this.type = this.trapType;
+                    if (this.onClose){
+                        this.onClose();
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+class SpringerEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.springType = config.springType;
+        this.springStyle = config.springStyle;
+        this.springSpecial = config.springSpecial;
+        this.shotsRemaining = config.shots || 3;
+        this.phase = 100;
+        this.sightRange = 800;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.canSeePlayer()){
+            this.phase -= framesElapsed;
+            if (this.phase < 0){
+                this.shoot();
+                this.phase = 100;
+            }
+        }
+    }
+
+    shoot(){
+        if (this.shotsRemaining > 0){
+            this.game._create(this.x, this.y - this.game.blockHeight * 1.5, this.game.blockWidth, this.game.blockHeight, this.springStyle, this.springType, this.springSpecial);
+            this.shotsRemaining --;
+        }
+    }
+}
+
+
 class BulletEnemy extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
@@ -796,16 +1188,21 @@ class BulletEnemy extends Brick{
         else{
             this.yv = config.yv;
         }
-        this.damage = config.damage || 30;
+        this.danger = config.danger || 30;
         this.specialCollisions.push("player");
         this.collisions.push("player");
         this.friction = 1;
         this.gravity = 0;
+        this.isDamageable = true;
+    }
+
+    onDie(){
+        this.game.player.collect(2);
     }
 
     specialCollision(type){
         if (type == "player"){
-            this.game.player.harm(this.damage);
+            this.game.player.harm(this.danger);
         }
     }
 
@@ -832,7 +1229,9 @@ class ShooterEnemy extends Brick{
         super(game, x, y, width, height, style, type);
         this.isStatic = true;
         this.phase = 0;
-        this.sightRange = Infinity;
+        this.angle = 0;
+        this.angleV = 0;
+        this.sightRange = config.sightRange || Infinity;
         if (config.shootAbove == undefined){
             this.shootAbove = true;
         }
@@ -843,37 +1242,63 @@ class ShooterEnemy extends Brick{
 
     loop(framesElapsed){
         super.loop(framesElapsed);
+        var goalAngle = 0;
+        var angleFric = 0.9;
         if (this.canSeePlayer()){
             this.phase += framesElapsed;
-            if (this.phase > 20){
+            var distX = this.x + this.width/2 - (this.game.player.x + this.game.player.width/2);
+            var distY = this.y + this.height/2 - (this.game.player.y + this.game.player.height/2);
+            var hypotenuse = Math.sqrt(distY * distY + distX * distX);
+            goalAngle = Math.acos(distX/hypotenuse) * 180/Math.PI + 90;
+            if (distY < 0){
+                goalAngle -= 180;
+                goalAngle *= -1;
+            }
+            if (this.phase > 10){
                 this.phase = 0;
                 this.shoot();
             }
+            angleFric = 0.95;
         }
+        if (goalAngle > this.angle){
+            this.angleV += framesElapsed * 0.75;
+        }
+        else if (goalAngle < this.angle){
+            this.angleV -= framesElapsed * 0.75;
+        }
+        this.angle += this.angleV * framesElapsed;
+        this.angleV *= angleFric;
+        var ctx = this.game.ctx;
+        ctx.save();
+        ctx.translate(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+        ctx.rotate(this.angle * Math.PI/180);
+        ctx.fillStyle = "grey";
+        ctx.beginPath();
+        ctx.translate(0, 20);
+        ctx.moveTo(-5, -5);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(5, -5);
+        ctx.lineTo(0, 20);
+        ctx.lineTo(-5, -5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
     }
 
     shoot(){
-        var distX = this.x - (this.game.player.x + this.game.player.width/2);
-        var distY = this.y - (this.game.player.y + this.game.player.height/2);
-        var hypotenuse = Math.sqrt(distY * distY + distX * distX);
-        var xm = distX/hypotenuse * -1;
-        var ym = distY/hypotenuse * -1;
-        if (this.shootAbove){
-            this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "enemy", BulletEnemy, {xv: xm * 25, yv: ym * 25});
-        }
-        else{
-            this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "enemy", BulletEnemy, {xv: xm * 25, yv: ym * 25});
-        }
+        var thingX = Math.cos((this.angle + 90) * Math.PI/180);
+        var thingY = Math.sin((this.angle + 90) * Math.PI/180);
+        this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "bullet", "solid", BulletEnemy, {xv: thingX * 20, yv: thingY * 20});
     }
 }
 
 
 class CannonEnemy extends Brick{
-    constructor(game, x, y, width, height, style, type){
+    constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.isStatic = true;
         this.phase = Math.random() * 100;
-        this.sightRange = 1000;
+        this.sightRange = config.sightRange || 1000;
     }
 
     loop(framesElapsed){
@@ -888,7 +1313,7 @@ class CannonEnemy extends Brick{
     }
 
     shoot(){
-        this.game._create(this.x - this.game.blockWidth/2 + this.width/2 + ((this.game.player.x < this.x ? -1 : 1) * this.game.blockWidth), this.y, this.game.blockWidth, this.game.blockHeight, "bullet", "enemy", BulletEnemy, {
+        this.game._create(this.x - this.game.blockWidth/2 + this.width/2 + ((this.game.player.x < this.x ? -1 : 1) * this.game.blockWidth), this.y, this.game.blockWidth, this.game.blockHeight, "bullet", "solid", BulletEnemy, {
             xv: ((this.game.player.x < this.x ? -1 : 1) * 15),
             yv: 0,
             damage: 50
@@ -900,13 +1325,10 @@ class CannonEnemy extends Brick{
 class Player extends PhysicsObject{
     constructor(game, x, y, width, height){
         super(game, x, y, width, height);
-        this.element = document.createElement("div");
-        document.getElementById("game").appendChild(this.element);
-        this.element.classList.add("player");
         this.healthbar = document.createElement("div");
         this.healthbar.id = "healthbar";
         this.healthbar.style.display = "none";
-        document.getElementById("game").appendChild(this.healthbar);
+        document.body.appendChild(this.healthbar);
         this.healthbar.innerHTML = "<span></span>";
         this.keysHeld = {}; // {} means a new dictionary-like object.
         document.addEventListener("keydown", (event) => {
@@ -918,6 +1340,11 @@ class Player extends PhysicsObject{
         document.addEventListener("keyup", (event) => {
             this.keysHeld[event.key] = false;
         });
+        document.addEventListener("mousedown", (event) => {
+            if (this.weapon){
+                this.weapon.trigger();
+            }
+        });
         this.specialCollisions.push("killu"); // Register killu as a special collision type
         this.specialCollisions.push("tencoin") // Add ten coins to special collisions
         this.specialCollisions.push("fiftycoin"); // Fifty coins
@@ -926,6 +1353,8 @@ class Player extends PhysicsObject{
         this.specialCollisions.push("tar");
         this.specialCollisions.push("end");
         this.specialCollisions.push("heal");
+        this.specialCollisions.push("water");
+        this.specialCollisions.push("key");
         this.collisions.push("glass");
         this.collisions.push("enemy");
         this._score = 0;
@@ -942,6 +1371,16 @@ class Player extends PhysicsObject{
         this.doSignalCollisions = true;
         this.weapon = undefined;
         this.direction = 0;
+        this.inWater = false;
+        this.artPos = {
+            x: 0,
+            y: 0
+        };
+        this.collectAnimation = {
+            yPos: 0,
+            amount: 0,
+            startPos: 0
+        };
     }
 
     giveWeapon(weapon){
@@ -972,7 +1411,7 @@ class Player extends PhysicsObject{
             if (goImmune){
                 this.harmImmune = 50;
             }
-            this.element.classList.add("harmImmune");
+            //this.element.classList.add("harmImmune");
             if (this.health <= 0){
                 this.game.die = true;
             }
@@ -992,7 +1431,6 @@ class Player extends PhysicsObject{
 
     set score(val){
         this._score = val;
-        this.element.innerHTML = this._score;
     }
 
     get score(){
@@ -1000,15 +1438,21 @@ class Player extends PhysicsObject{
     }
 
     draw(){
-        this.element.style.left = (window.innerWidth - this.width) / 2 - this.game.viewPos.x + "px";
-        this.element.style.top = (window.innerHeight - this.height) / 2 - this.game.viewPos.y + "px";
-        this.element.style.width = this.width + "px";
-        this.element.style.height = this.height + "px";
+        this.artPos.x = Math.round((window.innerWidth - this.width) / 2);
+        this.artPos.y = Math.round((window.innerHeight - this.height) / 2);
+        this.game.ctx.fillStyle = "green";
+        this.game.ctx.fillRect(this.artPos.x,
+                               this.artPos.y,
+                               this.width,
+                               this.height);
+        this.game.ctx.fillStyle = "black";
+        this.game.ctx.font = "bold 16px sans-serif";
+        this.game.ctx.fillText(this.score + "", this.artPos.x, this.artPos.y + 16);
     }
 
     Jump(){
-        if (this.touchingBottom || this.monkey > 0){
-            this.yv = -22;
+        if (this.touchingBottom || this.monkey > 0 || this.inWater){
+            this.yv = this.inWater ? -13 : -22;
             this.monkey = 0;
         }
     }
@@ -1024,25 +1468,25 @@ class Player extends PhysicsObject{
     loop(framesElapsed){
         framesElapsed *= this.timerate;
         super.loop(framesElapsed);
-        if (this.keysHeld["ArrowUp"]){
+        if (this.keysHeld["ArrowUp"] || this.keysHeld["w"]){
             this.Jump();
         }
-        if (this.keysHeld["ArrowLeft"]){
+        if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"]){
             this.Left(framesElapsed);
             this.direction = -1;
         }
-        if (this.keysHeld["ArrowRight"]){
+        if (this.keysHeld["ArrowRight"] || this.keysHeld["d"]){
             this.Right(framesElapsed);
             this.direction = 1;
         }
-        if (this.keysHeld["ArrowDown"]){
+        if (this.keysHeld["ArrowDown"] || this.keysHeld["s"]){
             this.jumpthroughing = true;
         }
         if (this.harmImmune >= 0){
             this.harmImmune -= framesElapsed;
         }
         else{
-            this.element.classList.remove("harmImmune");
+            //this.element.classList.remove("harmImmune");
         }
         this.monkey -= framesElapsed;
 
@@ -1057,9 +1501,35 @@ class Player extends PhysicsObject{
             this.x = this.game.startX;
             this.y = this.game.startY;
         }
+        if (this.harmImmune > 0){
+            this.game.ctx.globalAlpha = 0.5;
+        }
+        this.draw();
+        this.game.ctx.globalAlpha = 1;
         if (this.weapon){
             this.weapon.loop(framesElapsed);
         }
+        if (this.collectAnimation.amount > 0){
+            this.game.ctx.globalAlpha = this.collectAnimation.yPos/this.collectAnimation.startPos;
+            this.collectAnimation.yPos -= 10 * framesElapsed;
+            this.game.ctx.fillStyle = "gold";
+            this.game.ctx.font = "bold 40px sans-serif";
+            this.game.ctx.textAlign = "center";
+            this.game.ctx.fillText(this.collectAnimation.amount + "", window.innerWidth/2, this.collectAnimation.yPos);
+            this.game.ctx.textAlign = "left";
+            this.game.ctx.globalAlpha = 1;
+            if (this.collectAnimation.yPos < 0){
+                this.collectAnimation.amount = 0;
+            }
+        }
+    }
+
+    collect(amount){
+        this.score += amount;
+        this.collectedRecently += amount;
+        this.collectAnimation.amount = amount;
+        this.collectAnimation.yPos = window.innerHeight/2;
+        this.collectAnimation.startPos = window.innerHeight/2;
     }
 
     specialCollision(type, items){
@@ -1071,22 +1541,20 @@ class Player extends PhysicsObject{
         if (type == "tencoin"){
             items.forEach((item, index) => {
             	this.game.deleteBrick(item);
-                this.score += 10;
-                this.collectedRecently += 10;
+                this.collect(10);
             });
         }
         if (type == "fiftycoin"){
             items.forEach((item, index) => {
             	this.game.deleteBrick(item);
-                this.score += 50;
-                this.collectedRecently += 50;
+                this.collect(50);
             });
         }
         if (type == "heal"){
             items.forEach((item, index) => {
             	this.game.deleteBrick(item);
                 this.health += Math.random() * 100;
-                this.score += 5;
+                this.collect(5);
             });
         }
         if (type == "jumpthrough"){
@@ -1099,6 +1567,11 @@ class Player extends PhysicsObject{
                 }
             }
         }
+        if (type == "key"){
+            items.forEach((item, i) => {
+                this.game.deleteBrick(item);
+            });
+        }
         if (type == "ice"){
             this.frictionChangeX = 0.99/this.friction; // Arithmetic. this.friction * 1 / this.friction == this.friction / this.friction == 1. We can do the same thing with 0.99, 0.8, etc, but 1 will do for now.
             return true; // Ice is always solid
@@ -1107,8 +1580,15 @@ class Player extends PhysicsObject{
             this.frictionChangeX = 0.5/this.friction;
             return true;
         }
-        if (type == "end"){
+        if (type == "end" && this.game.keyCount <= 0){
             this.game.win = true;
+            this.collect(30);
+        }
+        if (type == "water"){
+            this.inWater = true;
+            this.gravityChangeY = 0.7;
+            this.frictionChangeY = 0.9;
+            this.frictionChangeX = 0.7;
         }
     }
 
@@ -1116,15 +1596,16 @@ class Player extends PhysicsObject{
         if (type == "jumpthrough"){
             this.jumpthroughing = false;
         }
+        if (type == "water"){
+            this.inWater = false;
+        }
     }
 
     endGame(){
-        this.element.style.display = "none"; // This sets the css property display to none, hiding it and making it inactive.
         this.healthbar.style.display = "none";
         if (this.cantCollect){
             this.score -= this.collectedRecently;
         }
-        this.collectedRecently = 0;
         if (this.weapon){
             this.clearWeapon();
         }
@@ -1133,12 +1614,12 @@ class Player extends PhysicsObject{
     start(){
         this.x = this.game.startX;
         this.y = this.game.startY;
-        this.element.style.display = ""; // Leaving it blank means it will go to the default, or what we set in main.css.
         this.healthbar.style.display = "";
         this.xv = 0;
         this.yv = 0;
         this.health = 100;
         this.harmImmune = 0;
+        this.collectedRecently = 0;
     }
 
     clearWeapon(){
@@ -1158,10 +1639,13 @@ class Game {
         this.player = new Player(this, this.startX, this.startY, this.blockWidth, this.blockHeight * 2); // Players are usually 1x2 blocks. Feel free to change as you wish.
         this.playing = false;
         this.win = false;
+        this.keyCount = 0;
         this.die = false;
         this.mousePos = {
             x: 0,
-            y: 0
+            y: 0,
+            gameX: 0, // Relative to the game
+            gameY: 0
         };
         this.viewPos_real = {
             x: 0,
@@ -1181,6 +1665,14 @@ class Game {
         this.toDelete = [];
         this.minimumExtent = -Infinity;
         this.fallingKills = true;
+        this.canvas = document.getElementById("game");
+        var resize = () => {
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
+        }
+        window.addEventListener("resize", resize);
+        resize();
+        this.ctx = this.canvas.getContext("2d");
     }
 
     jitter(amount){
@@ -1203,22 +1695,24 @@ class Game {
 
     sign(x, y, label, text){
         var brick = this.create(x, y, 1, 1, "sign", "none");
-        brick.element.innerHTML = label + "<p>" + text + "</p>";
+        brick.signName = label;
+        brick.signText = text;
     }
 
     loop(framesElapsed){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.playing){
-            this.tileset.forEach((item, i) => {
-                item.loop(framesElapsed);
-                item.draw();
-            });
-            this.player.loop(framesElapsed);
-            this.player.draw();
             this.viewPos.x += (this.viewPos_real.x - this.viewPos.x) / 20 - this.player.xv/10;
             this.viewPos.y += (this.viewPos_real.y - this.viewPos.y) / 20 - this.player.yv/10;
             this.viewPos.x += Math.random() * this.viewJitter - this.viewJitter/2;
             this.viewPos.y += Math.random() * this.viewJitter - this.viewJitter/2;
             this.viewJitter *= 0.8;
+            this.ctx.translate(-Math.round(this.viewPos.x), -Math.round(this.viewPos.y));
+            this.player.loop(framesElapsed);
+            this.tileset.forEach((item, i) => {
+                item.loop(framesElapsed);
+            });
+            this.ctx.translate(Math.round(this.viewPos.x), Math.round(this.viewPos.y));
         }
         if (this.die){
             this.end();
@@ -1227,20 +1721,26 @@ class Game {
         else if (this.win){
             this.end();
             return 2;
-        }/*
-        this.toDelete.forEach((brick, i) => {
-            brick.remove();
-            this.tileset.splice(this.tileset.findIndex((object) => {
-                return object.id == brick.id;
-            }), 1);
-        });*/
-        this.tileset.forEach((item, i) => {
-            if (this.toDelete.indexOf(item) != -1){
-                item.remove();
-                this.tileset.splice(this.tileset.indexOf(item), 1);
-            }
-        });
-        this.toDelete = [];
+        }
+        var newTileset = [];
+        if (this.toDelete.length > 0){ // Don't do expensive operations without cause
+            this.tileset.forEach((item, i) => {
+                if (this.toDelete.indexOf(item) == -1){
+                    newTileset.push(item);
+                }
+            });
+            this.tileset = newTileset;
+            this.toDelete = [];
+        }
+        this.mousePos.gameX = this.player.x + this.player.width/2 + (this.mousePos.x - window.innerWidth/2) + this.viewPos.x;
+        this.mousePos.gameY = this.player.y + this.player.height/2 + (this.mousePos.y - window.innerHeight/2) + this.viewPos.y;
+        if (this.keyCount > 0){
+            this.ctx.textAlign = "center";
+            this.ctx.font = "bold 30px monospace";
+            this.ctx.fillStyle = "black";
+            this.ctx.fillText("Keys left: " + this.keyCount, window.innerWidth/2, 30);
+            this.ctx.textAlign = "left";
+        }
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
@@ -1262,14 +1762,17 @@ class Game {
             "enemy": [0, []],
             "stopblock": [0, []],
             "glass": [0, []],
-            "field": [0, []]
+            "field": [0, []],
+            "water": [0, []],
+            "key": [0, []]
         }
         var iter = (item, i) => {
             if (item != object){ // Yes, this plagues me.
                 if (object.x + object.width > item.x && // && means "and"
                     object.x < item.x + item.width &&
                    	object.y + object.height > item.y &&
-                   	object.y < item.y + item.height){
+                   	object.y < item.y + item.height &&
+                !item.dead){
                     if (item.type != undefined){ // Don't do this for items that don't have a type, it'll break if you do!
                         collisionsDict[item.type][0] ++; // Increment the first item (javascript is 0 indexed, meaning 0 is the first item in a list)
                         collisionsDict[item.type][1].push(item); // Add the item to the array at index 1 (the second element)
@@ -1285,21 +1788,16 @@ class Game {
     }
 
     end(){ // Clear the stuff from the level.
+        this.ctx.fillStyle = "rgb(255, 255, 255, 0.8)"
+        this.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
         this.deleteAllBricks();
         this.player.endGame();
         this.playing = false;
         document.getElementById("menu").style.display = "";
     }
 
-    doShowThing(element){
-        element.style.display = ""; // Show the element by resetting display (we've seen this before!)
-        setTimeout(() => {
-            element.style.display = "none"; // Hide the element by setting display to none (we've seen this before as well!)
-        }, 2000);
-    }
-
     deleteBrick(brick){
-        console.log(brick);
+        brick.remove();
         this.toDelete.push(brick);
     }
 
@@ -1320,7 +1818,54 @@ class Game {
     }
 }
 
-// Demo
+
+class PlayerFriendlyBullet extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.xv = config.xv || 1;
+        this.yv = config.yv || 0;
+        this.gravity = 0;
+        this.friction = 1;
+        this.frictionY = 1;
+        this.specialCollisions.push("enemy");
+        this.TTL = config.TTL || 50;
+    }
+
+    specialCollision(type, items){
+        if (type == "enemy"){
+            items.forEach((item, i) => {
+                item.damage(15);
+                this.game.deleteBrick(this);
+            });
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        this.TTL -= framesElapsed;
+        gm.bumpTime();
+        if (this.TTL < 0){
+            this.game.deleteBrick(this);
+        }
+    }
+
+    hitTop(){
+        this.game.deleteBrick(this);
+    }
+
+    hitLeft(){
+        this.game.deleteBrick(this);
+    }
+
+    hitBottom(){
+        this.game.deleteBrick(this);
+    }
+
+    hitRight(){
+        this.game.deleteBrick(this);
+    }
+}
+
 
 class PrettyAverageSwordBrick extends Brick{
     constructor(game, x, y, width, height, style, type){
@@ -1337,7 +1882,7 @@ class PrettyAverageSwordBrick extends Brick{
 
 var PrettyAverageSword = {
     init(player){
-        this.brick = player.game._create(player.x + player.width/2, player.y + player.height/2, 10, 10, "pretty-average-sword", "none", PrettyAverageSwordBrick);
+        this.brick = player.game._create(player.x + player.width/2, player.y + player.height/2 - 5, 10, 10, "pretty-average-sword", "none", PrettyAverageSwordBrick);
         this.game = player.game;
         this.slashing = 0;
         this.slashDir = 0;
@@ -1384,6 +1929,61 @@ var PrettyAverageSword = {
     }
 };
 
+var BasicGun = {
+    phase: 0,
+    gunTimeout: 20,
+    distX: 0,
+    distY: 0,
+    hypotenuse: 0,
+    init(player){
+        this.player = player;
+    },
+    trigger(){
+        if (this.player.score > 0){
+            if (this.phase < 0){
+                this.shoot();
+                this.phase = this.gunTimeout;
+            }
+        }
+        else{
+            this.player.game.jitter(30);
+        }
+    },
+    shoot(){
+        this.player.collect(-1);
+        var xm = this.distX/this.hypotenuse * -1;
+        var ym = this.distY/this.hypotenuse * -1;
+        this.player.game._create(this.player.x + this.player.width/2 - 5, this.player.y + this.player.height/2 - 5, 10, 10, "ourbullet", "none", PlayerFriendlyBullet, {xv: xm * 20, yv: ym * 20});
+    },
+    loop(framesElapsed){
+        this.distX = this.player.x + this.player.width/2 - this.player.game.mousePos.gameX;
+        this.distY = this.player.y + this.player.height/2 - this.player.game.mousePos.gameY;
+        this.hypotenuse = Math.sqrt(this.distY * this.distY + this.distX * this.distX);
+        this.phase -= framesElapsed;
+        var ctx = this.player.game.ctx;
+        if (this.phase > 0){
+            ctx.fillStyle = "black";
+            ctx.fillRect(this.player.artPos.x + this.player.width/2 - this.phase/2, this.player.artPos.y + this.player.height/2 - 20, this.phase, 5);
+        }
+        ctx.save();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2;
+        ctx.translate(this.player.artPos.x + this.player.width/2, this.player.artPos.y + this.player.height/2);
+        ctx.rotate((Math.acos(this.distY/this.hypotenuse) - Math.PI/2 + (this.distX > 0 ? Math.PI : 0)) * (this.distX > 0 ? -1 : 1));
+        ctx.beginPath();
+        ctx.arc(0, 0, 10, Math.PI * 0.2, Math.PI * 1.8);
+        ctx.lineTo(26, 0);
+        ctx.lineTo(10, 5);
+        ctx.stroke();
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.restore();
+    },
+    destroy(){
+
+    }
+}
+
 const levels = [
     {
         name: "Training",
@@ -1396,8 +1996,9 @@ const levels = [
         oncreate(game){
             game.startX = 0;
             game.startY = 0;
+            this.stage = 0;
             game.create(-2, 3, 12, 1);
-            game.sign(-1, 2, "Mouse Over Me", "Welcome to Platformer 2nd Edition! What you have put your mouse over is a sign. Signs always contain helpful information, and you should always put your mouse over them.<br/>You can move in Platformer with the arrow keys. Up to jump, left to go left, right to go right. This level is a simple tutorial which introduces you to all the game elements. To go to the next phase of the tutorial, go right off this platform and fall.");
+            game.sign(-1, 2, "Mouse Over Me", "Welcome to Platformer 2nd Edition! What you have put your mouse over is a sign. Signs always contain helpful information, and you should always put your mouse over them.<br />You can move in Platformer with the arrow keys. Up to jump, left to go left, right to go right. This level is a simple tutorial which introduces you to all the game elements. To go to the next phase of the tutorial, go right off this platform and fall.");
         },
         onloop(game, framesElapsed){
             if (game.player.health < 10){
@@ -1524,9 +2125,49 @@ const levels = [
         }
     },
     {
+        "name": "Climb of Death",
+        skippable: false,
+        cantCollect: false,
+        difficulty: 0.7,
+        phase: 0,
+        fallingIsSafe: false,
+        oncreate(game){
+            game.create(-3, -3, 1, 7);
+            game.create(-2, 3, 4, 1);
+            game.create(2, 3, 8, 1, "ice", "ice");
+            game.create(10, 3, 1, 7);
+            game.create(11, 9, 7, 1);
+            game.create(13, 8, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(18, 7, 1, 3);
+            game.create(19, 5, 1, 3);
+            game.create(20, 3, 1, 3);
+            game.create(21, 3, 6, 1);
+            game.create(22, -3, 1, 3);
+            game.create(26, -6, 1, 9);
+            game.create(23, -1, 3, 1, "jumpthrough", "jumpthrough");
+            game.create(12, -3, 10, 1, "glass", "glass");
+            game.create(17, -7, 10, 1, "glass", "glass");
+            game.create(12, -21, 1, 18);
+            game.create(16, -17, 1, 11);
+            game.create(13, -7, 3, 1, "jumpthrough", "jumpthrough");
+            game.create(13, -11, 3, 1, "jumpthrough", "jumpthrough");
+            game.create(13, -15, 3, 1, "jumpthrough", "jumpthrough");
+            game.create(12, -22, 18, 1);
+            game.create(17, -17, 24, 1, "glass", "glass");
+            game.create(40, -16, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(40, -18, 1, 1, "end", "end");
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+
+        }
+    },
+    {
         name: "Fortress",
         skippable: false,
-        difficulty: 1,
+        difficulty: 0.6,
         phase: 0,
         oncreate(game){
             game.startX = 50;
@@ -1547,10 +2188,10 @@ const levels = [
             game.create(77, -9, 1, 5);
             game.create(57, 0, 20, 1, "glass", "glass");
 
-            game.create(57, 6, 1, 1, "glass", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(76, 6, 1, 1, "glass", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(57, -8, 1, 1, "glass", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(76, -8, 1, 1, "glass", "killu", ShooterEnemy, {shootAbove: false});
+            game.create(57, 6, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+            game.create(76, 6, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+            game.create(57, -8, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+            game.create(76, -8, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
             game.create(57, -6, 1, 1, "coin", "fiftycoin");
             game.create(56, -4, 1, 4, "glass", "field");
             game.create(77, -4, 1, 4, "glass", "field");
@@ -1601,17 +2242,19 @@ const levels = [
         phase: 0,
         stage: 0,
         fallingIsSafe: true,
+        bats: [],
         oncreate(game){
             game.startX = 0;
             game.startY = 0;
             game.create(-5, 3, 50, 1);
             game.create(-5, -5, 1, 8);
             game.create(44, -5, 1, 8);
-            game.sign(3, 2, "", "Welcome to the first bossfight! First, kill all the bats, then warp over to the boss zone by walking to the wall on the other side. When you beat the boss, the wall will open - jump off to get to the end!");
+            game.sign(3, 2, "", "Welcome to the first bossfight! First, kill all the bats, then warp over to the boss zone by walking to the wall on the other side. When you beat the boss, the wall will open - jump off to get to the end!<br/><br/>I have given you the legendary Sword that Isn't Very Awesome, you can aim it with your mouse and click (or press spacebar) to stab.");
             game.player.giveWeapon(PrettyAverageSword);
-            game.create(5, -1, 1, 1, "bullet", "enemy", BatEnemy);
-            game.create(15, -1, 1, 1, "bullet", "enemy", BatEnemy);
+            this.bats.push(game.create(5, -1, 1, 1, "bullet", "enemy", BatEnemy));
+            this.bats.push(game.create(15, -1, 1, 1, "bullet", "enemy", BatEnemy));
             game.create(30, 1, 1, 1, "cannon", "solid", CannonEnemy);
+            game.create(30, 2, 1, 1);
             game.create(190, 5, 40, 1);
             game.create(190, -3, 1, 8);
             this.lastWall = game.create(229, -3, 1, 8);
@@ -1626,7 +2269,13 @@ const levels = [
                     boss.onDie = () => {
                         this.stage = 2;
                         game.player.clearWeapon();
+                        game.jitter(50);
                     };
+                    this.bats.forEach((item, i) => {
+                        if (!item.dead){
+                            item.x = 9900 + i * 200;
+                        }
+                    });
                 }
             }
             else if (this.stage == 2){
@@ -1646,10 +2295,91 @@ const levels = [
                     game.create(1, 3, 1, 1, "heal", "heal");
                     game.create(2, 3, 1, 1, "heal", "heal");
                     game.create(6, 3, 1, 1, "end", "end");
+                    this.bats = [];
                 }
             }
         },
         ondestroy(game){
+
+        }
+    },
+    {
+        name: "Lake",
+        phase: 1,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.player.giveWeapon(BasicGun);
+            game.startY = -100;
+            game.create(-3, 1, 1, 12);
+            game.create(-3, 1, 6, 1);
+            game.create(-3, 13, 180, 1); // Bottom bricks
+            game.create(176, 1, 1, 12);
+            game.create(-2, 4, 178, 9, "water", "water");
+            game.create(-1, 3, 3, 1, "glass", "glass", SideMovingPlatform);
+            game.create(100, 3, 3, 1, "glass", "glass", SideMovingPlatform);
+            game.create(2, 12, 1, 1, "fish", "enemy", FishEnemy);
+            game.create(90, 2, 1, 1, "glass", "glass", CannonEnemy, {sightRange: Infinity}); // Just some crossfire to screw the player.
+            game.create(90, 1, 1, 1, "glass", "glass", CannonEnemy, {sightRange: Infinity}); // Just some crossfire to screw the player.
+            game.create(90, 3, 1, 7);
+            game.create(20, 7, 30, 1); // first seacave
+            game.create(40, 13, 1, 1, "seabrick", "solid", SpringerEnemy, {springStyle: "fish", springType: "enemy", springSpecial: FishEnemy, shots: 2});
+            game.create(20, 9, 1, 3, "seabrick", "solid", TrapperPlatformVertical);
+            game.create(49, 9, 1, 3, "seabrick", "solid", TrapperPlatformVertical, {
+                onClose(){
+                    game.create(52, 12, 1, 1, "heal", "heal");
+                    game.jitter(30);
+                }
+            });
+            game.sign(-2, 0, "", "To advance, you must find all the Keys. The level is perilous, but I have given you the Gun of Slightly Better but Still Not That Great. Aim with your mouse and fire with the mouse button or the spacebar. Your gun will take 1 coin every time you fire - every time you kill an enemy, you get some coin. Here's 10 to start out.<br /><br />Be careful of the Fish!");
+            game.create(-3, 0, 1, 1, "coin", "tencoin");
+            game.create(25, 8, 1, 1, "coin", "tencoin"); // Coins to entice
+            game.create(30, 8, 1, 1, "coin", "tencoin");
+            game.create(35, 8, 1, 1, "coin", "tencoin");
+            game.create(40, 8, 1, 1, "coin", "tencoin");
+            game.create(45, 8, 1, 1, "coin", "tencoin");
+            game.create(90, -2, 1, 1, "key", "key");
+            game.create(35, 12, 1, 1, "key", "key");
+            game.create(0, 0, 1, 1, "end", "end");
+            game.create(89, 0, 3, 1);
+            game.create(55, 9, 1, 1, "fish", "enemy", FishEnemy);
+            game.create(65, 10, 10, 1);
+            game.create(75, 10, 1, 3);
+            game.create(72, 12, 1, 1, "key", "key");
+            game.create(74, 12, 1, 1, "glass", "glass", CannonEnemy, {sightRange: 400});
+            game.create(90, 12, 1, 1, "heal", "heal");
+            game.create(105, 3, 9, 1);
+            game.create(105, 3, 1, 5);
+            game.create(105, 11, 10, 1);
+            game.create(114, 3, 1, 5);
+
+            game.create(106, 4, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(110, 7, 1, 1, "key", "key");
+            game.create(116, 12, 1, 1, "heal", "heal");
+
+            game.create(120, 4, 2, 9);
+            game.create(120, 3, 1, 1, "key", "key");
+            game.create(130, 4, 2, 9);
+            game.create(130, 3, 1, 1, "key", "key");
+            game.create(140, 4, 2, 9);
+            game.create(140, 3, 1, 1, "key", "key");
+            game.create(150, 4, 2, 9);
+            game.create(150, 3, 1, 1, "key", "key");
+            game.create(160, 4, 2, 9);
+            game.create(160, 3, 1, 1, "key", "key");
+            game.create(115, 3, 1, 1, "shooter", "enemy", ShooterEnemy);
+
+            //game.create(165, 10, 1, 1, "fish", "enemy", FishEnemy, {sightRange: Infinity});
+            game.create(180, 0, 1, 1, "key", "key");
+            game.create(175, 12, 1, 1, "heal", "heal");
+            game.create(177, 1, 5, 1);
+            game.create(181, -5, 1, 6);
+            game.create(170, 4, 3, 1, "glass", "glass", SideMovingPlatform);
+        },
+        onloop(){
+
+        },
+        ondestroy(){
 
         }
     }
@@ -1856,9 +2586,10 @@ class GameManager{
             this.curLevelObj.onloop(this.game, framesElapsed);
             if (retVal == 1){
                 this.youLoseEl.style.display = "";
-                setTimeout(() => {
+                window.setTimeout(() => {
                     this.youLoseEl.style.display = "none";
                 }, 500);
+                this.game.player.score -= this.game.player.collectedRecently;
             }
             else if (retVal == 2){
                 this.beatLevel();
@@ -1890,8 +2621,6 @@ class GameManager{
             if (retVal > 0){
                 localStorage.storage = JSON.stringify(this.storage);
                 this.showMenu();
-                //this.game.win = false;
-                //this.game.die = false;
             }
         }
     }
