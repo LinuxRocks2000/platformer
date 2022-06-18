@@ -299,3 +299,25 @@ h1{
 .ourbullet{
     background-color: gold;
 }
+
+#studioDock{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#studioCopyExport{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    padding: 50px;
+    font-family: monospace;
+    color: grey;
+    background-color: white;
+}

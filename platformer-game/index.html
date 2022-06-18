@@ -29,6 +29,33 @@
                 <button id="highscore" onclick="gm.showHighscores();">Highscore table</button>
             </div>
         </div>
+        <div id="studioDock" style = "display: none;">
+            <b>Platformer Studio</b>
+            <div id="curStudioSelected">
+                [Select a block!]
+            </div>
+            <div id="changeBlock">
+                Change the properties of the selected brick:<br />
+                Style: <input type="text" id="changeBlockStyle"></input><br />
+                Type: <input type="text" id="changeBlockType"></input><br />
+                <button onclick="game.studioChangeType()">Change</button>
+            </div>
+            <div id="newBlock">
+                New block:<br/>
+                Style: <input type="text" id="newBlockStyle"></input><br />
+                Type: <input type="text" id="newBlockType"></input><br />
+                <button onclick="game.studioNewBlock()">New brick</button><br />
+            </div>
+            <div id="delete">
+                <button onclick="game.studioDelete()">Delete selected brick</button>
+            </div>
+            <div id="export">
+                <button onclick="game.studioExport()">Export your level</button>
+            </div>
+        </div>
+        <div id="studioCopyExport" style = "display: none;">
+
+        </div>
         <div id="highscores" style="display: none;">
         </div>
         <div id="youwin" class="coverwall" style="display: none;">

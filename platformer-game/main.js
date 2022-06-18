@@ -254,6 +254,7 @@ const BrickDrawer = {
     }
 };
 
+
 class PhysicsObject{
     constructor(game, x, y, width, height, isStatic){
         this.game = game;
@@ -448,6 +449,58 @@ class Brick extends PhysicsObject{
         }
 
         this.transparents = ["glass", "none", "key", "water", "jumpthrough", "ice", "tar"];
+        this.mouseOver = false;
+        this.studioSelected = false;
+        this.studioLeftHovered = false;
+        this.studioTopHovered = false;
+        this.studioRightHovered = false;
+        this.studioBottomHovered = false;
+
+        this.studioResizingTop = false;
+        this.studioResizingLeft = false;
+        this.studioResizingBottom = false;
+        this.studioResizingRight = false;
+        this.studioMoving = false;
+        this.studioMotionOffx = 0;
+        this.studioMotionOffy = 0;
+    }
+
+    beginResize(){
+        if (this.studioTopHovered){
+            this.studioResizingTop = true;
+        }
+        else if (this.studioLeftHovered){
+            this.studioResizingLeft = true;
+        }
+        else if (this.studioRightHovered){
+            this.studioResizingRight = true;
+        }
+        else if (this.studioBottomHovered){
+            this.studioResizingBottom = true;
+        }
+        else{
+            this.studioMoving = true;
+            this.studioMotionOffx = this.game.mousePos.gameX - this.x;
+            this.studioMotionOffy = this.game.mousePos.gameY - this.y;
+        }
+    }
+
+    endResize(){
+        this.studioResizingTop = false;
+        this.studioResizingLeft = false;
+        this.studioResizingRight = false;
+        this.studioResizingBottom = false;
+        this.studioMoving = false;
+    }
+
+    studioSelect(){
+        this.studioSelected = true;
+        var el = document.getElementById("curStudioSelected");
+        el.innerHTML = this.style + "/" + this.type + " block at " + "(" + this.x + ", " + this.y + ")";
+    }
+
+    studioUnselect(){
+        this.studioSelected = false;
     }
 
     draw(){
@@ -460,7 +513,7 @@ class Brick extends PhysicsObject{
                                                  this.type,
                                                  this.game);
             if (this.style == "sign"){
-                if (this.game.mousePos.gameX > this.x && this.game.mousePos.gameY > this.y && this.game.mousePos.gameX < this.x + this.width && this.game.mousePos.gameY < this.y + this.height){
+                if (this.mouseOver && !this.game.studioMode){
                     if (!this.signActive){
                         var sign = document.getElementById("sign");
                         sign.innerHTML = this.signText;
@@ -474,6 +527,75 @@ class Brick extends PhysicsObject{
                     sign.classList.remove("active");
                 }
                 BrickDrawer.drawText(this.game.ctx, this.artPos.x, this.artPos.y, this.width, this.height, this.signName);
+            }
+        }
+        if (this.studioSelected){
+            this.game.ctx.strokeStyle = "green";
+            this.game.ctx.lineWidth = 4;
+            this.game.ctx.strokeRect(this.artPos.x, this.artPos.y, this.width, this.height);
+        }
+        if (this.game.studioMode){
+            if (this.mouseOver){
+                this.game.ctx.strokeStyle = "blue";
+                this.game.ctx.lineWidth = 2;
+                this.game.ctx.strokeRect(this.artPos.x, this.artPos.y, this.width, this.height);
+            }
+        }
+        if (this.studioSelected){
+            if (Math.abs(this.game.mousePos.gameX - this.x) < 10 && this.game.mousePos.gameY > this.y && this.game.mousePos.gameY < this.y + this.height){
+                this.game.ctx.strokeStyle = "yellow";
+                this.game.ctx.lineWidth = 3;
+                this.game.ctx.beginPath();
+                this.game.ctx.moveTo(this.artPos.x, this.artPos.y);
+                this.game.ctx.lineTo(this.artPos.x, this.artPos.y + this.height);
+                this.game.ctx.closePath();
+                this.game.ctx.stroke();
+                this.studioLeftHovered = true;
+            }
+            else{
+                this.studioLeftHovered = false;
+            }
+
+            if (Math.abs(this.game.mousePos.gameX - this.x - this.width) < 10 && this.game.mousePos.gameY > this.y && this.game.mousePos.gameY < this.y + this.height){
+                this.game.ctx.strokeStyle = "yellow";
+                this.game.ctx.lineWidth = 3;
+                this.game.ctx.beginPath();
+                this.game.ctx.moveTo(this.artPos.x + this.width, this.artPos.y);
+                this.game.ctx.lineTo(this.artPos.x + this.width, this.artPos.y + this.height);
+                this.game.ctx.closePath();
+                this.game.ctx.stroke();
+                this.studioRightHovered = true;
+            }
+            else{
+                this.studioRightHovered = false;
+            }
+
+            if (Math.abs(this.game.mousePos.gameY - this.y) < 10 && this.game.mousePos.gameX > this.x && this.game.mousePos.gameX < this.x + this.width){
+                this.game.ctx.strokeStyle = "yellow";
+                this.game.ctx.lineWidth = 3;
+                this.game.ctx.beginPath();
+                this.game.ctx.moveTo(this.artPos.x, this.artPos.y);
+                this.game.ctx.lineTo(this.artPos.x + this.width, this.artPos.y);
+                this.game.ctx.closePath();
+                this.game.ctx.stroke();
+                this.studioTopHovered = true;
+            }
+            else{
+                this.studioTopHovered = false;
+            }
+
+            if (Math.abs(this.game.mousePos.gameY - this.y - this.height) < 10 && this.game.mousePos.gameX > this.x && this.game.mousePos.gameX < this.x + this.width){
+                this.game.ctx.strokeStyle = "yellow";
+                this.game.ctx.lineWidth = 3;
+                this.game.ctx.beginPath();
+                this.game.ctx.moveTo(this.artPos.x, this.artPos.y + this.height);
+                this.game.ctx.lineTo(this.artPos.x + this.width, this.artPos.y + this.height);
+                this.game.ctx.closePath();
+                this.game.ctx.stroke();
+                this.studioBottomHovered = true;
+            }
+            else{
+                this.studioBottomHovered = false;
             }
         }
     }
@@ -494,6 +616,47 @@ class Brick extends PhysicsObject{
         }
         var oldHarmImmune = this.harmImmune;
         this.harmImmune -= framesElapsed;
+        if (this.game.mousePos.gameX > this.x && this.game.mousePos.gameX < this.x + this.width
+        && this.game.mousePos.gameY > this.y && this.game.mousePos.gameY < this.y + this.height){
+            this.mouseOver = true;
+        }
+        else{
+            this.mouseOver = false;
+        }
+        if (this.studioResizingTop){
+            var yChange = this.game.mousePos.gameY - this.y;
+            this.y += yChange;
+            this.height -= yChange;
+            this.interlock();
+        }
+        if (this.studioResizingLeft){
+            var xChange = this.game.mousePos.gameX - this.x;
+            this.x += xChange;
+            this.width -= xChange;
+            this.interlock();
+        }
+        if (this.studioResizingBottom){
+            var yChange = this.game.mousePos.gameY - this.y - this.height;
+            this.height += yChange;
+            this.interlock();
+        }
+        if (this.studioResizingRight){
+            var xChange = this.game.mousePos.gameX - this.x - this.width;
+            this.width += xChange;
+            this.interlock();
+        }
+        if (this.studioMoving){
+            this.x = this.game.mousePos.gameX - this.studioMotionOffx;
+            this.y = this.game.mousePos.gameY - this.studioMotionOffy;
+            this.interlock();
+        }
+    }
+
+    interlock(){
+        this.x = this.game.nearestGridX(this.x);
+        this.y = this.game.nearestGridY(this.y);
+        this.width = this.game.nearestGridX(this.width);
+        this.height = this.game.nearestGridY(this.height);
     }
 
     remove(){
@@ -908,8 +1071,8 @@ class PlayerbossBoss extends Brick{
         this.collisions.push("player");
         this.specialCollisions.push("player");
         this.isDamageable = true;
-        this.health = 90;
-        this.maxHealth = 90;
+        this.health = 40;
+        this.maxHealth = 40;
         this.mode = 0;
         this.shootPhase = 0;
         this.shotsFired = 0;
@@ -941,6 +1104,9 @@ class PlayerbossBoss extends Brick{
                 this.game._create(this.x, this.y, this.game.blockWidth, this.game.blockHeight, "coin", "tencoin");
             }
         }
+        if (this.mode != 3){
+            this.xv += 20 * (this.game.player.x > this.x ? -1 : 1)
+        }
     }
 
     escapeSlow(framesElapsed){
@@ -958,7 +1124,7 @@ class PlayerbossBoss extends Brick{
         super.loop(framesElapsed);
         if (this.mode == 0){
             if (this.seekPlayer(framesElapsed)){
-                if (Math.random() < 0.8){
+                if (Math.random() < 0.5){
                     this.shootBat();
                 }
                 var rand = Math.random();
@@ -987,7 +1153,7 @@ class PlayerbossBoss extends Brick{
                     this.shotsFired = 0;
                     this.mode = 0;
                 }
-                this.shootPhase = 60;
+                this.shootPhase = 80;
             }
             this.shootPhase -= framesElapsed;
         }
@@ -1000,7 +1166,7 @@ class PlayerbossBoss extends Brick{
     }
 
     shootBat(){
-        this.game._create(this.x + this.width/2 - this.game.blockWidth/2, this.y - this.game.blockHeight - 20, this.game.blockWidth, this.game.blockHeight, "bullet", "enemy", BatEnemy, {health: 10})
+        this.game._create(this.x + this.width/2 - this.game.blockWidth/2, this.y - this.game.blockHeight - 20, this.game.blockWidth, this.game.blockHeight, "bullet", "enemy", BatEnemy, {health: 10}).sightRange = Infinity;
     }
 
     shootSmall(){ // Same equations as for shooter enemies.
@@ -1009,12 +1175,15 @@ class PlayerbossBoss extends Brick{
         var hypotenuse = Math.sqrt(distY * distY + distX * distX);
         var xm = distX/hypotenuse * -1;
         var ym = distY/hypotenuse * -1;
-        this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "bullet", BulletEnemy, {xv: xm * 15, yv: ym * 15, damage: 10});
+        this.game._create(this.x + this.width/2 - 5, this.y - 20, 10, 10, "bullet", "bullet", BulletEnemy, {xv: xm * 15, yv: ym * 15, damage: 7});
     }
 
     specialCollision(type){
         if (type == "player"){
-            this.game.player.harm(15); // Very little collision harm.
+            this.game.player.harm(17); // Very little collision harm.
+            if (Math.random() < 0.5){
+                this.Jump();
+            }
         }
     }
 
@@ -1325,6 +1494,8 @@ class CannonEnemy extends Brick{
 class Player extends PhysicsObject{
     constructor(game, x, y, width, height){
         super(game, x, y, width, height);
+        this.shielding = 0;
+        this.flight = 0;
         this.healthbar = document.createElement("div");
         this.healthbar.id = "healthbar";
         this.healthbar.style.display = "none";
@@ -1340,9 +1511,48 @@ class Player extends PhysicsObject{
         document.addEventListener("keyup", (event) => {
             this.keysHeld[event.key] = false;
         });
-        document.addEventListener("mousedown", (event) => {
+        document.getElementById("game").addEventListener("mousedown", (event) => {
             if (this.weapon){
                 this.weapon.trigger();
+            }
+            if (this.studioMode){
+                this.game.tileset.forEach((item, i) => {
+                    item.endResize();
+                });
+                this.game.tileset.forEach((item, i) => {
+                    if (item.studioSelected){
+                        item.beginResize();
+                    }
+                });
+            }
+        });
+        document.getElementById("game").addEventListener("mouseup", (event) => {
+            if (this.studioMode){
+                this.game.tileset.forEach((item, i) => {
+                    if (item.studioSelected){
+                        item.endResize();
+                    }
+                });
+            }
+        });
+        document.getElementById("game").addEventListener("click", (event) => {
+            if (this.studioMode){
+                var deselected = true;
+                this.game.tileset.forEach((item, i) => {
+                    item.endResize();
+                });
+                this.game.tileset.forEach((item, i) => {
+                    if (item.mouseOver){
+                        item.studioSelect();
+                        deselected = false;
+                    }
+                    else{
+                        item.studioUnselect();
+                    }
+                });
+                if (deselected){
+                    document.getElementById("curStudioSelected").innerHTML = "[Select a brick!]";
+                }
             }
         });
         this.specialCollisions.push("killu"); // Register killu as a special collision type
@@ -1381,6 +1591,12 @@ class Player extends PhysicsObject{
             amount: 0,
             startPos: 0
         };
+        this.studioMode = false;
+    }
+
+    studio(){
+        this.studioMode = true;
+        this.healthbar.style.display = "none";
     }
 
     giveWeapon(weapon){
@@ -1405,7 +1621,7 @@ class Player extends PhysicsObject{
     }
 
     harm(amount, goImmune = true){
-        if (this.harmImmune <= 0){
+        if (this.harmImmune <= 0 && !this.studioMode && this.shielding <= 0){
             amount *= this.calculateHarmReduction();
             this.health -= amount;
             if (goImmune){
@@ -1437,7 +1653,7 @@ class Player extends PhysicsObject{
         return this._score;
     }
 
-    draw(){
+    draw(framesElapsed){
         this.artPos.x = Math.round((window.innerWidth - this.width) / 2);
         this.artPos.y = Math.round((window.innerHeight - this.height) / 2);
         this.game.ctx.fillStyle = "green";
@@ -1448,6 +1664,24 @@ class Player extends PhysicsObject{
         this.game.ctx.fillStyle = "black";
         this.game.ctx.font = "bold 16px sans-serif";
         this.game.ctx.fillText(this.score + "", this.artPos.x, this.artPos.y + 16);
+        if (this.shielding > 0){
+            this.shielding -= framesElapsed / 4;
+            this.game.ctx.fillStyle = "lightgrey";
+            this.game.ctx.fillRect(this.artPos.x + this.width/2 - this.shielding/2, this.artPos.y - 10, this.shielding, 5);
+        }
+        if (this.collectAnimation.amount > 0){
+            this.game.ctx.globalAlpha = this.collectAnimation.yPos/this.collectAnimation.startPos;
+            this.collectAnimation.yPos -= 10 * framesElapsed;
+            this.game.ctx.fillStyle = "gold";
+            this.game.ctx.font = "bold 40px sans-serif";
+            this.game.ctx.textAlign = "center";
+            this.game.ctx.fillText(this.collectAnimation.amount + "", window.innerWidth/2, this.collectAnimation.yPos);
+            this.game.ctx.textAlign = "left";
+            this.game.ctx.globalAlpha = 1;
+            if (this.collectAnimation.yPos < 0){
+                this.collectAnimation.amount = 0;
+            }
+        }
     }
 
     Jump(){
@@ -1469,7 +1703,12 @@ class Player extends PhysicsObject{
         framesElapsed *= this.timerate;
         super.loop(framesElapsed);
         if (this.keysHeld["ArrowUp"] || this.keysHeld["w"]){
-            this.Jump();
+            if (this.flightMode){
+                this.yv = -5;
+            }
+            else{
+                this.Jump();
+            }
         }
         if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"]){
             this.Left(framesElapsed);
@@ -1480,6 +1719,9 @@ class Player extends PhysicsObject{
             this.direction = 1;
         }
         if (this.keysHeld["ArrowDown"] || this.keysHeld["s"]){
+            if (this.flightMode){
+                this.yv = 5;
+            }
             this.jumpthroughing = true;
         }
         if (this.harmImmune >= 0){
@@ -1490,37 +1732,32 @@ class Player extends PhysicsObject{
         }
         this.monkey -= framesElapsed;
 
-        if (this.keysHeld["j"]){
-            this.game.jitter(10);
-        }
-        else if (this.keysHeld["h"]){
-            this.harm(99);
+        if (this.studioMode || this.cheatMode){
+            if (this.keysHeld["r"]){
+                this.x = this.game.startX;
+                this.y = this.game.startY;
+            }
+            if (this.keysHeld["f"]){
+                this.toggleFlightmode = true;
+                this.yv = 0; // Freeze and Flight
+            }
+            else if (this.toggleFlightmode){
+                this.flightMode = !this.flightMode;
+                this.toggleFlightmode = false;
+            }
         }
         if (this.game.fallingKills && this.y > this.game.minimumExtent){
             this.harm(25);
             this.x = this.game.startX;
             this.y = this.game.startY;
         }
-        if (this.harmImmune > 0){
+        if (this.harmImmune > 0 || this.shielding > 0){
             this.game.ctx.globalAlpha = 0.5;
         }
-        this.draw();
+        this.draw(framesElapsed);
         this.game.ctx.globalAlpha = 1;
         if (this.weapon){
             this.weapon.loop(framesElapsed);
-        }
-        if (this.collectAnimation.amount > 0){
-            this.game.ctx.globalAlpha = this.collectAnimation.yPos/this.collectAnimation.startPos;
-            this.collectAnimation.yPos -= 10 * framesElapsed;
-            this.game.ctx.fillStyle = "gold";
-            this.game.ctx.font = "bold 40px sans-serif";
-            this.game.ctx.textAlign = "center";
-            this.game.ctx.fillText(this.collectAnimation.amount + "", window.innerWidth/2, this.collectAnimation.yPos);
-            this.game.ctx.textAlign = "left";
-            this.game.ctx.globalAlpha = 1;
-            if (this.collectAnimation.yPos < 0){
-                this.collectAnimation.amount = 0;
-            }
         }
     }
 
@@ -1641,6 +1878,7 @@ class Game {
         this.win = false;
         this.keyCount = 0;
         this.die = false;
+        this.studioMode = false;
         this.mousePos = {
             x: 0,
             y: 0,
@@ -1673,6 +1911,64 @@ class Game {
         window.addEventListener("resize", resize);
         resize();
         this.ctx = this.canvas.getContext("2d");
+    }
+
+    nearestGridX(x){
+        return Math.round(x / this.blockWidth) * this.blockWidth;
+    }
+
+    nearestGridY(y){
+        return Math.round(y / this.blockHeight) * this.blockHeight;
+    }
+
+    studioChangeType(){
+        var newStyle = document.getElementById("changeBlockStyle").value;
+        var newType = document.getElementById("changeBlockType").value;
+        this.tileset.forEach((item, i) => {
+            if (item.studioSelected){
+                if (newType != ""){
+                    item.type = newType;
+                }
+                if (newStyle != ""){
+                    item.style = newStyle;
+                }
+            }
+        });
+    }
+
+    studioNewBlock(){
+        var newStyle = document.getElementById("newBlockStyle").value;
+        var newType = document.getElementById("newBlockType").value;
+        var newBrick = this._create(this.player.x - this.blockWidth * 2, this.player.y, this.blockWidth, this.blockHeight, newStyle, newType);
+        this.tileset.forEach((item, i) => {
+            item.studioUnselect();
+        });
+        newBrick.studioSelect();
+    }
+
+    studioDelete(){
+        this.tileset.forEach((item, i) => {
+            if (item.studioSelected){
+                this.deleteBrick(item);
+            }
+        });
+    }
+
+    studioExport(){
+        var t = "";
+        this.tileset.forEach((item, i) => {
+            t += "game._create(" + item.x + ", " + item.y + ", " + item.width + ", " + item.height + ", " + item.style + ", " + item.type + "); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.<br />";
+        });
+        t += "<br/><br/><button onclick='this.parentNode.style.display = \"none\"'>Exit</button>"
+        var el = document.getElementById("studioCopyExport");
+        el.innerHTML = t;
+        el.style.display = "";
+    }
+
+    studio(){
+        this.player.studio();
+        this.studioMode = true;
+        document.getElementById("studioDock").style.display = "";
     }
 
     jitter(amount){
@@ -1924,7 +2220,7 @@ var PrettyAverageSword = {
             }
         }
         this.brick.x += (this.game.player.x - this.brick.x + this.game.player.width/2 - (this.slashDir == -1 ? this.brick.width : 0 ));
-        this.brick.y += (this.game.player.y - this.brick.y + this.game.player.height/2);
+        this.brick.y += (this.game.player.y - this.brick.y + this.game.player.height/2) - this.brick.height;
     },
     destroy(){
         this.game.deleteBrick(this.brick);
@@ -2251,7 +2547,7 @@ const levels = [
             game.create(-5, 3, 50, 1);
             game.create(-5, -5, 1, 8);
             game.create(44, -5, 1, 8);
-            game.sign(3, 2, "", "Welcome to the first bossfight! First, kill all the bats, then warp over to the boss zone by walking to the wall on the other side. When you beat the boss, the wall will open - jump off to get to the end!<br/><br/>I have given you the legendary Sword that Isn't Very Awesome, you can aim it with your mouse and click (or press spacebar) to stab.");
+            game.sign(3, 2, "", "Welcome to the first bossfight! First, kill all the bats, then warp over to the boss zone by walking to the wall on the other side. When you beat the boss, the wall will open - jump off to get to the end!<br/><br/>I have given you the legendary Sword that Should Have Stayed Broken, you can aim it with your mouse and click (or press spacebar) to stab.");
             game.player.giveWeapon(PrettyAverageSword);
             this.bats.push(game.create(5, -1, 1, 1, "bullet", "enemy", BatEnemy));
             this.bats.push(game.create(15, -1, 1, 1, "bullet", "enemy", BatEnemy));
@@ -2271,7 +2567,7 @@ const levels = [
                     boss.onDie = () => {
                         this.stage = 2;
                         game.player.clearWeapon();
-                        game.jitter(50);
+                        game.jitter(200);
                     };
                     this.bats.forEach((item, i) => {
                         if (!item.dead){
