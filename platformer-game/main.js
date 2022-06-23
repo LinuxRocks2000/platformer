@@ -1818,8 +1818,10 @@ class Player extends PhysicsObject{
             return true;
         }
         if (type == "end" && this.game.keyCount <= 0){
+            if (!this.game.win){ // There's a bug where this is called for both X and Y collisions, so this fixes it by making sure it isn't already winning.
+                this.collect(30);
+            }
             this.game.win = true;
-            this.collect(30);
         }
         if (type == "water"){
             this.inWater = true;
