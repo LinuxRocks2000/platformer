@@ -181,6 +181,14 @@ const BrickDrawer = {
                 ctx.fillStyle = "black";
                 isRect = true;
                 break;
+            case "averagingenemy":
+                ctx.fillStyle = "lightgreen";
+                isRect = true;
+                break;
+            case "bat":
+                ctx.fillStyle = "grey";
+                isCircle = true;
+                break;
         }
         ctx.save();
         if (isTransparent){
@@ -447,8 +455,9 @@ class Brick extends PhysicsObject{
         if (this.type == "key"){
             this.game.keyCount ++;
         }
+        this.playerSight = 0;
 
-        this.transparents = ["glass", "none", "key", "water", "jumpthrough", "ice", "tar"];
+        this.transparents = ["glass", "none", "key", "water", "jumpthrough", "ice", "tar", "splenectifyu"];
         this.mouseOver = false;
         this.studioSelected = false;
         this.studioLeftHovered = false;
@@ -504,6 +513,15 @@ class Brick extends PhysicsObject{
     }
 
     draw(){
+        if (this.playerSight > 0){
+            this.game.ctx.strokeStyle = "red";
+            this.game.ctx.lineWidth = 1;
+            this.game.ctx.beginPath();
+            this.game.ctx.moveTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+            this.game.ctx.lineTo(this.game.player.artPos.x + this.game.player.width/2, this.game.player.artPos.y + this.game.player.height/2);
+            this.game.ctx.stroke();
+            this.game.ctx.closePath();
+        }
         if (!this.dead){
             BrickDrawer.drawBrick(this.game.ctx, this.artPos.x,
                                                  this.artPos.y,
@@ -601,6 +619,7 @@ class Brick extends PhysicsObject{
     }
 
     loop(framesElapsed){
+        this.playerSight -= framesElapsed;
         if (!this.dead){
             this.artPos.x = Math.round(this.x - this.game.player.x + (window.innerWidth - this.game.player.width) / 2);
             this.artPos.y = Math.round(this.y - this.game.player.y + (window.innerHeight - this.game.player.height) / 2);
@@ -668,13 +687,15 @@ class Brick extends PhysicsObject{
         }
     }
 
-    canSeePlayer(){
+    canSeePlayer(rangeDoesntMatter){
         if (!this.dead){
             var lineToPlayer = [this.game.player.x + this.game.player.width/2, this.game.player.y + this.game.player.height/2, this.x + this.width/2, this.y + this.height/2];
             var canSee = true;
             var distToPlayer = Math.sqrt(Math.pow(lineToPlayer[0] - lineToPlayer[2], 2) + Math.pow(lineToPlayer[1] - lineToPlayer[3], 2));
-            if (distToPlayer < Infinity && distToPlayer > this.sightRange){
-                canSee = false;
+            if (distToPlayer > this.sightRange){
+                if (!rangeDoesntMatter){
+                    canSee = false;
+                }
             }
             if (canSee){
                 this.game.tileset.forEach((item, i) => {
@@ -832,7 +853,6 @@ class SwarmFlyer extends Brick{ // Averaging swarm
         this.frictionY = config.friction || 1;
         this.randomness = config.randomness || 500;
         this.isStatic = false;
-        this.collisions.push("all");
         this.specialCollisions.push("player");
         this.TTL = 500;
         this.speed = config.speed || 0.1;
@@ -991,8 +1011,8 @@ class FishEnemy extends Brick{
         this.specialCollisions.push("player");
         this.inWater = true;
         this.isDamageable = true;
-        this.health = 30;
-        this.maxHealth = 30;
+        this.health = config.health || 30;
+        this.maxHealth = config.health || 30;
         this.sightRange = config.sightRange || 400; // 8 block activation field
         this.frozen = true;
     }
@@ -1196,11 +1216,12 @@ class PlayerbossBoss extends Brick{
 
 
 class AverageSwarmEnemy extends Brick{
-    constructor(game, x, y, width, height, style, type){
+    constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
-        this.state = 0;
+        this.state = 49;
         this.swarm = [];
         this.active = false;
+        this.sightRange = config.sightRange || this.sightRange;
     }
 
     positionWeightedAverage(objects){
@@ -1218,7 +1239,8 @@ class AverageSwarmEnemy extends Brick{
 
     loop(framesElapsed){
         super.loop(framesElapsed);
-        if (this.canSeePlayer()){
+        if (!this.active && this.canSeePlayer()){
+            this.playerSight = 20;
             this.active = true;
         }
         if (this.active){
@@ -1491,6 +1513,201 @@ class CannonEnemy extends Brick{
 }
 
 
+class MacerEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.sightRange = Infinity;
+        this.collisions.push("jumpthrough");
+        this.collisions.push("field");
+        this.collisions.push("enemy");
+        this.specialCollisions.push("enemy");
+        this.mace = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu");
+        this.mace.isStatic = false;
+        this.mace.collisions = [];
+        this.mace.specialCollisions = ["player"];
+        this.maceInPlayer = false;
+        this.mace.specialCollision = (type, items) => {
+            this.maceInPlayer = true;
+        };
+        this.mace.noSpecial = (type) => {
+            this.maceInPlayer = false;
+        };
+        this.mace.gravity = 0;
+        this.swinging = false;
+        this.swingPos = 0;
+        this.elasticityX = 1;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+
+        if (this.swinging){
+            var distToPlayerX = this.game.player.x - this.x;
+            var distToPlayerY = this.game.player.y - this.y;
+            var distToPlayer = Math.sqrt(distToPlayerX * distToPlayerX + distToPlayerY * distToPlayerY);
+            var swingX = this.x + this.width/2 + Math.cos(this.swingPos) * distToPlayer;
+            var swingY = this.y + this.height/2 + Math.sin(this.swingPos) * distToPlayer;
+            this.mace.x += (swingX - this.mace.x) / 6;
+            this.mace.y += (swingY - this.mace.y) / 6;
+            if (this.maceInPlayer){
+                this.swingPos += Math.PI / 720;
+            }
+            else{
+                this.swingPos += Math.PI / 60;
+            }
+            if (this.swingPos > Math.PI * 8 || !this.canSeePlayer(true)){ // 4 revolutions
+                this.swinging = false;
+                this.swingPos = 0;
+            }
+        }
+        else{
+            if (this.canSeePlayer()){
+                if (this.x > this.game.player.x){
+                    this.xv += 40;
+                }
+                else{
+                    this.xv -= 40;
+                }
+                this.swinging = true;
+            }
+            else{
+                if (this.x > this.game.player.x){
+                    this.xv -= 1;
+                }
+                else{
+                    this.xv += 1;
+                }
+            }
+            this.mace.x += (this.x - this.mace.x) / 20;
+            this.mace.y += (this.y - this.mace.y) / 20;
+        }
+
+        this.game.ctx.strokeStyle = "black";
+        this.game.ctx.lineWidth = 1;
+        this.game.ctx.beginPath();
+        this.game.ctx.moveTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+        this.game.ctx.lineTo(this.mace.artPos.x + this.mace.width/2, this.mace.artPos.y + this.mace.height/2);
+        this.game.ctx.closePath();
+        this.game.ctx.stroke();
+    }
+
+    hitLeft(){
+        if (this.touchingBottom){
+            this.yv = -10;
+        }
+    }
+
+    hitRight(){
+        if (this.touchingBottom){
+            this.yv = -10;
+        }
+    }
+}
+
+
+class MaceEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.collisions = [];
+        this.specialCollisions = ["player"];
+        this.owner = config.owner;
+        if (config.offset){
+            this.swingPos = config.offset;
+        }
+        else{
+            this.swingPos = 0;
+        }
+        this.gravity = 0;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.owner){ // Maces can't function without an owner, fortunately any block can be attached to them.
+            var distToPlayer = 100;
+            if (this.owner.canSeePlayer()){
+                var distToPlayerX = this.game.player.x - this.owner.x;
+                var distToPlayerY = this.game.player.y - this.owner.y;
+                distToPlayer = Math.sqrt(distToPlayerX * distToPlayerX + distToPlayerY * distToPlayerY);
+            }
+            var swingX = this.owner.x + this.owner.width/2 + Math.cos(this.swingPos) * distToPlayer;
+            var swingY = this.owner.y + this.owner.height/2 + Math.sin(this.swingPos) * distToPlayer;
+            this.x += (swingX - this.x) / 12;
+            this.y += (swingY - this.y) / 12;
+            this.game.ctx.strokeStyle = "black";
+            this.game.ctx.lineWidth = 1;
+            this.game.ctx.beginPath();
+            this.game.ctx.moveTo(this.owner.artPos.x + this.owner.width/2, this.owner.artPos.y + this.owner.height/2);
+            this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+            this.game.ctx.closePath();
+            this.game.ctx.stroke();
+            if (this.owner){
+                if (this.owner.maceInPlayer){
+                    this.swingPos += Math.PI / 20000;
+                }
+                else{
+                    this.swingPos += Math.PI / 60;
+                }
+            }
+        }
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            if (this.owner){
+                this.owner.maceInPlayer = true;
+            }
+        }
+    }
+
+    noSpecial(type){
+        if (type == "player"){
+            if (this.owner){
+                this.owner.maceInPlayer = false;
+            }
+        }
+    }
+}
+
+
+class BruiserEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.sightRange = Infinity;
+        this.collisions.push("jumpthrough");
+        this.collisions.push("field");
+        this.collisions.push("enemy");
+        this.specialCollisions.push("enemy");
+        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this});
+        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this, offset: Math.PI});
+        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this, offset: Math.PI/2});
+        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this, offset: 3 * Math.PI/2});
+        this.maceInPlayer = false;
+        this.elasticityX = 1;
+        this.xv = 10;
+        this.friction = 1;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+    }
+
+    hitLeft(){
+        if (this.touchingBottom){
+            this.yv = -10;
+        }
+    }
+
+    hitRight(){
+        if (this.touchingBottom){
+            this.yv = -10;
+        }
+    }
+}
+
+
 class Player extends PhysicsObject{
     constructor(game, x, y, width, height){
         super(game, x, y, width, height);
@@ -1555,7 +1772,7 @@ class Player extends PhysicsObject{
                 }
             }
         });
-        this.specialCollisions.push("killu"); // Register killu as a special collision type
+        this.specialCollisions.push("killu", "splenectifyu"); // Register killu as a special collision type
         this.specialCollisions.push("tencoin") // Add ten coins to special collisions
         this.specialCollisions.push("fiftycoin"); // Fifty coins
         this.specialCollisions.push("jumpthrough");
@@ -1592,6 +1809,10 @@ class Player extends PhysicsObject{
             startPos: 0
         };
         this.studioMode = false;
+        this.equippedAnimator = {
+            name: "",
+            time: 0
+        };
     }
 
     studio(){
@@ -1605,6 +1826,8 @@ class Player extends PhysicsObject{
         }
         this.weapon = weapon;
         weapon.init(this);
+        this.equippedAnimator.time = 50;
+        this.equippedAnimator.name = weapon.name;
     }
 
     hitBottom(){
@@ -1682,6 +1905,16 @@ class Player extends PhysicsObject{
                 this.collectAnimation.amount = 0;
             }
         }
+        if (this.equippedAnimator.time > 0){
+            this.equippedAnimator.time -= framesElapsed/3;
+            this.game.ctx.globalAlpha = this.equippedAnimator.time + 10/40;
+            this.game.ctx.fillStyle = "gold";
+            this.game.ctx.font = "bold 20px sans-serif";
+            this.game.ctx.textAlign = "center";
+            this.game.ctx.fillText("Equipped " + this.equippedAnimator.name + "!", window.innerWidth/2, this.equippedAnimator.time/50 * window.innerHeight/2);
+            this.game.ctx.textAlign = "left";
+            this.game.ctx.glbalAlpha = 1;
+        }
     }
 
     Jump(){
@@ -1709,6 +1942,9 @@ class Player extends PhysicsObject{
             else{
                 this.Jump();
             }
+        }
+        if (this.yv > 15){
+            this.jumpthroughing = true;
         }
         if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"]){
             this.Left(framesElapsed);
@@ -1774,6 +2010,11 @@ class Player extends PhysicsObject{
             this.harm(0.1, false); // Take a fixed 20 damage from any normal killu.
             this.frictionChangeX = 0.1;
             this.frictionChangeY = 0.1;
+        }
+        if (type == "splenectifyu"){
+            this.harm(0.3, false);
+            this.frictionChangeX = 0.3;
+            this.frictionChangeY = 0.3;
         }
         if (type == "tencoin"){
             items.forEach((item, index) => {
@@ -1862,8 +2103,10 @@ class Player extends PhysicsObject{
     }
 
     clearWeapon(){
-        this.weapon.destroy();
-        delete this.weapon;
+        if (this.weapon){
+            this.weapon.destroy();
+            delete this.weapon;
+        }
     }
 }
 
@@ -1981,8 +2224,8 @@ class Game {
         var b = new bricktype(this, x, y, width, height, style, type, config); // Put it in a variable so we can return it later
         this.tileset.push(b); // Add it to the tileset
         b.id = this.tileset.length;
-        if (y > this.minimumExtent){
-            this.minimumExtent = y;
+        if (y + height > this.minimumExtent){
+            this.minimumExtent = y + height;
         }
         return b; // Return it, so you can call this function and then do operations immediately.
     }
@@ -2063,7 +2306,8 @@ class Game {
             "field": [0, []],
             "water": [0, []],
             "key": [0, []],
-            "bullet": [0, []]
+            "bullet": [0, []],
+            "splenectifyu": [0, []]
         }
         var iter = (item, i) => {
             if (item != object){ // Yes, this plagues me.
@@ -2181,6 +2425,7 @@ class PrettyAverageSwordBrick extends Brick{
 }
 
 var PrettyAverageSword = {
+    name: "The sword that should have stayed broken",
     init(player){
         this.brick = player.game._create(player.x + player.width/2, player.y + player.height/2 - 5, 10, 10, "pretty-average-sword", "none", PrettyAverageSwordBrick);
         this.game = player.game;
@@ -2230,6 +2475,7 @@ var PrettyAverageSword = {
 };
 
 var BasicGun = {
+    name: "Gun that isn't really that bad",
     phase: 0,
     gunTimeout: 20,
     distX: 0,
@@ -2604,6 +2850,99 @@ const levels = [
         }
     },
     {
+        name: "Office",
+        phase: 1,
+        skippable: false,
+        difficulty: 1,
+        minimumExtent: 2000,
+        hasGivenPlayerWeapon: false,
+        oncreate(game){
+            //game.startX = -100;
+            // Create the rooms skeleton
+            var numRooms = 7;
+            var alternator = numRooms % 2 == 1;
+            var isFirst = true;
+            for (var x = 0; x < numRooms; x ++){
+                game.create(alternator ? 0 : 1, x * 6, 16 + (isFirst ? 1 : 0), 1);
+                if (!isFirst){
+                    game.create(alternator ? 16 : 0, x * 6, 1, 1, "jumpthrough", "jumpthrough");
+                    game.create(alternator ? 16 : 0, x * 6 + 4, 1, 2);
+                    var p1upX = alternator ? 16 : 0;
+                    var p1upY = x * 6 + 3;
+                    if (Math.random() < 0.5){
+                        if (Math.random() < 0.3){
+                            game.create(p1upX, p1upY, 1, 1, "coin", "fiftycoin");
+                        }
+                        else{
+                            game.create(p1upX, p1upY, 1, 1, "heal", "heal");
+                        }
+                    }
+                    else{
+                        game.create(p1upX, p1upY, 1, 1, "coin", "tencoin");
+                    }
+                }
+                isFirst = false;
+                alternator = !alternator;
+            }
+            game.create(-1, 0, 1, numRooms * 6 - 2);
+            game.create(17, 0, 1, numRooms * 6);
+            game.create(-4, numRooms * 6, 22, 1);
+
+            // Keep lavas from escaping
+            game.create(-1, 40, 1, 2, "glass", "field");
+
+            // Create the starting room
+            game.create(0, 40, 1, 1, "lava", "enemy", NormalEnemy).collisions.push("enemy");
+            game.create(15, 40, 1, 1, "lava", "enemy", NormalEnemy).collisions.push("enemy");
+
+            // Swarm room
+            game.create(7, 32, 1, 1, "averagingenemy", "enemy", AverageSwarmEnemy, {sightRange: Infinity});
+
+            // Security room #1 (1 macer)
+            game.create(7, 26, 1, 1, "lava", "enemy", MacerEnemy);
+
+            // Security room #2 (1 macer and 1 shooter)
+            game.create(5, 20, 1, 1, "lava", "enemy", MacerEnemy);
+            game.create(1, 22, 1, 1, "bullet", "enemy", ShooterEnemy);
+
+            // Flooded room
+            game.create(1, 16, 1, 2);
+            game.create(1, 13, 1, 3, "glass", "field");
+            game.create(1, 15, 1, 1, "heal", "heal");
+            game.create(15, 17, 1, 1, "coin", "tencoin");
+            game.create(2, 13, 15, 5, "water", "water");
+            game.create(6, 16, 1, 1, "fish", "enemy", FishEnemy, {health: 15});
+            game.create(16, 11, 1, 1, "heal", "heal");
+
+            // Security room #2 (1 bruiser, they're really awful)
+            game.create(3, 7, 1, 1, "lava", "killu", BruiserEnemy);
+
+            // Final room (1 shooter, scattered glass and lava)
+            game.create(3, 4, 1, 1, "lava", "killu");
+            game.create(6, 3, 1, 1, "lava", "killu");
+            game.create(8, 3, 1, 2, "glass", "glass");
+            game.create(12, 5, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(16, 5, 1, 1, "end", "end");
+        },
+        onloop(game){
+            if (game.player.y > 12 * 50 && game.player.y < 17 * 50){
+                if (!this.hasGivenPlayerWeapon){
+                    this.hasGivenPlayerWeapon = true;
+                    game.player.giveWeapon(PrettyAverageSword);
+                }
+            }
+            else{
+                if (this.hasGivenPlayerWeapon){
+                    this.hasGivenPlayerWeapon = false;
+                    game.player.clearWeapon();
+                }
+            }
+        },
+        ondestroy(){
+
+        }
+    },
+    {
         name: "Lake",
         phase: 1,
         skippable: false,
@@ -2676,7 +3015,7 @@ const levels = [
             game.create(181, -5, 1, 6);
             game.create(170, 4, 3, 1, "glass", "glass", SideMovingPlatform);
         },
-        onloop(){
+        onloop(game){
 
         },
         ondestroy(){
@@ -2932,13 +3271,9 @@ class GameManager{
 
 var game = new Game(50, 50);
 
-var gm = new GameManager(game, levels);
+var gm = new GameManager(game, levels, 40);
 
 gm.start();
-
-const FPS = 50;
-const millisPerFrame = 1000 / FPS;
-var lastFrameTime = 0;
 
 window.onfocus = function(){
     lastFrameTime = window.performance.now();
