@@ -66,6 +66,16 @@ function isLineOffRect(rect, line){
            (line[1] > rect[3] && line[3] > rect[3])
 }
 
+function findCoterminalRadians(angle){
+    while (angle < 0){
+        angle += Math.PI * 2;
+    }
+    while (angle > 2 * Math.PI){
+        angle -= Math.PI * 2;
+    }
+    return angle;
+}
+
 const BrickDrawer = {
     coinPulse: 30,
     coinPulseFlip: false,
@@ -687,12 +697,12 @@ class Brick extends PhysicsObject{
         }
     }
 
-    canSeePlayer(rangeDoesntMatter){
+    canSeePlayer(rangeDoesntMatter, auxilaryRange){
         if (!this.dead){
             var lineToPlayer = [this.game.player.x + this.game.player.width/2, this.game.player.y + this.game.player.height/2, this.x + this.width/2, this.y + this.height/2];
             var canSee = true;
             var distToPlayer = Math.sqrt(Math.pow(lineToPlayer[0] - lineToPlayer[2], 2) + Math.pow(lineToPlayer[1] - lineToPlayer[3], 2));
-            if (distToPlayer > this.sightRange){
+            if (distToPlayer > (auxilaryRange ? auxilaryRange : this.sightRange)){
                 if (!rangeDoesntMatter){
                     canSee = false;
                 }
@@ -1620,35 +1630,65 @@ class MaceEnemy extends Brick{
             this.swingPos = 0;
         }
         this.gravity = 0;
+        this.dragSpeed = config.dragSpeed || Math.PI / 20000;
+        this.explode = false;
+        this.friction = 1;
+        this.frictionY = 1;
     }
 
     loop(framesElapsed){
         super.loop(framesElapsed);
-        if (this.owner){ // Maces can't function without an owner, fortunately any block can be attached to them.
+
+        if (this.owner.dead && !this.explode){
+            this.explode = true;
+            this.TTL = 50;
+        }
+        if (this.owner && !this.isBullet){ // Maces can't function without an owner, fortunately any block can be attached to them.
             var distToPlayer = 100;
-            if (this.owner.canSeePlayer()){
-                var distToPlayerX = this.game.player.x - this.owner.x;
-                var distToPlayerY = this.game.player.y - this.owner.y;
+            if (this.owner.canSeePlayer(false, 500)){
+                var distToPlayerX = this.game.player.x + this.game.player.width/2 - this.owner.x - this.owner.width/2;
+                var distToPlayerY = this.game.player.y + this.game.player.height/2 - this.owner.y - this.owner.height/2;
                 distToPlayer = Math.sqrt(distToPlayerX * distToPlayerX + distToPlayerY * distToPlayerY);
             }
             var swingX = this.owner.x + this.owner.width/2 + Math.cos(this.swingPos) * distToPlayer;
             var swingY = this.owner.y + this.owner.height/2 + Math.sin(this.swingPos) * distToPlayer;
             this.x += (swingX - this.x) / 12;
             this.y += (swingY - this.y) / 12;
-            this.game.ctx.strokeStyle = "black";
-            this.game.ctx.lineWidth = 1;
-            this.game.ctx.beginPath();
-            this.game.ctx.moveTo(this.owner.artPos.x + this.owner.width/2, this.owner.artPos.y + this.owner.height/2);
-            this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
-            this.game.ctx.closePath();
-            this.game.ctx.stroke();
+            if (!this.explode){
+                this.game.ctx.strokeStyle = "black";
+                this.game.ctx.lineWidth = 1;
+                this.game.ctx.beginPath();
+                this.game.ctx.moveTo(this.owner.artPos.x + this.owner.width/2, this.owner.artPos.y + this.owner.height/2);
+                this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+                this.game.ctx.closePath();
+                this.game.ctx.stroke();
+            }
             if (this.owner){
                 if (this.owner.maceInPlayer){
-                    this.swingPos += Math.PI / 20000;
+                    this.swingPos += this.dragSpeed;
                 }
                 else{
                     this.swingPos += Math.PI / 60;
                 }
+            }
+        }
+        if (this.explode && !this.isBullet){
+            var distToPlayerX = this.game.player.x - this.x;
+            var distToPlayerY = this.game.player.y - this.y;
+            var playerAngle = Math.atan(distToPlayerY/distToPlayerX);
+            if (distToPlayerX < 0){
+                playerAngle -= Math.PI;
+            }
+            if (Math.abs(findCoterminalRadians(this.swingPos) - findCoterminalRadians(playerAngle)) <= Math.PI/60){
+                this.isBullet = true;
+                this.xv = Math.cos(this.swingPos) * 20;
+                this.yv = Math.sin(this.swingPos) * 20;
+            }
+        }
+        if (this.isBullet){
+            this.TTL -= framesElapsed;
+            if (this.TTL <= 0){
+                this.game.deleteBrick(this);
             }
         }
     }
@@ -1680,10 +1720,7 @@ class BruiserEnemy extends Brick{
         this.collisions.push("field");
         this.collisions.push("enemy");
         this.specialCollisions.push("enemy");
-        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this});
-        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this, offset: Math.PI});
-        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this, offset: Math.PI/2});
-        this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: this, offset: 3 * Math.PI/2});
+        this.game.attachMaces(this, 6);
         this.maceInPlayer = false;
         this.elasticityX = 1;
         this.xv = 10;
@@ -2232,6 +2269,18 @@ class Game {
 
     create(x, y, width, height, style = "normal", type = "solid", bricktype = Brick, config = {}){
         return this._create(x * this.blockWidth, y * this.blockHeight, width * this.blockWidth, height * this.blockHeight, style, type, bricktype, config);
+    }
+
+    attachMace(block, offset = 0){
+        return this._create(block.x, block.y, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: block, dragSpeed: Math.PI/180, offset: offset});
+    }
+
+    attachMaces(block, num){
+        var maces = [];
+        for (var x = 0; x < num; x ++){
+            maces.push(this.attachMace(block, Math.PI * 2 * x / num));
+        }
+        return maces;
     }
 
     sign(x, y, label, text){
@@ -2789,6 +2838,7 @@ const levels = [
         stage: 0,
         fallingIsSafe: true,
         bats: [],
+        hasGivenPlayerCoins: false,
         oncreate(game){
             game.startX = 0;
             game.startY = 0;
@@ -2834,12 +2884,15 @@ const levels = [
                     game.player.x = 0;
                     game.deleteAllBricks();
                     game.create(-3, 4, 10, 1);
-                    game.create(-3, 3, 1, 1, "coin", "tencoin");
-                    game.create(-2, 3, 1, 1, "coin", "tencoin");
-                    game.create(-1, 3, 1, 1, "coin", "tencoin");
-                    game.create(0, 3, 1, 1, "coin", "fiftycoin");
-                    game.create(1, 3, 1, 1, "heal", "heal");
-                    game.create(2, 3, 1, 1, "heal", "heal");
+                    if (!this.hasGivenPlayerCoins){
+                        game.create(-3, 3, 1, 1, "coin", "tencoin");
+                        game.create(-2, 3, 1, 1, "coin", "tencoin");
+                        game.create(-1, 3, 1, 1, "coin", "tencoin");
+                        game.create(0, 3, 1, 1, "coin", "fiftycoin");
+                        game.create(1, 3, 1, 1, "heal", "heal");
+                        game.create(2, 3, 1, 1, "heal", "heal");
+                        this.hasGivenPlayerCoins = true;
+                    }
                     game.create(6, 3, 1, 1, "end", "end");
                     this.bats = [];
                 }
@@ -3021,7 +3074,28 @@ const levels = [
         ondestroy(){
 
         }
-    }
+    },
+    /*{
+        name: "Phase 2 Bossfight",
+        phase: 0,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.player.giveWeapon(BasicGun);
+            game.create(0, 2, 1, 1, "coin", "fiftycoin");
+            game.create(-7, 3, 14, 1);
+            var bat = game.create(-6, -3, 1, 1, "bullet", "enemy", BatEnemy);
+            game.attachMaces(bat, 2).forEach((item, i) => {
+                game.attachMaces(item, 3);
+            });
+        },
+        onloop(game){
+
+        },
+        ondestroy(){
+
+        }
+    }*/
 ];
 
 class GameManager{
