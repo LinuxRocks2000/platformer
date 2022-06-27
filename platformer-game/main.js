@@ -276,8 +276,8 @@ const BrickDrawer = {
 class PhysicsObject{
     constructor(game, x, y, width, height, isStatic){
         this.game = game;
-        this.x = x;
-        this.y = y;
+        this._x = x;
+        this._y = y;
         this.width = width;
         this.height = height;
         this.xv = 0;
@@ -299,12 +299,40 @@ class PhysicsObject{
         this.restrictInteger = false;
     }
 
+    set x(newval){
+        this._x = newval;
+    }
+
+    set y(newval){
+        this._y = newval;
+    }
+
+    get x(){
+        if (this.restrictInteger){
+            return Math.round(this._x);
+        }
+        else{
+            return this._x;
+        }
+    }
+
+    get y(){
+        if (this.restrictInteger){
+            return Math.round(this._y);
+        }
+        else{
+            return this._y;
+        }
+    }
+
     phaseShift(){
         this.phaser = 1;
     }
 
     loop(framesElapsed){
         if (!this.isStatic){
+            var doRestrictInt = this.restrictInteger;
+            this.restrictInteger = false; // Allow non-int operations
             this.touchingTop = false;
             this.touchingBottom = false;
             this.touchingLeft = false;
@@ -362,6 +390,7 @@ class PhysicsObject{
             if (!didCollide){
                 this.phaser = 0;
             }
+            this.restrictInteger = doRestrictInt;
         }
     }
 
@@ -402,10 +431,6 @@ class PhysicsObject{
     }
 
     move(xm, ym){
-        if (this.restrictInteger){
-            xm = Math.round(xm);
-            ym = Math.round(ym);
-        }
         this.x += xm;
         this.y += ym;
     }
@@ -1286,8 +1311,8 @@ class RaisingPlatform extends Brick{
         this.specialCollisions.push("player");
         this.collisions.push("stopblock");
         this.elasticityY = 1;
-        this.restrictInteger = true;
         this.phase = 0;
+        this.restrictInteger = true;
     }
 }
 
@@ -3345,7 +3370,7 @@ class GameManager{
 
 var game = new Game(50, 50);
 
-var gm = new GameManager(game, levels, 40);
+var gm = new GameManager(game, levels, 55);
 
 gm.start();
 
