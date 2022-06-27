@@ -210,10 +210,6 @@ const BrickDrawer = {
         }
         if (type == "tencoin" || type == "fiftycoin" || type == "heal"){
             ctx.globalAlpha = this.coinPulse/255;
-            this.coinPulse += 5 * (this.coinPulseFlip ? -1 : 1);
-            if (this.coinPulse >= 255 || this.coinPulse <= 10){
-                this.coinPulseFlip = !this.coinPulseFlip;
-            }
         }
         if (isRect){
             ctx.fillRect(x, y, width, height);
@@ -268,6 +264,18 @@ const BrickDrawer = {
         });
         if (curLine != ""){
             ctx.fillText(curLine, x, y + curY);
+        }
+    },
+    upPulse(fe){
+        this.coinPulse += fe * 5 * (this.coinPulseFlip ? -1 : 1);
+        if (this.coinPulse > 255 || this.coinPulse < 10){
+            this.coinPulseFlip = !this.coinPulseFlip;
+        }
+        if (this.coinPulse > 255){
+            this.coinPulse = 255;
+        }
+        if (this.coinPulse < 10){
+            this.coinPulse = 10;
         }
     }
 };
@@ -905,7 +913,7 @@ class SwarmFlyer extends Brick{ // Averaging swarm
         }
     }
 
-    swarmDo(avgPos){
+    swarmDo(avgPos, framesElapsed){
         var xRandom = (Math.random() - 0.5) * this.randomness
         var yRandom = (Math.random() - 0.5) * this.randomness
         var distXReal = (avgPos.x + xRandom) - this.x;
@@ -914,8 +922,8 @@ class SwarmFlyer extends Brick{ // Averaging swarm
         var distYSquared = distYReal * distYReal;
         var distSquared = distXSquared + distYSquared;
         if (distSquared != 0){
-            this.xv += (distXSquared/distSquared) * (distXReal < 0 ? -1: 1);
-            this.yv += (distYSquared/distSquared) * (distYReal < 0 ? -1: 1);
+            this.xv += framesElapsed * (distXSquared/distSquared) * (distXReal < 0 ? -1: 1);
+            this.yv += framesElapsed * (distYSquared/distSquared) * (distYReal < 0 ? -1: 1);
         }
     }
 
@@ -1085,10 +1093,10 @@ class FishEnemy extends Brick{
             }
         }
         if (this.game.player.y < this.y && this.inWater){
-            this.yv --;
+            this.yv -= framesElapsed;
         }
         if (!this.inWater){
-            this.yv += 1;
+            this.yv += framesElapsed;
         }
     }
 
@@ -1291,7 +1299,7 @@ class AverageSwarmEnemy extends Brick{
             swarmWithWeighty.push({x: this.game.player.x, y: this.game.player.y, weight: 5000000})
             var pos = this.positionWeightedAverage(swarmWithWeighty);
             this.swarm.forEach((item, i) => {
-                item.swarmDo(pos);
+                item.swarmDo(pos, framesElapsed);
                 if (item.dead){
                     this.swarm.splice(i, 1);
                 }
@@ -1487,10 +1495,10 @@ class ShooterEnemy extends Brick{
             angleFric = 0.95;
         }
         if (goalAngle > this.angle){
-            this.angleV += framesElapsed * 0.75;
+            this.angleV += 0.75;
         }
         else if (goalAngle < this.angle){
-            this.angleV -= framesElapsed * 0.75;
+            this.angleV -= 0.75;
         }
         this.angle += this.angleV * framesElapsed;
         this.angleV *= angleFric;
@@ -1557,74 +1565,34 @@ class MacerEnemy extends Brick{
         this.collisions.push("field");
         this.collisions.push("enemy");
         this.specialCollisions.push("enemy");
-        this.mace = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "bullet", "splenectifyu");
-        this.mace.isStatic = false;
-        this.mace.collisions = [];
-        this.mace.specialCollisions = ["player"];
-        this.maceInPlayer = false;
-        this.mace.specialCollision = (type, items) => {
-            this.maceInPlayer = true;
-        };
-        this.mace.noSpecial = (type) => {
-            this.maceInPlayer = false;
-        };
-        this.mace.gravity = 0;
-        this.swinging = false;
-        this.swingPos = 0;
         this.elasticityX = 1;
+        this.mace = this.game.attachMace(this);
+        this.mace.idleUntilSwing = true;
+        this.mace.doesExtend = true;
     }
 
     loop(framesElapsed){
         super.loop(framesElapsed);
 
-        if (this.swinging){
-            var distToPlayerX = this.game.player.x - this.x;
-            var distToPlayerY = this.game.player.y - this.y;
-            var distToPlayer = Math.sqrt(distToPlayerX * distToPlayerX + distToPlayerY * distToPlayerY);
-            var swingX = this.x + this.width/2 + Math.cos(this.swingPos) * distToPlayer;
-            var swingY = this.y + this.height/2 + Math.sin(this.swingPos) * distToPlayer;
-            this.mace.x += (swingX - this.mace.x) / 6;
-            this.mace.y += (swingY - this.mace.y) / 6;
-            if (this.maceInPlayer){
-                this.swingPos += Math.PI / 720;
-            }
-            else{
-                this.swingPos += Math.PI / 60;
-            }
-            if (this.swingPos > Math.PI * 8 || !this.canSeePlayer(true)){ // 4 revolutions
-                this.swinging = false;
-                this.swingPos = 0;
-            }
-        }
-        else{
+        if (this.mace.swingPos > this.mace.swingTill){
             if (this.canSeePlayer()){
                 if (this.x > this.game.player.x){
-                    this.xv += 40;
+                    this.xv += 40 * framesElapsed;
                 }
                 else{
-                    this.xv -= 40;
+                    this.xv -= 40 * framesElapsed;
                 }
-                this.swinging = true;
+                this.mace.swing(4);
             }
             else{
                 if (this.x > this.game.player.x){
-                    this.xv -= 1;
+                    this.xv -= framesElapsed;
                 }
                 else{
-                    this.xv += 1;
+                    this.xv += framesElapsed;
                 }
             }
-            this.mace.x += (this.x - this.mace.x) / 20;
-            this.mace.y += (this.y - this.mace.y) / 20;
         }
-
-        this.game.ctx.strokeStyle = "black";
-        this.game.ctx.lineWidth = 1;
-        this.game.ctx.beginPath();
-        this.game.ctx.moveTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
-        this.game.ctx.lineTo(this.mace.artPos.x + this.mace.width/2, this.mace.artPos.y + this.mace.height/2);
-        this.game.ctx.closePath();
-        this.game.ctx.stroke();
     }
 
     hitLeft(){
@@ -1659,6 +1627,14 @@ class MaceEnemy extends Brick{
         this.explode = false;
         this.friction = 1;
         this.frictionY = 1;
+        this.extent = 0;
+        this.doesExtend = config.doesExtend || false; // Yes, I know it will just be undefined, but the explicit smoke-and-mirrors is easier for codeblinds and noops to understand.
+        this.idleUntilSwing = false;
+        this.swingTill = 0;
+    }
+
+    swing(amnt){
+      this.swingTill = this.swingPos + amnt * 2 * Math.PI;
     }
 
     loop(framesElapsed){
@@ -1670,13 +1646,21 @@ class MaceEnemy extends Brick{
         }
         if (this.owner && !this.isBullet){ // Maces can't function without an owner, fortunately any block can be attached to them.
             var distToPlayer = 100;
-            if (this.owner.canSeePlayer(false, 500)){
-                var distToPlayerX = this.game.player.x + this.game.player.width/2 - this.owner.x - this.owner.width/2;
-                var distToPlayerY = this.game.player.y + this.game.player.height/2 - this.owner.y - this.owner.height/2;
-                distToPlayer = Math.sqrt(distToPlayerX * distToPlayerX + distToPlayerY * distToPlayerY);
+            if (!this.idleUntilSwing || this.swingPos < this.swingTill){
+                if (this.doesExtend && this.owner.canSeePlayer(false, 500)){
+                    var distToPlayerX = this.game.player.x + this.game.player.width/2 - this.owner.x - this.owner.width/2;
+                    var distToPlayerY = this.game.player.y + this.game.player.height/2 - this.owner.y - this.owner.height/2;
+                    distToPlayer = Math.sqrt(distToPlayerX * distToPlayerX + distToPlayerY * distToPlayerY);
+                }
             }
-            var swingX = this.owner.x + this.owner.width/2 + Math.cos(this.swingPos) * distToPlayer;
-            var swingY = this.owner.y + this.owner.height/2 + Math.sin(this.swingPos) * distToPlayer;
+            if (this.extent < distToPlayer){
+              this.extent += 8 * framesElapsed;
+            }
+            else{
+              this.extent -= 8 * framesElapsed;
+            }
+            var swingX = this.owner.x + this.owner.width/2 + Math.cos(this.swingPos) * this.extent;
+            var swingY = this.owner.y + this.owner.height/2 + Math.sin(this.swingPos) * this.extent;
             this.x += (swingX - this.x) / 12;
             this.y += (swingY - this.y) / 12;
             if (!this.explode){
@@ -1690,10 +1674,10 @@ class MaceEnemy extends Brick{
             }
             if (this.owner){
                 if (this.owner.maceInPlayer){
-                    this.swingPos += this.dragSpeed;
+                    this.swingPos += this.dragSpeed * framesElapsed;
                 }
                 else{
-                    this.swingPos += Math.PI / 60;
+                    this.swingPos += Math.PI / 60 * framesElapsed;
                 }
             }
         }
@@ -2315,6 +2299,7 @@ class Game {
     }
 
     loop(framesElapsed){
+        BrickDrawer.upPulse(framesElapsed);
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.playing){
             this.viewPos.x += (this.viewPos_real.x - this.viewPos.x) / 20 - this.player.xv/10;
@@ -2461,7 +2446,6 @@ class PlayerFriendlyBullet extends Brick{
     loop(framesElapsed){
         super.loop(framesElapsed);
         this.TTL -= framesElapsed;
-        gm.bumpTime();
         if (this.TTL < 0){
             this.game.deleteBrick(this);
         }
@@ -2497,6 +2481,7 @@ class PrettyAverageSwordBrick extends Brick{
         });
     }
 }
+
 
 var PrettyAverageSword = {
     name: "The sword that should have stayed broken",
@@ -2547,6 +2532,7 @@ var PrettyAverageSword = {
         this.game.deleteBrick(this.brick);
     }
 };
+
 
 var BasicGun = {
     name: "Gun that isn't really that bad",
@@ -2603,6 +2589,7 @@ var BasicGun = {
 
     }
 }
+
 
 const levels = [
     {
@@ -3370,7 +3357,7 @@ class GameManager{
 
 var game = new Game(50, 50);
 
-var gm = new GameManager(game, levels, 55);
+var gm = new GameManager(game, levels, 60);
 
 gm.start();
 
