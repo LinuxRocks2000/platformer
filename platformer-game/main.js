@@ -804,11 +804,22 @@ class NormalEnemy extends Brick{
         this.health = 100;
         this.maxHealth = 100;
         this.isDamageable = true;
+        this.TTL = -Infinity;
     }
 
     specialCollision(type, things){
         if (type == "player"){
             things[0].harm(20);
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.TTL > -Infinity){
+            this.TTL -= framesElapsed;
+            if (this.TTL < 0){
+                this.game.deleteBrick(this);
+            }
         }
     }
 }
@@ -1058,10 +1069,14 @@ class FishEnemy extends Brick{
         this.maxHealth = config.health || 30;
         this.sightRange = config.sightRange || 400; // 8 block activation field
         this.frozen = true;
+        this.doDropHealth = config.dropHealth || false;
     }
 
     onDie(){
         this.game.player.collect(5);
+        if (this.doDropHealth){
+            this.game._create(this.x, this.y, this.width, this.height, "heal", "heal");
+        }
     }
 
     onDamage(){
@@ -1631,6 +1646,7 @@ class MaceEnemy extends Brick{
         this.doesExtend = config.doesExtend || false; // Yes, I know it will just be undefined, but the explicit smoke-and-mirrors is easier for codeblinds and noops to understand.
         this.idleUntilSwing = false;
         this.swingTill = 0;
+        this.defaultExtent = 100;
     }
 
     swing(amnt){
@@ -1645,7 +1661,7 @@ class MaceEnemy extends Brick{
             this.TTL = 50;
         }
         if (this.owner && !this.isBullet){ // Maces can't function without an owner, fortunately any block can be attached to them.
-            var distToPlayer = 100;
+            var distToPlayer = this.defaultExtent;
             if (!this.idleUntilSwing || this.swingPos < this.swingTill){
                 if (this.doesExtend && this.owner.canSeePlayer(false, 500)){
                     var distToPlayerX = this.game.player.x + this.game.player.width/2 - this.owner.x - this.owner.width/2;
@@ -1749,6 +1765,28 @@ class BruiserEnemy extends Brick{
     hitRight(){
         if (this.touchingBottom){
             this.yv = -10;
+        }
+    }
+}
+
+
+class TricklerEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = true;
+        this.waitTime = 100;
+        this.phase = Math.random() * this.waitTime;
+        this.enemyTTL = 250;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        this.phase += framesElapsed;
+        if (this.phase > this.waitTime){
+            var e = this.game._create(this.x, this.y, this.width, this.height, "lava", "enemy", NormalEnemy);
+            e.xv = 10 * (Math.random() > 0.5 ? -1 : 1);
+            e.TTL = this.enemyTTL;
+            this.phase = 0;
         }
     }
 }
@@ -3087,27 +3125,99 @@ const levels = [
 
         }
     },
-    /*{
-        name: "Phase 2 Bossfight",
+    { // This is an evil level: the "easy route" (over and down) is almost unbeatable because of the fish, while the "hard route" (inverse) is playable.
+        name: "Spaceport",
         phase: 0,
         skippable: false,
         difficulty: 1,
         oncreate(game){
-            game.player.giveWeapon(BasicGun);
-            game.create(0, 2, 1, 1, "coin", "fiftycoin");
-            game.create(-7, 3, 14, 1);
-            var bat = game.create(-6, -3, 1, 1, "bullet", "enemy", BatEnemy);
-            game.attachMaces(bat, 2).forEach((item, i) => {
-                game.attachMaces(item, 3);
+            game.startX = 50;
+            game.startY = 200;
+            game.create(0, 0, 49, 1);
+            game.create(0, 1, 1, 30);
+            game.create(0, 30, 49, 1);
+            game.create(49, 0, 1, 31);
+
+            // Procedural generation of all the platforms
+            for (var x = 0; x < 5; x ++){
+                for (var y = 0; y < 7; y ++){
+                    if ((x + y) % 2 == 1){
+                        game.create(x * 10 + 2, y * 4 + 4, 7, 1);
+                        if (y < 4 && x % 2 == 0) {
+                            game.create(x * 10 + 5, y * 4 + 3, 1, 1, "heal", "heal");
+                        }
+                        if (Math.random() > 0.7){
+                            game.create(x * 10 + 3, y * 4 + 3, 1, 1, "coin", "fiftycoin");
+                        }
+                        else{
+                            game.create(x * 10 + 3, y * 4 + 3, 1, 1, "coin", "tencoin");
+                        }
+                        if (Math.random() > 0.8){
+                            if (Math.random() > 0.7){
+                                game.create(x * 10 + 6, y * 4 + 3, 1, 1, "coin", "fiftycoin");
+                            }
+                            else{
+                                game.create(x * 10 + 6, y * 4 + 3, 1, 1, "coin", "tencoin");
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Wall
+            game.create(2, 1, 1, 27);
+
+            // Turnstiles. One of them is undodgeable but has only 3 (so there's a short window in which to hop), the other is dodgable if you're good but has 6.
+            game.attachMaces(game.create(15, 27, 1, 1, "lava", "splenectifyu"), 6).forEach((item, i) => {
+                item.defaultExtent = 150;
             });
+
+            game.attachMaces(game.create(35, 27, 1, 1, "lava", "splenectifyu"), 3).forEach((item, i) => {
+                item.defaultExtent = 175;
+            });
+
+            // Guns
+            game.create(15, 19, 1, 1, "shooter", "enemy", ShooterEnemy);
+
+            game.create(35, 19, 1, 1, "shooter", "enemy", ShooterEnemy);
+
+            // Normal enemies for people who play the easy route
+            game.create(9, 15, 1, 1, "none", "field");
+            game.create(7, 15, 1, 1, "lava", "enemy", NormalEnemy);
+
+            game.create(9, 23, 1, 1, "none", "field");
+            game.create(5, 23, 1, 1, "lava", "enemy", NormalEnemy);
+
+            // Random-vel trickle at the top
+            game.create(15, 3, 1, 1, "none", "none", TricklerEnemy);
+
+            game.create(35, 3, 1, 1, "none", "none", TricklerEnemy);
+
+            // The actual keys you need
+            game.create(15, 3, 1, 1, "key", "key");
+
+            game.create(35, 3, 1, 1, "key", "key");
+
+            game.create(48, 29, 1, 1, "key", "key");
+
+
+            // The end!
+            game.create(1, 29, 1, 1, "end", "end");
         },
         onloop(game){
-
+            if (game.keyCount == 0 && !this.flooded) {
+                game.create(1, 22, 48, 8, "water", "water");
+                //game.create(15, 27, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true, health: 20});
+                game.create(35, 27, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true, health: 20});
+                game.player.giveWeapon(PrettyAverageSword);
+                this.flooded = true;
+                game.jitter(75);
+            }
         },
         ondestroy(){
-
+            this.flooded = false;
         }
-    }*/
+    }
 ];
 
 class GameManager{
@@ -3307,8 +3417,8 @@ class GameManager{
             var distTime = window.performance.now() - this.lastFrameTime;
             this.lastFrameTime = window.performance.now();
             var framesElapsed = distTime/this.frameDuration;
-            var retVal = this.game.loop(framesElapsed);
             this.curLevelObj.onloop(this.game, framesElapsed);
+            var retVal = this.game.loop(framesElapsed);
             if (retVal == 1){
                 this.youLoseEl.style.display = "";
                 window.setTimeout(() => {
