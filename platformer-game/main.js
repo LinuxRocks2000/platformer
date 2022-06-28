@@ -3127,7 +3127,7 @@ const levels = [
     },
     { // This is an evil level: the "easy route" (over and down) is almost unbeatable because of the fish, while the "hard route" (inverse) is playable.
         name: "Spaceport",
-        phase: 0,
+        phase: 1,
         skippable: false,
         difficulty: 1,
         oncreate(game){
