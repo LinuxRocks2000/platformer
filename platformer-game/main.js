@@ -3067,6 +3067,8 @@ const levels = [
         phase: 0,
         fallingIsSafe: false,
         oncreate(game){
+            game.startX = 0;
+            game.startY = 0;
             game.create(-3, -3, 1, 7);
             game.create(-2, 3, 4, 1);
             game.create(2, 3, 8, 1, "ice", "ice");
@@ -3250,8 +3252,8 @@ const levels = [
         minimumExtent: 2000,
         hasGivenPlayerWeapon: false,
         oncreate(game){
-            game.startX = -100;
-            game.startY = 0;
+            game.startX = 0;
+            game.startY = -200;
             // Create the rooms skeleton
             var numRooms = 7;
             var alternator = numRooms % 2 == 1;
@@ -3344,6 +3346,7 @@ const levels = [
         oncreate(game){
             game.player.giveWeapon(BasicGun);
             game.startY = -100;
+            game.startX = 0;
             game.create(-3, 1, 1, 12);
             game.create(-3, 1, 6, 1);
             game.create(-3, 13, 180, 1); // Bottom bricks
