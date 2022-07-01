@@ -321,3 +321,30 @@ h1{
     color: grey;
     background-color: white;
 }
+
+#saveslot{
+    text-align: center;
+    color: lightblue;
+}
+
+#saveslot:hover{
+    background-color: lightblue;
+    color: white;
+    cursor: pointer;
+}
+
+#saveslotman{
+    display: grid;
+    grid-template-areas: '. things x';
+    grid-template-rows: 15% auto 15%;
+}
+
+#saveslotman > button#exitSaveslots{
+    grid-area: x;
+    margin: auto;
+}
+
+#saveslotman > div#cont{
+    grid-area: things;
+    text-align: center;
+}

@@ -76,6 +76,8 @@ function findCoterminalRadians(angle){
     return angle;
 }
 
+const VERSION_LATEST = 1.3;
+
 const BrickDrawer = {
     coinPulse: 30,
     coinPulseFlip: false,
@@ -86,6 +88,7 @@ const BrickDrawer = {
         var isRect = false;
         var isTransparent = false;
         var isCircle = false;
+        var isStroke = false;
         switch(style){
             case "normal":
                 ctx.fillStyle = "brown";
@@ -100,7 +103,10 @@ const BrickDrawer = {
                 isCircle = true;
                 break;
             case "sign":
-                ctx.fillStyle = "#AA4A44";
+                ctx.fillStyle = "#FFFFA0";
+                ctx.strokeStyle = "yellow";
+                ctx.lineWidth = 1;
+                isStroke = true;
                 isRect = true;
                 break;
             case "heal":
@@ -221,7 +227,7 @@ const BrickDrawer = {
         var radSize = 10;
         if (isRect){
             ctx.fillRect(x, y, width, height);
-            if (type == "enemy"){
+            if (type == "enemy" || isStroke){
                 ctx.strokeRect(x, y, width, height);
             }
             if (this.isRadiating){
@@ -2498,6 +2504,7 @@ class Game {
         resize();
         this.ctx = this.canvas.getContext("2d");
         this.isShadow = false;
+        this.humanReadablePerf = 0;
     }
 
     nearestGridX(x){
@@ -2602,6 +2609,9 @@ class Game {
     }
 
     loop(framesElapsed){
+        if (framesElapsed > 2.5){
+            framesElapsed = 2.5; // If performance scaling goes to 2.5 blockiness, there's something wrong.
+        }
         BrickDrawer.upPulse(framesElapsed);
         if (this.isShadow){
             this.ctx.fillStyle = "rgb(100, 100, 100)";
@@ -2656,18 +2666,18 @@ class Game {
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.globalAlpha = 1;
         }
-        this.ctx.textAlign = "left";
-        this.ctx.font = "bold 16px serif";
-        if (framesElapsed < 1.5){
+        this.ctx.fillStyle = "grey";
+        this.ctx.fillRect(window.innerWidth - 110, window.innerHeight - 20, 100, 10);
+        if (framesElapsed < 1){
             this.ctx.fillStyle = "green";
         }
-        else if (framesElapsed < 2.5){
+        else if (framesElapsed < 2){
             this.ctx.fillStyle = "yellow";
         }
-        else {
+        else{
             this.ctx.fillStyle = "red";
         }
-        this.ctx.fillText("" + framesElapsed, window.innerWidth - 100, window.innerHeight - 20);
+        this.ctx.fillRect(window.innerWidth - 110, window.innerHeight - 20, 100 * framesElapsed/2.5, 10)
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
@@ -3631,11 +3641,18 @@ class GameManager{
         this.levelSelectEl.onchange = this.onSelectionChanged;
         this.beaten = [];
         this.menu = true;
-        if (localStorage.storage){
+        if (localStorage.storage && localStorage.version == VERSION_LATEST){
             this.storage = JSON.parse(localStorage.storage);
         }
         else{
-            console.log("No storage profile exists, creating new one");
+            if (localStorage.version != VERSION_LATEST){
+                console.log("You are on an old version! Resetting.");
+                alert("You are not on the latest version of platformer. Upgrading now. Your saved games will be reset.");
+            }
+            else{
+                console.log("No storage profile exists, creating new one");
+            }
+            localStorage.version = VERSION_LATEST;
             this.storage = {
                 highscore1: {
                     name: "Tyler",
@@ -3648,9 +3665,11 @@ class GameManager{
                 highscore3: {
                     name: "Preston",
                     value: 100
-                }
+                },
+                savedGames: []
             };
         }
+        this.saveSlot = -1;
     }
 
     set curLevel(val){
@@ -3706,8 +3725,13 @@ class GameManager{
         }
     }
 
+    showSaveslot(){
+        document.getElementById("saveslot").innerHTML = "Save slot: " + (this.saveSlot == -1 ? "[nilch]" : "" + this.saveSlot + " [" + this.storage.savedGames[this.saveSlot].name + "]");
+    }
+
     showMenu(){
         this.showLevels();
+        this.showSaveslot();
         document.getElementById("menu").style.display = "";
         HarmAnimator.menuTime();
         this.menu = true;
@@ -3721,6 +3745,9 @@ class GameManager{
 
     start(){
         this.showMenu();
+        if (this.storage.savedGames.length > 0){
+            this.switchToSlot(0);
+        }
     }
 
     getLevel(name){
@@ -3847,16 +3874,65 @@ class GameManager{
                         this.beaten = [];
                     }
                 }
+                this.saveGame();
             }
             if (retVal > 0){
-                localStorage.storage = JSON.stringify(this.storage);
+                this.saveToStorage();
                 this.showMenu();
             }
         }
     }
 
+    saveGame(){
+        if (this.saveSlot >= 0){
+            this.storage.savedGames[this.saveSlot].levelsBeaten = this.beaten;
+            this.storage.savedGames[this.saveSlot].curPhase = this.curPhase;
+            this.storage.savedGames[this.saveSlot].curScore = this.game.player.score;
+        }
+    }
+
+    saveToStorage(){
+        localStorage.storage = JSON.stringify(this.storage);
+    }
+
     bumpTime(){
         this.lastFrameTime = window.performance.now();
+    }
+
+    newSlot(name){
+        this.storage.savedGames.push({
+            name: name,
+            levelsBeaten: [],
+            curPhase: 0,
+            curScore: 0
+        });
+        return this.storage.savedGames.length - 1;
+    }
+
+    switchToSlot(num){
+        this.beaten = this.storage.savedGames[num].levelsBeaten;
+        this.curPhase = this.storage.savedGames[num].curPhase;
+        this.game.player.score = this.storage.savedGames[num].curScore;
+        this.saveSlot = num;
+        this.showMenu();
+    }
+
+    manageSaveslots(){
+        document.getElementById("saveslotman").style.display = "";
+        var thing = "There's no saved games here!";
+        if (this.storage.savedGames.length > 0){
+            thing = "<select onchange='gm.switchToSlot(this.value)'>"
+            this.storage.savedGames.forEach((item, i) => {
+                thing += "<option value='" + i + "'>" + i + ": " + item.name + "</option>";
+            });
+            thing += "</select>"
+        }
+        thing += "<br /><button onclick='gm.switchToSlot(gm.newSlot(prompt(\"New save slot name\")));gm.manageSaveslots()'>New</button>"
+        document.getElementById("cont").innerHTML = thing;
+    }
+
+    exitSaveslotManager(){
+        document.getElementById("saveslotman").style.display = "none";
     }
 }
 
