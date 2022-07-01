@@ -79,6 +79,8 @@ function findCoterminalRadians(angle){
 const BrickDrawer = {
     coinPulse: 30,
     coinPulseFlip: false,
+    isRadiating: false,
+    radiationPulse: 0,
     drawBrick(ctx, x, y, width, height, style, type, game){
         ctx.fillStyle = "transparent"; // Default
         var isRect = false;
@@ -199,6 +201,10 @@ const BrickDrawer = {
                 ctx.fillStyle = "grey";
                 isCircle = true;
                 break;
+            case "begone":
+                ctx.fillStyle = "orange";
+                isCircle = true;
+                break;
         }
         ctx.save();
         if (isTransparent){
@@ -211,10 +217,22 @@ const BrickDrawer = {
         if (type == "tencoin" || type == "fiftycoin" || type == "heal"){
             ctx.globalAlpha = this.coinPulse/255;
         }
+        var numRads = 10;
+        var radSize = 10;
         if (isRect){
             ctx.fillRect(x, y, width, height);
             if (type == "enemy"){
                 ctx.strokeRect(x, y, width, height);
+            }
+            if (this.isRadiating){
+                for (var i = 0; i < numRads; i ++){
+                    var realOff = i * radSize + this.radiationPulse % radSize + i;
+                    ctx.strokeStyle = ctx.fillStyle;
+                    ctx.globalAlpha = (1 - (realOff/(numRads * (radSize + 1))))/2;
+                    ctx.lineWidth = realOff/2;
+                    ctx.strokeRect(x - (realOff/2), y - (realOff/2), width + realOff, height + realOff);
+                    ctx.globalAlpha = 1;
+                }
             }
         }
         else if (isCircle){
@@ -223,6 +241,18 @@ const BrickDrawer = {
             ctx.fill();
             if (type == "enemy"){
                 ctx.stroke();
+            }
+            if (this.isRadiating){
+                for (var i = 0; i < numRads; i ++){
+                    var realOff = i * radSize + this.radiationPulse % radSize + i;
+                    ctx.strokeStyle = ctx.fillStyle;
+                    ctx.globalAlpha = (1 - (realOff/(numRads * (radSize + 1))))/4;
+                    ctx.lineWidth = realOff/2;
+                    ctx.beginPath();
+                    ctx.arc(x + width/2, y + width/2, width/2 + realOff, 0, 2 * Math.PI, false);
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
+                }
             }
         }
         if (type == "tencoin" || type == "fiftycoin"){
@@ -276,6 +306,25 @@ const BrickDrawer = {
         }
         if (this.coinPulse < 10){
             this.coinPulse = 10;
+        }
+        this.radiationPulse += fe;
+    }
+};
+
+
+const Behavior = {
+    flyToPlayer(brick, speed = 3){
+        if (brick.game.player.x > brick.x){
+            brick.xv += speed;
+        }
+        else{
+            brick.xv -= speed;
+        }
+        if (brick.game.player.y > brick.y){
+            brick.yv += speed;
+        }
+        else{
+            brick.yv -= speed;
         }
     }
 };
@@ -334,7 +383,7 @@ class PhysicsObject{
     }
 
     phaseShift(){
-        this.phaser = 1;
+        this.phaser = 2;
     }
 
     loop(framesElapsed){
@@ -395,8 +444,11 @@ class PhysicsObject{
                     this.xv *= -this.elasticityX;
                 }
             }
-            if (!didCollide){
+            if (!didCollide && this.phaser == 1){
                 this.phaser = 0;
+            }
+            if (didCollide && this.phaser == 2){
+                this.phaser = 1;
             }
             this.restrictInteger = doRestrictInt;
         }
@@ -858,6 +910,39 @@ class FlyerEnemy extends Brick{
 }
 
 
+class PhaserEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.collisions.push("player");
+        this.specialCollisions = this.collisions;
+        this.gravity = 0;
+        this.friction = 0.99;
+        this.frictionY = 0.99;
+        this.elasticityX = 1;
+        this.elasticityY = 1;
+        this.shiftNextCycle = false;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        Behavior.flyToPlayer(this, 0.3);
+        if (this.shiftNextCycle){
+            this.shiftNextCycle = false;
+            if (this.phaser == 0){
+                this.phaseShift();
+            }
+        }
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            this.game.player.harm(20);
+        }
+        this.shiftNextCycle = true;
+    }
+}
+
+
 class GunnerEnemy extends Brick{
     constructor(game, x, y, width, height, style, type){
         super(game, x, y, width, height, style, type);
@@ -997,6 +1082,8 @@ class BatEnemy extends Brick{
             if (this.canSeePlayer()){
                 this.state = 1;
                 this.isStatic = false;
+                this.xv = 0;
+                this.yv = 0; // Just a make'a sure'a
             }
         }
         if (this.state == 2){
@@ -1325,11 +1412,17 @@ class AverageSwarmEnemy extends Brick{
 
 
 class RaisingPlatform extends Brick{
-    constructor(game, x, y, width, height, style, type){
+    constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
+        console.log(config);
         this.gravity = 0;
         this.isStatic = false;
-        this.yv = -1;
+        if (config.speed){
+            this.yv = config.speed;
+        }
+        else{
+            this.yv = -1;
+        }
         this.frictionY = 1;
         this.specialCollisions.push("player");
         this.collisions.push("stopblock");
@@ -1351,6 +1444,8 @@ class SideMovingPlatform extends Brick{
         this.restrictInteger = true;
         this.collisions.push("stopblock");
         this.collisions.push("player");
+        this.specialCollisions.push("player");
+        this.touchingPlayer = false;
     }
 }
 
@@ -1509,10 +1604,12 @@ class ShooterEnemy extends Brick{
             }
             angleFric = 0.95;
         }
-        if (goalAngle > this.angle){
+        var isMoreThan = goalAngle > this.angle;
+        var isLessThan = goalAngle < this.angle;
+        if (isMoreThan){
             this.angleV += 0.75;
         }
-        else if (goalAngle < this.angle){
+        else if (isLessThan){
             this.angleV -= 0.75;
         }
         this.angle += this.angleV * framesElapsed;
@@ -1792,6 +1889,127 @@ class TricklerEnemy extends Brick{
 }
 
 
+class RicketyPlatform extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.gravity = 0;
+        this.specialCollisions.push("player");
+        this.isShrinking = false;
+        this.killAlso = config.killAlso || [];
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            this.isShrinking = true;
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.isShrinking){
+            this.height -= framesElapsed;
+            this.y += framesElapsed/2;
+            if (this.height <= 0){
+                this.game.deleteBrick(this);
+                this.killAlso.forEach((item, i) => {
+                    this.game.deleteBrick(item);
+                });
+            }
+        }
+    }
+}
+
+
+class BatGunnerEnemy extends BatEnemy{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type, config);
+        this.angle = 0;
+        this.angleV = 0;
+        this.gunPhase = 0;
+        this.onDieFunction = config.onDie;
+        this.health = 40;
+        this.maxHealth = 40;
+    }
+    onDie(){
+        if (this.onDieFunction){
+            this.onDieFunction();
+        }
+    }
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        var goalAngle = 0;
+        var angleFric = 0.9;
+        if (this.canSeePlayer(false, 1000)){
+            this.gunPhase += framesElapsed;
+            var distX = this.x + this.width/2 - (this.game.player.x + this.game.player.width/2);
+            var distY = this.y + this.height/2 - (this.game.player.y + this.game.player.height/2);
+            var hypotenuse = Math.sqrt(distY * distY + distX * distX);
+            goalAngle = Math.acos(distX/hypotenuse) * 180/Math.PI + 90;
+            if (distY < 0){
+                goalAngle -= 180;
+                goalAngle *= -1;
+            }
+            if (this.gunPhase > 20){
+                this.gunPhase = 0;
+                this.shoot();
+            }
+            angleFric = 0.95;
+        }
+        var isMoreThan = goalAngle > this.angle;
+        var isLessThan = goalAngle < this.angle;
+        if (isMoreThan){
+            this.angleV += 0.75;
+        }
+        else if (isLessThan){
+            this.angleV -= 0.75;
+        }
+        this.angle += this.angleV * framesElapsed;
+        this.angleV *= angleFric;
+        var ctx = this.game.ctx;
+        ctx.save();
+        ctx.translate(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+        ctx.rotate(this.angle * Math.PI/180);
+        ctx.fillStyle = "grey";
+        ctx.beginPath();
+        ctx.translate(0, 20);
+        ctx.moveTo(-5, -5);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(5, -5);
+        ctx.lineTo(0, 20);
+        ctx.lineTo(-5, -5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    shoot(){
+        var thingX = Math.cos((this.angle + 90) * Math.PI/180);
+        var thingY = Math.sin((this.angle + 90) * Math.PI/180);
+        this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "bullet", "bullet", BulletEnemy, {xv: thingX * 40, yv: thingY * 40});
+    }
+}
+
+
+class Boink{
+    constructor(text){
+        this.text = text;
+        this.TTL = 50;
+    }
+
+    loop(ctx, framesElapsed){
+        ctx.font = "bold 48px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText(this.text, window.innerWidth/2, window.innerHeight/4);
+        ctx.textAlign = "left";
+        this.TTL -= framesElapsed;
+        if (this.TTL < 0){
+            return true;
+        }
+    }
+}
+
+
 class Player extends PhysicsObject{
     constructor(game, x, y, width, height){
         super(game, x, y, width, height);
@@ -1866,6 +2084,7 @@ class Player extends PhysicsObject{
         this.specialCollisions.push("heal");
         this.specialCollisions.push("water");
         this.specialCollisions.push("key");
+        this.specialCollisions.push("begone");
         this.collisions.push("glass");
         this.collisions.push("enemy");
         this._score = 0;
@@ -1897,6 +2116,8 @@ class Player extends PhysicsObject{
             name: "",
             time: 0
         };
+        this.boinks = [];
+        this.begonCycle = 0;
     }
 
     studio(){
@@ -1999,6 +2220,20 @@ class Player extends PhysicsObject{
             this.game.ctx.textAlign = "left";
             this.game.ctx.glbalAlpha = 1;
         }
+        if (this.begoneCycle > 0){
+            this.begoneCycle -= framesElapsed;
+            this.game.ctx.strokeStyle = "black";
+            this.game.ctx.lineWidth = 1;
+            this.game.tileset.forEach((item, i) => {
+                if (!item.isStatic){
+                    this.game.ctx.beginPath();
+                    this.game.ctx.moveTo(this.artPos.x, this.artPos.y);
+                    this.game.ctx.lineTo(item.artPos.x, item.artPos.y);
+                    this.game.ctx.stroke();
+                    this.game.ctx.closePath();
+                }
+            });
+        }
     }
 
     Jump(){
@@ -2047,9 +2282,6 @@ class Player extends PhysicsObject{
         if (this.harmImmune >= 0){
             this.harmImmune -= framesElapsed;
         }
-        else{
-            //this.element.classList.remove("harmImmune");
-        }
         this.monkey -= framesElapsed;
 
         if (this.studioMode || this.cheatMode){
@@ -2079,6 +2311,11 @@ class Player extends PhysicsObject{
         if (this.weapon){
             this.weapon.loop(framesElapsed);
         }
+        this.boinks.forEach((item, i) => {
+            if (item.loop(this.game.ctx, framesElapsed)){
+                this.boinks.splice(i, 1);
+            }
+        });
     }
 
     collect(amount){
@@ -2154,6 +2391,26 @@ class Player extends PhysicsObject{
             this.frictionChangeY = 0.9;
             this.frictionChangeX = 0.7;
         }
+        if (type == "begone"){
+            items.forEach((item, i) => {
+                this.game.deleteBrick(item);
+                this.begone();
+            });
+        }
+    }
+
+    begone(){
+        this.game.tileset.forEach((item, i) => {
+            if (item.type == "enemy" || item.type == "bullet"){
+                var distX = item.x - this.x;
+                var distY = item.y - this.y;
+                var distH = Math.sqrt(distX * distX + distY * distY);
+                item.xv += distX * 50 / distH;
+                item.yv += distY * 50 / distH;
+            }
+        });
+        this.boinks.push(new Boink("Begone!"));
+        this.begoneCycle = 30;
     }
 
     noSpecial(type){
@@ -2240,6 +2497,7 @@ class Game {
         window.addEventListener("resize", resize);
         resize();
         this.ctx = this.canvas.getContext("2d");
+        this.isShadow = false;
     }
 
     nearestGridX(x){
@@ -2318,6 +2576,13 @@ class Game {
         return this._create(x * this.blockWidth, y * this.blockHeight, width * this.blockWidth, height * this.blockHeight, style, type, bricktype, config);
     }
 
+    createRect(x, y, width, height, style = "normal", type = "solid"){
+        this.create(x, y, width, 1, style, type);
+        this.create(x, y + 1, 1, height, style, type);
+        this.create(x + width, y, 1, height, style, type);
+        this.create(x + 1, y + height, width, 1, style, type);
+    }
+
     attachMace(block, offset = 0){
         return this._create(block.x, block.y, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: block, dragSpeed: Math.PI/180, offset: offset});
     }
@@ -2338,7 +2603,13 @@ class Game {
 
     loop(framesElapsed){
         BrickDrawer.upPulse(framesElapsed);
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.isShadow){
+            this.ctx.fillStyle = "rgb(100, 100, 100)";
+        }
+        else{
+            this.ctx.fillStyle = "white";
+        }
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.playing){
             this.viewPos.x += (this.viewPos_real.x - this.viewPos.x) / 20 - this.player.xv/10;
             this.viewPos.y += (this.viewPos_real.y - this.viewPos.y) / 20 - this.player.yv/10;
@@ -2379,6 +2650,24 @@ class Game {
             this.ctx.fillText("Keys left: " + this.keyCount, window.innerWidth/2, 30);
             this.ctx.textAlign = "left";
         }
+        if (this.isShadow){
+            this.ctx.fillStyle = "black";
+            this.ctx.globalAlpha = 0.5;
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.globalAlpha = 1;
+        }
+        this.ctx.textAlign = "left";
+        this.ctx.font = "bold 16px serif";
+        if (framesElapsed < 1.5){
+            this.ctx.fillStyle = "green";
+        }
+        else if (framesElapsed < 2.5){
+            this.ctx.fillStyle = "yellow";
+        }
+        else {
+            this.ctx.fillStyle = "red";
+        }
+        this.ctx.fillText("" + framesElapsed, window.innerWidth - 100, window.innerHeight - 20);
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
@@ -2404,10 +2693,11 @@ class Game {
             "water": [0, []],
             "key": [0, []],
             "bullet": [0, []],
-            "splenectifyu": [0, []]
+            "splenectifyu": [0, []],
+            "begone": [0, []]
         }
         var iter = (item, i) => {
-            if (item != object){ // Yes, this plagues me.
+            if (item != object && item.phaser == 0){ // Yes, this plagues me.
                 if (object.x + object.width > item.x && // && means "and"
                     object.x < item.x + item.width &&
                    	object.y + object.height > item.y &&
@@ -2960,7 +3250,8 @@ const levels = [
         minimumExtent: 2000,
         hasGivenPlayerWeapon: false,
         oncreate(game){
-            //game.startX = -100;
+            game.startX = -100;
+            game.startY = 0;
             // Create the rooms skeleton
             var numRooms = 7;
             var alternator = numRooms % 2 == 1;
@@ -3217,6 +3508,107 @@ const levels = [
         ondestroy(){
             this.flooded = false;
         }
+    },
+    {
+        name: "Shadow: Phase 2 Bossfight",
+        phase: 1,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.startX = -500;
+            game.startY = -800;
+            BrickDrawer.isRadiating = true;
+            game.isShadow = true;
+            game.create(0, 0, 20, 1);
+            game.create(-1, -10, 1, 11);
+            game.create(0, -10, 20, 1);
+            game.create(20, -4, 1, 11);
+            game.create(25, -6, 1, 11);
+            game.create(21, 0, 10, 1);
+
+            // Rectangles
+            game.createRect(-20, -10, 7, 7);
+            game.createRect(-24, -14, 15, 15)
+            this.phazah = game.create(-15, -5, 1, 1, "lava", "enemy", PhaserEnemy);
+
+            // Some coin scatters
+            game.create(1, -1, 1, 1, "coin", "tencoin");
+            game.create(2, -1, 1, 1, "coin", "tencoin");
+
+            // A Begone!
+            game.create(22, -1, 1, 1, "begone", "begone");
+
+            // Healpit
+            game.create(26, 4, 10, 1);
+            game.create(26, 3, 1, 1, "heal", "heal");
+
+            // Accursed Steps
+            game.create(38, -3, 5, 1);
+            game.create(46, -6, 5, 1);
+            game.create(54, -9, 5, 1);
+            game.create(56, -17, 1, 1, "shooter", "enemy", ShooterEnemy, {sightRange: 1000});
+
+            // Awful Climb
+            game.create(64, -17, 1, 5);
+            game.create(63, -13, 1, 1);
+
+            game.create(68, -20, 1, 5);
+            game.create(67, -16, 1, 1);
+
+            game.create(72, -23, 1, 5);
+            game.create(71, -19, 1, 1);
+
+            // Rickety
+            game.create(80, -21, 10, 1, "normal", "solid", RicketyPlatform);
+
+            // The dangerous ride
+            game.create(95, -19, 1, 1);
+            game.create(97, -19, 2, 1, "normal", "solid", SideMovingPlatform);
+            game.create(125, -19, 5, 1, "normal", "solid");
+
+            // The dangerous elevator
+            game.create(132, -19, 1, 1, "none", "stopblock");
+            game.create(132, 0, 1, 1, "none", "stopblock");
+            game.create(132, -15, 1, 1, "normal", "solid", RaisingPlatform, {speed: 7});
+
+            // Evil platform
+            game.create(136, -8, 1, 6, "none", "field");
+            var b = game.create(141, -9, 1, 1, "bullet", "enemy", BatEnemy);
+            game.attachMaces(b, 6)
+            game.create(137, -7, 10, 2, "normal", "solid", RicketyPlatform, {killAlso: [b]});
+            game.create(147, -8, 1, 6, "none", "field");
+
+            // Safety at last
+            game.create(155, -10, 50, 1);
+            game.create(155, -11, 1, 1, "heal", "heal");
+
+            // Or not.
+            game.create(165, -15, 1, 1, "bullet", "enemy", BatGunnerEnemy, {onDie: () => {
+                game.create(200, -11, 1, 1, "end", "end");
+            }});
+        },
+        hasBequeathed: false,
+        onloop(game){
+            if (game.player.x > 1500 && this.phazah.x > 1450){
+                this.phazah.xv --;
+            }
+            if (game.player.x > 7800){
+                if (!this.hasBequeathed){
+                    game.player.giveWeapon(BasicGun);
+                    this.hasBequeathed = true
+                }
+            }
+            else{
+                if (this.hasBequeathed){
+                    game.player.clearWeapon();
+                    this.hasBequeathed = false;
+                }
+            }
+        },
+        ondestroy(game){
+            game.isShadow = false;
+            BrickDrawer.isRadiating = false;
+        }
     }
 ];
 
@@ -3471,11 +3863,7 @@ var gm = new GameManager(game, levels, 60);
 
 gm.start();
 
-window.onfocus = function(){
-    lastFrameTime = window.performance.now();
-}
-
-var wasUnfocused = false;
+var wasUnfocused = true;
 
 function mainloop(){
     if (document.hasFocus()){
