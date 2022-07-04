@@ -1222,7 +1222,7 @@ class FishEnemy extends Brick{
             }
         }
         else{
-            this.stage = 0;
+            //this.stage = 0;
         }
     }
 
@@ -1658,7 +1658,7 @@ class CannonEnemy extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.isStatic = true;
-        this.fireRate = config.fireRate;
+        this.fireRate = config.fireRate || 70;
         this.phase = Math.random() * this.fireRate;
         this.sightRange = config.sightRange || 1000;
     }
