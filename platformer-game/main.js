@@ -2974,7 +2974,6 @@ var BasicGun = {
 
 
 const levels = [
-    /*
     {
         name: "Training",
         skippable: true,
@@ -3667,10 +3666,10 @@ const levels = [
             game.isShadow = false;
             BrickDrawer.isRadiating = false;
         }
-    },*/
+    },
     {
-        name: "Quest [ TEMPORARY NAME ]",
-        phase: 0, // 2
+        name: "Chambers",
+        phase: 2,
         skippable: false,
         difficulty: 1,
         chambers: [],
@@ -3738,10 +3737,10 @@ const levels = [
             this.chambers.push({
                 door: game.create(-7, 16, 1, 1, "tar", "solid"),
                 isSideways: true,
-                enemies: [game.create(-5, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40, dropHealth: true}), game.create(2, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40, dropHealth: true})]
+                enemies: [game.create(-5, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40}), game.create(2, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40})]
             });
 
-            game.create(-5, 21, 1, 1, "end", "end");
+            game.create(-5, 20, 1, 1, "end", "end");
         },
         onloop(game, framesElapsed){
             this.chambers.forEach((item, i) => {
@@ -3775,6 +3774,8 @@ const levels = [
                     if (doDelete){
                         this.chambers.splice(i, 1);
                         game.deleteBrick(item.door);
+                        game.jitter(30);
+                        game.player.collect(20);
                     }
                 }
             });
