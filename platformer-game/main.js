@@ -1054,6 +1054,7 @@ class BatEnemy extends Brick{
         this.maxHealth = config.health || 30;
         this.isDamageable = true;
         this.swoop = 0;
+        this.sightRange = config.sightRange || 200;
     }
 
     onDie(){
@@ -1155,7 +1156,8 @@ class FishEnemy extends Brick{
         this.range = config.range || 500;
         this.specialCollisions.push("water");
         this.collisions.push("player");
-        this.specialCollisions.push("player");
+        //this.specialCollisions.push("player");
+        this.specialCollisions = this.collisions;
         this.inWater = true;
         this.isDamageable = true;
         this.health = config.health || 30;
@@ -1190,7 +1192,6 @@ class FishEnemy extends Brick{
             this.goal = this.x + Math.random() * this.range;
             if (this.x > this.game.player.x){
                 this.goal *= -1;
-                gm.bumpTime();
             }
             this.stage = 1;
         }
@@ -1212,8 +1213,15 @@ class FishEnemy extends Brick{
         if (type == "water"){
             this.inWater = true;
         }
-        if (type == "player"){
+        else if (type == "player"){
             this.game.player.harm(30);
+            this.stage = 1;
+            this.goal = this.x + Math.random() * this.range;
+            if (this.x < this.game.player.x){
+                this.goal *= -1;
+            }
+        }
+        else{
             this.stage = 0;
         }
     }
@@ -1373,6 +1381,7 @@ class AverageSwarmEnemy extends Brick{
         this.swarm = [];
         this.active = false;
         this.sightRange = config.sightRange || this.sightRange;
+        this.bulletSize = config.bulletSize || 10;
     }
 
     positionWeightedAverage(objects){
@@ -1398,7 +1407,7 @@ class AverageSwarmEnemy extends Brick{
             this.state += framesElapsed;
             if (this.state > 50){
                 this.state = 0;
-                this.swarm.push(this.game._create(this.x + this.width/2 - 5, this.y - 10, 10, 10, "swarm", "none", SwarmFlyer, {yv: -10}));
+                this.swarm.push(this.game._create(this.x + this.width/2 - this.bulletSize/2, this.y - this.bulletSize, this.bulletSize, this.bulletSize, "swarm", "none", SwarmFlyer, {yv: -10}));
             }
         }
         if (this.swarm.length > 0){
@@ -1649,7 +1658,8 @@ class CannonEnemy extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.isStatic = true;
-        this.phase = Math.random() * 100;
+        this.fireRate = config.fireRate;
+        this.phase = Math.random() * this.fireRate;
         this.sightRange = config.sightRange || 1000;
     }
 
@@ -1657,7 +1667,7 @@ class CannonEnemy extends Brick{
         super.loop(framesElapsed);
         if (this.canSeePlayer()){
             this.phase += framesElapsed;
-            if (this.phase > 70){
+            if (this.phase > this.fireRate){
                 this.phase = 0;
                 this.shoot();
             }
@@ -1801,8 +1811,8 @@ class MaceEnemy extends Brick{
             }
         }
         if (this.explode && !this.isBullet){
-            var distToPlayerX = this.game.player.x - this.x;
-            var distToPlayerY = this.game.player.y - this.y;
+            var distToPlayerX = this.game.player.x + this.game.player.width/2 - this.x;
+            var distToPlayerY = this.game.player.y + this.game.player.height/2 - this.y;
             var playerAngle = Math.atan(distToPlayerY/distToPlayerX);
             if (distToPlayerX < 0){
                 playerAngle -= Math.PI;
@@ -1847,12 +1857,24 @@ class BruiserEnemy extends Brick{
         this.collisions.push("jumpthrough");
         this.collisions.push("field");
         this.collisions.push("enemy");
+        this.collisions.push("player");
+        this.specialCollisions.push("player");
         this.specialCollisions.push("enemy");
         this.game.attachMaces(this, 6);
         this.maceInPlayer = false;
         this.elasticityX = 1;
         this.xv = 10;
         this.friction = 1;
+        this.health = config.health || 80;
+        this.maxHealth = config.health || 80;
+        this.isDamageable = true;
+        this.doDropHeal = config.dropHealth;
+    }
+
+    onDie(){
+        if (this.doDropHeal){
+            this.game._create(this.x, this.y, this.width, this.height, "heal", "heal");
+        }
     }
 
     loop(framesElapsed){
@@ -1868,6 +1890,12 @@ class BruiserEnemy extends Brick{
     hitRight(){
         if (this.touchingBottom){
             this.yv = -10;
+        }
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            this.game.player.harm(20);
         }
     }
 }
@@ -2590,14 +2618,18 @@ class Game {
         this.create(x + 1, y + height, width, 1, style, type);
     }
 
-    attachMace(block, offset = 0){
-        return this._create(block.x, block.y, 10, 10, "bullet", "splenectifyu", MaceEnemy, {owner: block, dragSpeed: Math.PI/180, offset: offset});
+    attachMace(block, offset = 0, maceConfig = {}){
+        var _maceConf = Object.create(maceConfig);
+        _maceConf.owner = block;
+        _maceConf.dragSpeed = maceConfig.dragSpeed || Math.PI/180;
+        _maceConf.offset = maceConfig.offset || offset;
+        return this._create(block.x, block.y, 10, 10, "bullet", "splenectifyu", MaceEnemy, _maceConf);
     }
 
-    attachMaces(block, num){
+    attachMaces(block, num, maceConfig, off = 0){
         var maces = [];
         for (var x = 0; x < num; x ++){
-            maces.push(this.attachMace(block, Math.PI * 2 * x / num));
+            maces.push(this.attachMace(block, off + Math.PI * 2 * x / num, maceConfig));
         }
         return maces;
     }
@@ -2677,7 +2709,13 @@ class Game {
         else{
             this.ctx.fillStyle = "red";
         }
-        this.ctx.fillRect(window.innerWidth - 110, window.innerHeight - 20, 100 * framesElapsed/2.5, 10)
+        this.ctx.fillRect(window.innerWidth - 110, window.innerHeight - 20, 100 * framesElapsed/2.5, 10);
+        this.ctx.beginPath();
+        this.ctx.moveTo(window.innerWidth - 110 + (100/2.5), window.innerHeight - 20);
+        this.ctx.lineTo(window.innerWidth - 110 + 100/2.5, window.innerHeight - 10);
+        this.ctx.strokeStyle = "black";
+        this.ctx.closePath();
+        this.ctx.stroke();
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
@@ -2821,6 +2859,12 @@ class PrettyAverageSwordBrick extends Brick{
 }
 
 
+class DropperEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){}
+
+}
+
+
 var PrettyAverageSword = {
     name: "The sword that should have stayed broken",
     init(player){
@@ -2930,6 +2974,7 @@ var BasicGun = {
 
 
 const levels = [
+    /*
     {
         name: "Training",
         skippable: true,
@@ -3221,7 +3266,7 @@ const levels = [
                     };
                     this.bats.forEach((item, i) => {
                         if (!item.dead){
-                            item.x = 9900 + i * 200;
+                            item.x = 9600 + i * 200;
                         }
                     });
                 }
@@ -3621,6 +3666,121 @@ const levels = [
         ondestroy(game){
             game.isShadow = false;
             BrickDrawer.isRadiating = false;
+        }
+    },*/
+    {
+        name: "Quest [ TEMPORARY NAME ]",
+        phase: 0, // 2
+        skippable: false,
+        difficulty: 1,
+        chambers: [],
+        oncreate(game){
+            game.startX = 0;
+            game.startY = -150;
+            game.player.giveWeapon(BasicGun);
+
+            // Entry chamber
+            game.create(-5, 0, 32, 1);
+            game.create(-5, -11, 1, 9);
+            game.create(-4, -11, 20, 1);
+            game.create(15, -10, 1, 11);
+            game.sign(-2, -1, "", "Kill the enemies to open the door!");
+            game.create(-1, -1, 1, 1, "coin", "fiftycoin");
+
+            game.create(2, -2, 1, 2, "glass", "field");
+
+            this.chambers.push({
+                door: game.create(-5, -2, 1, 2, "tar"),
+                enemies: [game.create(3, -1, 1, 1, "lava", "enemy", NormalEnemy), game.create(14, -1, 1, 1, "lava", "enemy", NormalEnemy)]
+            });
+
+            // Pretty PC passage (Yes, this is an alliteration, thank you for noticing)
+            game.create(-7, -3, 2, 1);
+            game.create(-8, -3, 1, 8);
+            game.create(-8, 5, 26, 1);
+
+            game.create(14, 4, 1, 1, "cannon", "enemy", CannonEnemy, {fireRate: 20, sightRange: Infinity});
+
+            game.create(26, 1, 1, 15);
+            game.create(17, 6, 1, 1);
+
+            game.create(20, 6, 1, 5);
+            game.create(23, 6, 1, 2);
+
+            game.create(18, 6, 2, 1, "jumpthrough", "jumpthrough");
+            game.create(24, 6, 2, 1, "jumpthrough", "jumpthrough");
+
+            game.create(10, 10, 10, 1);
+            game.create(10, 6, 1, 8);
+
+            game.create(12, 9, 1, 1, "heal", "heal");
+            game.create(11, 9, 1, 1, "coin", "fiftycoin");
+
+            game.create(21, 7, 2, 1);
+            game.attachMaces(game.create(21.5, 6, 1, 1, "shooter", "enemy", ShooterEnemy), 3, {doesExtend: true});
+
+            game.create(-6, 16, 33, 1);
+            game.create(-8, 6, 1, 15);
+            game.create(-3, 17, 1, 5);
+            game.create(-8, 21, 5, 1);
+
+            game.create(22, 14, 1, 2, "glass", "field");
+
+            this.chambers.push({
+                door: game.create(10, 14, 1, 2, "tar", "solid"),
+                enemies: [game.create(20, 14, 1, 1, "lava", "enemy", BruiserEnemy, {dropHealth: true})]
+            });
+
+            game.create(-7, 10, 17, 6, "water", "water");
+            game.create(10, 14, 1, 2, "glass", "field");
+            game.create(-7, 16, 1, 1, "glass", "field");
+
+            this.chambers.push({
+                door: game.create(-7, 16, 1, 1, "tar", "solid"),
+                isSideways: true,
+                enemies: [game.create(-5, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40, dropHealth: true}), game.create(2, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40, dropHealth: true})]
+            });
+
+            game.create(-5, 21, 1, 1, "end", "end");
+        },
+        onloop(game, framesElapsed){
+            this.chambers.forEach((item, i) => {
+                var isDead = true;
+                item.enemies.forEach((enemy, enemyi) => {
+                    if (enemy.dead){
+                        item.enemies.splice(enemyi, 1);
+                    }
+                    else{
+                        isDead = false;
+                    }
+                });
+                if (isDead){
+                    var doDelete = false;
+                    if (item.isSideways){
+                        if (item.door.width > 0){
+                            item.door.width -= framesElapsed;
+                        }
+                        else{
+                            doDelete = true;
+                        }
+                    }
+                    else{
+                        if (item.door.height > 0){
+                            item.door.height -= framesElapsed;
+                        }
+                        else{
+                            doDelete = true;
+                        }
+                    }
+                    if (doDelete){
+                        this.chambers.splice(i, 1);
+                        game.deleteBrick(item.door);
+                    }
+                }
+            });
+        },
+        ondestroy(game){
+
         }
     }
 ];
