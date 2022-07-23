@@ -335,10 +335,9 @@ class FishEnemy extends Brick{
         this.frictionY = 1;
         this.friction = 0.9;
         this.range = config.range || 500;
-        this.specialCollisions.push("water");
         this.collisions.push("player");
-        //this.specialCollisions.push("player");
-        this.specialCollisions = this.collisions;
+        this.specialCollisions.push("water");
+        this.specialCollisions.push("player");
         this.inWater = true;
         this.isDamageable = true;
         this.health = config.health || 30;
@@ -539,10 +538,10 @@ class ShooterEnemy extends Brick{
         var isMoreThan = goalAngle > this.angle;
         var isLessThan = goalAngle < this.angle;
         if (isMoreThan){
-            this.angleV += 0.75;
+            this.angleV += 2 * Math.random();
         }
         else if (isLessThan){
-            this.angleV -= 0.75;
+            this.angleV -= 2 * Math.random();
         }
         this.angle += this.angleV * framesElapsed;
         this.angleV *= angleFric;
@@ -836,5 +835,72 @@ class TricklerEnemy extends Brick{
             e.TTL = this.enemyTTL;
             this.phase = 0;
         }
+    }
+}
+
+
+class PathfinderEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.path = [];
+        this.isStatic = false;
+        this.frictionX = 0.95;
+        this.tolerance = this.width/2;
+        this.collisions.push("player");
+        this.specialCollisions.push("player");
+        this.giveupWhen = 0;
+        this.sightRange = Infinity;
+        this.health = 40;
+        this.maxHealth = 40;
+        this.isDamageable = true;
+        this.active = false;
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            this.game.player.harm(30);
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (!this.active){
+            if (this.canSeePlayer()){
+                this.active = true;
+            }
+        }
+        else{
+            this.recalculate();
+            if (this.path.length == 0){
+                return;
+            }
+            this.game.ctx.beginPath();
+            this.game.ctx.lineWidth = 1;
+            this.game.ctx.strokeStyle = "green";
+            this.game.ctx.moveTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+            this.path.forEach((item, i) => {
+                this.game.ctx.lineTo(this.artPos.x - this.x + item[0], this.artPos.y - this.y + item[1])
+            });
+            this.game.ctx.stroke();
+            this.game.ctx.closePath();
+            var needX = this.path[1][0];
+            var needY = this.path[1][1];
+            if (this.x + this.width/2 > needX){
+                this.xv -= 2 * framesElapsed;
+            }
+            else{
+                this.xv += 2 * framesElapsed;
+            }
+            if (this.y + this.height/2 > needY){
+                this.yv -= 2 * framesElapsed;
+            }
+            /*if (this.path.length > 0 && distBetweenPoints([this.x + this.width/2, this.y + this.height/2], this.path[1]) < this.tolerance){
+                this.path.shift();
+            }*/
+        }
+    }
+
+    recalculate(){
+        this.path = new Pathfinder({x: this.x + this.width/2, y: this.y + this.height/2}, {x: this.game.player.x + this.game.player.width/2, y: this.game.player.y + this.game.player.height/2}, this.game, [this], ["bullet", "enemy", "tencoin", "fiftycoin", "heal"], this.tolerance).path; // Pathfinder is optimized enough that as long as there isn't an obstruction you're fine.
     }
 }

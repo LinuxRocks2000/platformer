@@ -166,3 +166,85 @@ var BasicGun = {
 
     }
 }
+
+
+class HyperslingBrick extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.duration = 0;
+        this.gravity = 0;
+        this.friction = 0.9;
+        this.frictionY = 0.9;
+        this.collisions = [];
+        this.specialCollisions.push("enemy");
+        this.specialCollisions.push("bullet");
+        this.transparents.push("enemy");
+        this.transparents.push("bullet");
+        this.sightRange = Infinity;
+    }
+
+    loop(framesElapsed){
+        if (!this.canSeePlayer()){
+            this.game.ctx.globalAlpha = 0.3;
+        }
+        super.loop(framesElapsed);
+        this.game.ctx.globalAlpha = 1;
+        var reqX = this.game.player.x;
+        var reqY = this.game.player.y;
+        if (this.duration > 0){
+            this.duration -= framesElapsed/3;
+            reqX = this.game.mousePos.gameX;
+            reqY = this.game.mousePos.gameY;
+            this.game.ctx.strokeStyle = "black";
+            this.game.ctx.beginPath();
+            this.game.ctx.moveTo(this.game.mousePos.x + this.game.viewPos.x, this.game.mousePos.y + this.game.viewPos.y);
+            this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+            this.game.ctx.stroke();
+        }
+        this.yv += framesElapsed * (reqY - this.y)/50;
+        this.xv += framesElapsed * (reqX - this.x)/50;
+    }
+
+    deploy(){
+        if (this.duration <= 0){
+            if (this.game.player.score >= 2){
+                this.game.player.collect(-1);
+                this.duration = 70;
+            }
+            else{
+                this.game.jitter(40);
+            }
+        }
+    }
+
+    specialCollision(type, items){
+        if (this.canSeePlayer()){
+            items.forEach((item, i) => {
+                item.damage(5);
+                item.frictionChangeX *= 0.3;
+                item.frictionChangeY *= 0.3;
+            });
+            this.frictionChangeX = 0.3;
+            this.frictionChangeY = 0.3;
+        }
+    }
+}
+
+
+var Hypersling = {
+    name: "Super Sling",
+    init(player){
+        this.brick = player.game._create(player.x, player.y, 30, 30, "bullet", "none", HyperslingBrick);
+    },
+    trigger(){
+        this.brick.deploy();
+    },
+    loop(framesElapsed){
+        this.brick.game.ctx.fillStyle = "black";
+        this.brick.game.ctx.fillRect(this.brick.game.player.artPos.x + this.brick.game.player.width/2 - this.brick.duration/2, this.brick.game.player.artPos.y, this.brick.duration, 10);
+    },
+    destroy(){
+        this.brick.game.deleteBrick(this.brick);
+    }
+}

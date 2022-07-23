@@ -174,8 +174,8 @@ class Player extends PhysicsObject{
     }
 
     draw(framesElapsed){
-        this.artPos.x = Math.round((window.innerWidth - this.width) / 2);
-        this.artPos.y = Math.round((window.innerHeight - this.height) / 2);
+        this.artPos.x = this.x;
+        this.artPos.y = this.y;
         this.game.ctx.fillStyle = "green";
         this.game.ctx.fillRect(this.artPos.x,
                                this.artPos.y,
@@ -195,7 +195,7 @@ class Player extends PhysicsObject{
             this.game.ctx.fillStyle = "gold";
             this.game.ctx.font = "bold 40px sans-serif";
             this.game.ctx.textAlign = "center";
-            this.game.ctx.fillText(this.collectAnimation.amount + "", window.innerWidth/2, this.collectAnimation.yPos);
+            this.game.ctx.fillText(this.collectAnimation.amount + "", this.x, this.y - (window.innerHeight/2 - this.collectAnimation.yPos));
             this.game.ctx.textAlign = "left";
             this.game.ctx.globalAlpha = 1;
             if (this.collectAnimation.yPos < 0){
@@ -208,7 +208,7 @@ class Player extends PhysicsObject{
             this.game.ctx.fillStyle = "gold";
             this.game.ctx.font = "bold 20px sans-serif";
             this.game.ctx.textAlign = "center";
-            this.game.ctx.fillText("Equipped " + this.equippedAnimator.name + "!", window.innerWidth/2, this.equippedAnimator.time/50 * window.innerHeight/2);
+            this.game.ctx.fillText("Equipped " + this.equippedAnimator.name + "!", this.x, -(50 - this.equippedAnimator.time)/50 * window.innerHeight/2 + this.y);
             this.game.ctx.textAlign = "left";
             this.game.ctx.glbalAlpha = 1;
         }
@@ -360,6 +360,7 @@ class Player extends PhysicsObject{
         }
         if (type == "key"){
             items.forEach((item, i) => {
+                this.collect(1);
                 this.game.deleteBrick(item);
             });
         }
@@ -422,6 +423,9 @@ class Player extends PhysicsObject{
         if (this.weapon){
             this.clearWeapon();
         }
+        Object.keys(this.keysHeld).forEach((item, i) => {
+            this.keysHeld[item] = false;
+        });
     }
 
     start(){
@@ -491,6 +495,20 @@ class Game {
         this.ctx = this.canvas.getContext("2d");
         this.isShadow = false;
         this.humanReadablePerf = 0;
+    }
+
+    isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal"]){
+        var ret = true;
+        this.tileset.forEach((item, i) => {
+            if (transparent.indexOf(item.type) == -1){
+                var rect = [item.x, item.y, item.x + item.width, item.y + item.height];
+                var line = [s[0], s[1], e[0], e[1]];
+                if (!isRectOffLine(rect, line) && !isLineOffRect(rect, line)){
+                    ret = false;
+                }
+            }
+        });
+        return ret;
     }
 
     nearestGridX(x){
@@ -616,12 +634,14 @@ class Game {
             this.viewPos.x += Math.random() * this.viewJitter - this.viewJitter/2;
             this.viewPos.y += Math.random() * this.viewJitter - this.viewJitter/2;
             this.viewJitter *= 0.8;
-            this.ctx.translate(-Math.round(this.viewPos.x), -Math.round(this.viewPos.y));
+            var tX = Math.round(this.viewPos.x + this.player.x + this.player.width/2 - window.innerWidth/2);
+            var tY = Math.round(this.viewPos.y + this.player.y + this.player.height/2 - window.innerHeight/2);
+            this.ctx.translate(-tX, -tY);
             this.player.loop(framesElapsed);
             this.tileset.forEach((item, i) => {
                 item.loop(framesElapsed);
             });
-            this.ctx.translate(Math.round(this.viewPos.x), Math.round(this.viewPos.y));
+            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         }
         if (this.die){
             this.end();
@@ -762,6 +782,9 @@ class GameManager{
         this._curLevel = "";
         this.curLevelObj = undefined;
         this.curPhase = 0;
+        if (window.location.hash == "#voidlands"){
+            this.curPhase = -1;
+        }
         this.frameDuration = 1000 / timerate;
         this.lastFrameTime = 0;
         this.youWinEl = document.getElementById("youwin");
@@ -1068,7 +1091,7 @@ class GameManager{
 
 var game = new Game(50, 50);
 
-var gm = new GameManager(game, levels, 60);
+var gm = new GameManager(game, levels, 55);
 
 gm.start();
 

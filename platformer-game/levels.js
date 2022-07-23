@@ -418,8 +418,55 @@ const levels = [
         }
     },
     {
+        name: "test",
+        phase: -1, // you have to enter the Void Lands to play this one.
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.startX = 50;
+            game.startY = 200;
+            game.create(0, 0, 49, 1);
+            game.create(0, 1, 1, 30);
+            game.create(0, 30, 49, 1);
+            game.create(49, 0, 1, 31);
+
+            // Procedural generation of all the platforms
+            for (var x = 0; x < 5; x ++){
+                for (var y = 0; y < 7; y ++){
+                    if ((x + y) % 2 == 1){
+                        game.create(x * 10 + 2, y * 4 + 4, 7, 1);
+                        if (y < 4 && x % 2 == 0) {
+                            game.create(x * 10 + 5, y * 4 + 3, 1, 1, "heal", "heal");
+                        }
+                        if (Math.random() > 0.7){
+                            game.create(x * 10 + 3, y * 4 + 3, 1, 1, "coin", "fiftycoin");
+                        }
+                        else{
+                            game.create(x * 10 + 3, y * 4 + 3, 1, 1, "coin", "tencoin");
+                        }
+                        if (Math.random() > 0.8){
+                            if (Math.random() > 0.7){
+                                game.create(x * 10 + 6, y * 4 + 3, 1, 1, "coin", "fiftycoin");
+                            }
+                            else{
+                                game.create(x * 10 + 6, y * 4 + 3, 1, 1, "coin", "tencoin");
+                            }
+                        }
+                    }
+                }
+            }
+            game.create(22, 1, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
+        },
+        onloop(game){
+
+        },
+        ondestroy(game){
+
+        }
+    },
+    {
         name: "Lake",
-        phase: 1,
+        phase: 0,
         skippable: false,
         difficulty: 1,
         oncreate(game){
@@ -808,5 +855,51 @@ const levels = [
         ondestroy(game){
 
         }
-    }
+    }/*,
+    {
+        name: "Trenches",
+        phase: 0,
+        skippable: false,
+        difficulty: 1.5,
+        oncreate(game){
+            game.startX = 2000;//0;
+            game.startY = 0;
+            game.player.giveWeapon(Hypersling);
+            // base and shooters
+            game.create(-2, -5, 1, 11);
+            game.create(-2, 6, 59, 1);
+            game.create(3, -13, 53, 1, "jumpthrough", "jumpthrough");
+            game.create(3, -9, 46, 1, "glass", "glass");
+            for (var x = 0; x < 8; x ++){
+                game.create(5 + 6 * x, -10, 1, 1, "coin", "tencoin");
+            }
+            game.create(58, -5, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -4, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -3, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -2, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -1, 1, 8);
+
+            game.create(5, -2, 1, 8);
+            game.create(5, -3, 1, 1, "coin", "tencoin");
+            game.create(4, 2, 3, 1);
+
+            game.create(6, 1, 16, 5, "water", "water");
+            game.create(22, 1, 1, 5);
+            game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+
+            game.create(6, 5, 1, 1, "end", "end");
+
+            game.create(28, 2, 1, 4, "glass", "glass");
+            game.create(30, 3, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
+
+            game.create(54, 13, 10, 1);
+            game.create(54, 7, 1, 6);
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+
+        }
+    }*/
 ];

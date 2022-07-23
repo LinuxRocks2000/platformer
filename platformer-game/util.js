@@ -75,3 +75,9 @@ function findCoterminalRadians(angle){
     }
     return angle;
 }
+
+function distBetweenPoints(p1, p2){
+    var distX = p1[0] - p2[0];
+    var distY = p1[1] - p2[1];
+    return Math.sqrt(distX * distX + distY * distY);
+}

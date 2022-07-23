@@ -193,8 +193,8 @@ class Brick extends PhysicsObject{
     loop(framesElapsed){
         this.playerSight -= framesElapsed;
         if (!this.dead){
-            this.artPos.x = Math.round(this.x - this.game.player.x + (window.innerWidth - this.game.player.width) / 2);
-            this.artPos.y = Math.round(this.y - this.game.player.y + (window.innerHeight - this.game.player.height) / 2);
+            this.artPos.x = Math.round(this.x);
+            this.artPos.y = Math.round(this.y);
             if (this.harmImmune > 0){
                 this.game.ctx.globalAlpha = 0.5;
             }
