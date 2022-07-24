@@ -618,24 +618,23 @@ class MacerEnemy extends Brick{
     loop(framesElapsed){
         super.loop(framesElapsed);
 
-        if (this.mace.swingPos > this.mace.swingTill){
-            if (this.canSeePlayer()){
-                if (this.x > this.game.player.x){
-                    this.xv += 40 * framesElapsed;
-                }
-                else{
-                    this.xv -= 40 * framesElapsed;
-                }
-                this.mace.swing(4);
+        if (this.canSeePlayer()){
+            if (this.x > this.game.player.x){
+                this.xv -= framesElapsed;
             }
             else{
-                if (this.x > this.game.player.x){
-                    this.xv -= framesElapsed;
-                }
-                else{
-                    this.xv += framesElapsed;
-                }
+                this.xv -= framesElapsed;
             }
+            this.mace.swing(4);
+        }
+        else{
+            if (this.x > this.game.player.x){
+                this.xv -= framesElapsed;
+            }
+            else{
+                this.xv += framesElapsed;
+            }
+            this.mace.swing(0);
         }
     }
 
@@ -795,6 +794,7 @@ class BruiserEnemy extends Brick{
 
     loop(framesElapsed){
         super.loop(framesElapsed);
+        this.xv = 10/this.xv;
     }
 
     hitLeft(){
@@ -821,7 +821,7 @@ class TricklerEnemy extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.isStatic = true;
-        this.waitTime = 100;
+        this.waitTime = config.waitTime || 100;
         this.phase = Math.random() * this.waitTime;
         this.enemyTTL = 250;
     }
@@ -901,6 +901,6 @@ class PathfinderEnemy extends Brick{
     }
 
     recalculate(){
-        this.path = new Pathfinder({x: this.x + this.width/2, y: this.y + this.height/2}, {x: this.game.player.x + this.game.player.width/2, y: this.game.player.y + this.game.player.height/2}, this.game, [this], ["bullet", "enemy", "tencoin", "fiftycoin", "heal"], this.tolerance).path; // Pathfinder is optimized enough that as long as there isn't an obstruction you're fine.
+        this.path = new Pathfinder({x: this.x + this.width/2, y: this.y + this.height/2}, {x: this.game.player.x + this.game.player.width/2, y: this.game.player.y + this.game.player.height/2}, this.game, [this], ["bullet", "enemy", "tencoin", "fiftycoin", "heal", "jumpthrough"], this.tolerance).path; // Pathfinder is optimized enough that as long as there isn't an obstruction you're fine.
     }
 }

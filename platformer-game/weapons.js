@@ -198,7 +198,7 @@ class HyperslingBrick extends Brick{
             reqY = this.game.mousePos.gameY;
             this.game.ctx.strokeStyle = "black";
             this.game.ctx.beginPath();
-            this.game.ctx.moveTo(this.game.mousePos.x + this.game.viewPos.x, this.game.mousePos.y + this.game.viewPos.y);
+            this.game.ctx.moveTo(this.game.mousePos.gameX, this.game.mousePos.gameY);
             this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
             this.game.ctx.stroke();
         }

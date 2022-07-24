@@ -1,3 +1,14 @@
+/* Made by Tyler Clarke, who also made everything else. Most of these files don't have a rights statement in them and this one is no exception; do what you want, just give me credit.
+This is the levels file. You can add levels this way, just follow the patterns.
+
+
+Fun note: The Void Lands are phase -1. You can access them by appending #voidlands to the current URL and loading that page. If you set phases to -1, the level will be pushed into the Void Lands.
+Most of the void-lands levels don't allow you to progress because they're in development or used for testing.
+They're a fun part of the game but serve no other purpose.
+
+
+Useful note: Phases are 0-indexed, so 0 is phase 1, 1 is phase 2, etc. If it seems annoying, you aren't a coder.
+*/
 const levels = [
     {
         name: "Training",
@@ -855,19 +866,19 @@ const levels = [
         ondestroy(game){
 
         }
-    }/*,
+    },
     {
         name: "Trenches",
-        phase: 0,
+        phase: -1, // I don't like this level much because it's far too hard, so I'm pushing it over to the Void Lands.
         skippable: false,
         difficulty: 1.5,
         oncreate(game){
-            game.startX = 2000;//0;
+            game.startX = 0;
             game.startY = 0;
             game.player.giveWeapon(Hypersling);
             // base and shooters
             game.create(-2, -5, 1, 11);
-            game.create(-2, 6, 59, 1);
+            game.create(-2, 6, 57, 1);
             game.create(3, -13, 53, 1, "jumpthrough", "jumpthrough");
             game.create(3, -9, 46, 1, "glass", "glass");
             for (var x = 0; x < 8; x ++){
@@ -888,12 +899,23 @@ const levels = [
             game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
 
             game.create(6, 5, 1, 1, "end", "end");
+            game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
 
             game.create(28, 2, 1, 4, "glass", "glass");
             game.create(30, 3, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
 
-            game.create(54, 13, 10, 1);
+            game.create(54, 13, 40, 1);
             game.create(54, 7, 1, 6);
+
+            game.create(59, 6, 30, 1, "glass", "glass");
+            game.create(59, 12, 1, 1);
+            game.create(90, 12, 1, 1);
+            //game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+            game.create(77, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+            game.create(57, 12, 1, 1, "coin", "fiftycoin");
+            game.create(56, 12, 1, 1, "heal", "heal");
+
+            game.create(92, 12, 1, 1, "key", "key");
         },
         onloop(game, framesElapsed){
 
@@ -901,5 +923,120 @@ const levels = [
         ondestroy(game){
 
         }
-    }*/
+    },
+    {
+        name: "Honeycomb",
+        phase: -1, // I want to do something with this but I'm not gonna deal with that rn
+        skippable: false,
+        difficulty: 1.5,
+        oncreate(game){
+            game.startX = 0;
+            game.startY = 0;
+            // procedurally generated honeycomb
+            for (var x = 0; x < 3; x ++){
+                var offX = x * 20;
+                if (x == 0){
+                    game.create(-12, 3, 2, 1);
+                    game.create(-14, 2, 2, 1);
+                    game.create(-12, 1, 2, 1);
+                }
+                if (x == 2){
+                    game.create(offX + 10, 4, 2, 1);
+                    game.create(offX + 12, 3, 2, 1);
+                    game.create(offX + 14, 2, 2, 1);
+                    game.create(offX + 12, 1, 2, 1);
+                    game.create(offX + 10, 0, 2, 1);
+                }
+                game.create(offX - 10, 4, 2, 1);
+                game.create(offX - 8, 5, 2, 1);
+                game.create(offX - 6, 6, 2, 1);
+                game.create(offX - 4, 7, 2, 1);
+                game.create(offX - 2, 8, 2, 1);
+                game.create(offX,     9, 2, 1);
+                game.create(offX + 2, 8, 2, 1);
+                game.create(offX + 4, 7, 2, 1);
+                game.create(offX + 6, 6, 2, 1);
+                game.create(offX + 8, 5, 2, 1);
+
+                game.create(offX - 10, 0, 2, 1);
+                game.create(offX - 8, -1, 2, 1);
+                game.create(offX - 6, -2, 2, 1);
+                game.create(offX - 4, -3, 2, 1);
+                game.create(offX - 2, -4, 2, 1);
+                game.create(offX,     -5, 2, 1);
+                game.create(offX + 2, -4, 2, 1);
+                game.create(offX + 4, -3, 2, 1);
+                game.create(offX + 6, -2, 2, 1);
+                game.create(offX + 8, -1, 2, 1);
+            }
+
+            game.create(-11, 2, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+
+        }
+    },
+    {
+        name: "Playground",
+        phase: 2,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){ // I used Studio on this one a lot more than usual. Studio can be activated by running "game.studio()" in the js console.
+            game.startX = 0;
+            game.startY = 400;
+            game.create(-5, -5, 1, 20, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(55, -5, 1, 20, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 15, 61, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(2, 7, 1, 5, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(3, 11, 2, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(5, 9, 1, 6, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(5, -91, 1, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(2, 6, 6, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(8, 6, 1, 7, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(9, 12, 2, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(9, 8, 2, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(11, 12, 1, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(11, 8, 1, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(18, 4, 8, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(18, 8, 1, 7, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(19, 11, 1, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(25, -10, 1, 14, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(18, 0, 5, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(23, 0, 2, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(19, 14, 1, 1, 'key', 'key'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(22, 14, 1, 1, "heal", "heal"); // handmade addition
+            game.create(4, 14, 1, 1, 'end', 'end'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(18, -3, 1, 3, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(20, -3, 4, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(19, -1, 1, 1, 'coin', 'fiftycoin'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(20, -1, 1, 1, 'coin', 'fiftycoin'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(24, 5, 1, 8, 'lava', 'splenectifyu'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(27, 10, 1, 5, 'lava', 'splenectifyu'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(26, 4, 4, 1, 'lava', 'splenectifyu'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(25, 11, 2, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(28, 14, 13, 1, 'lava', 'splenectifyu'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(28, 13, 1, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(43, 14, 6, 1, 'lava', 'splenectifyu'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(21, -1, 1, 1, 'heal', 'heal'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(51, 14, 1, 1, 'key', 'key'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(53, 14, 1, 1, "heal", "heal"); // handmade addition (also tyler clarke)
+            game.create(52, 11, 3, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(52, 7, 3, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(47, 5, 2, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(41, 3, 2, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(36, 0, 2, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(31, -3, 2, 1, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(26, -6, 2, 1, 'jumpthrough', 'jumpthrough'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+
+            game.create(6, 5, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+        }
+    }
 ];
