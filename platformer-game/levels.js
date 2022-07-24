@@ -477,7 +477,7 @@ const levels = [
     },
     {
         name: "Lake",
-        phase: 0,
+        phase: 1,
         skippable: false,
         difficulty: 1,
         oncreate(game){
