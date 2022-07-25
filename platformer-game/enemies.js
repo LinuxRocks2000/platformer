@@ -547,7 +547,7 @@ class ShooterEnemy extends Brick{
         this.angleV *= angleFric;
         var ctx = this.game.ctx;
         ctx.save();
-        ctx.translate(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+        ctx.translate(this.x + this.game.artOff.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
         ctx.rotate(this.angle * Math.PI/180);
         ctx.fillStyle = "grey";
         ctx.beginPath();
@@ -711,8 +711,8 @@ class MaceEnemy extends Brick{
                 this.game.ctx.strokeStyle = "black";
                 this.game.ctx.lineWidth = 1;
                 this.game.ctx.beginPath();
-                this.game.ctx.moveTo(this.owner.artPos.x + this.owner.width/2, this.owner.artPos.y + this.owner.height/2);
-                this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+                this.game.ctx.moveTo(this.owner.x + this.game.artOff.x + this.owner.width/2, this.owner.y + this.game.artOff.y + this.owner.height/2);
+                this.game.ctx.lineTo(this.x + this.game.artOff.x + this.width/2, this.y + this.game.artOff.y + this.height/2);
                 this.game.ctx.closePath();
                 this.game.ctx.stroke();
             }

@@ -151,7 +151,7 @@ var BasicGun = {
         ctx.save();
         ctx.strokeStyle = "blue";
         ctx.lineWidth = 2;
-        ctx.translate(this.player.artPos.x + this.player.width/2, this.player.artPos.y + this.player.height/2);
+        ctx.translate(this.player.x + this.player.game.artOff.x + this.player.width/2, this.player.y + this.player.game.artOff.y + this.player.height/2);
         ctx.rotate((Math.acos(this.distY/this.hypotenuse) - Math.PI/2 + (this.distX > 0 ? Math.PI : 0)) * (this.distX > 0 ? -1 : 1));
         ctx.beginPath();
         ctx.arc(0, 0, 10, Math.PI * 0.2, Math.PI * 1.8);

@@ -109,6 +109,7 @@ class Player extends PhysicsObject{
             time: 0
         };
         this.boinks = [];
+        this.risingTextBoinks = [];
         this.begonCycle = 0;
     }
 
@@ -123,8 +124,7 @@ class Player extends PhysicsObject{
         }
         this.weapon = weapon;
         weapon.init(this);
-        this.equippedAnimator.time = 50;
-        this.equippedAnimator.name = weapon.name;
+        this.risingTextBoinks.push(new RisingTextBoink("Equipped " + this.weapon.name, this.game));
     }
 
     hitBottom(){
@@ -174,22 +174,21 @@ class Player extends PhysicsObject{
     }
 
     draw(framesElapsed){
-        this.artPos.x = this.x;
-        this.artPos.y = this.y;
         this.game.ctx.fillStyle = "green";
-        this.game.ctx.fillRect(this.artPos.x,
-                               this.artPos.y,
+        this.game.ctx.fillRect(Math.round(this.game.artOff.x + this.x),
+                               Math.round(this.game.artOff.y + this.y),
                                this.width,
                                this.height);
         this.game.ctx.fillStyle = "black";
         this.game.ctx.font = "bold 16px sans-serif";
-        this.game.ctx.fillText(this.score + "", this.artPos.x, this.artPos.y + 16);
+        this.game.ctx.textAlign = "left";
+        this.game.ctx.fillText(this.score + "", this.game.artOff.x + this.x, this.game.artOff.y + this.y + 16);
         if (this.shielding > 0){
             this.shielding -= framesElapsed / 4;
             this.game.ctx.fillStyle = "lightgrey";
             this.game.ctx.fillRect(this.artPos.x + this.width/2 - this.shielding/2, this.artPos.y - 10, this.shielding, 5);
         }
-        if (this.collectAnimation.amount > 0){
+        /*if (this.collectAnimation.amount > 0){
             this.game.ctx.globalAlpha = this.collectAnimation.yPos/this.collectAnimation.startPos;
             this.collectAnimation.yPos -= 10 * framesElapsed;
             this.game.ctx.fillStyle = "gold";
@@ -211,7 +210,13 @@ class Player extends PhysicsObject{
             this.game.ctx.fillText("Equipped " + this.equippedAnimator.name + "!", this.x, -(50 - this.equippedAnimator.time)/50 * window.innerHeight/2 + this.y);
             this.game.ctx.textAlign = "left";
             this.game.ctx.glbalAlpha = 1;
-        }
+        }*/
+        this.risingTextBoinks.forEach((item, i) => {
+            item.loop(framesElapsed);
+            if (item.TTL <= 0){
+                this.risingTextBoinks.splice(i, 1);
+            }
+        });
         if (this.begoneCycle > 0){
             this.begoneCycle -= framesElapsed;
             this.game.ctx.strokeStyle = "black";
@@ -313,9 +318,10 @@ class Player extends PhysicsObject{
     collect(amount){
         this.score += amount;
         this.collectedRecently += amount;
-        this.collectAnimation.amount = amount;
-        this.collectAnimation.yPos = window.innerHeight/2;
-        this.collectAnimation.startPos = window.innerHeight/2;
+        //this.collectAnimation.amount = amount;
+        //this.collectAnimation.yPos = window.innerHeight/2;
+        //this.collectAnimation.startPos = window.innerHeight/2;
+        this.risingTextBoinks.push(new RisingTextBoink("" + amount, this.game));
     }
 
     specialCollision(type, items){
@@ -495,6 +501,10 @@ class Game {
         this.ctx = this.canvas.getContext("2d");
         this.isShadow = false;
         this.humanReadablePerf = 0;
+        this.artOff = {
+            x: 0,
+            y: 0
+        };
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu", "splenectifyu"]){
@@ -634,14 +644,12 @@ class Game {
             this.viewPos.x += Math.random() * this.viewJitter - this.viewJitter/2;
             this.viewPos.y += Math.random() * this.viewJitter - this.viewJitter/2;
             this.viewJitter *= 0.8;
-            var tX = Math.round(this.viewPos.x + this.player.x + this.player.width/2 - window.innerWidth/2);
-            var tY = Math.round(this.viewPos.y + this.player.y + this.player.height/2 - window.innerHeight/2);
-            this.ctx.translate(-tX, -tY);
+            this.artOff.x = -1 * (this.viewPos.x + this.player.x + this.player.width/2 - window.innerWidth/2);
+            this.artOff.y = -1 * (this.viewPos.y + this.player.y + this.player.height/2 - window.innerHeight/2);
             this.player.loop(framesElapsed);
             this.tileset.forEach((item, i) => {
                 item.loop(framesElapsed);
             });
-            this.ctx.setTransform(1, 0, 0, 1, 0, 0);
         }
         if (this.die){
             this.end();

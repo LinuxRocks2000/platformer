@@ -344,7 +344,7 @@ const levels = [
         oncreate(game){
             game.startX = 0;
             game.startY = -200;
-            // Create the rooms skeleton
+            // Procedurally generate the rooms skeleton
             var numRooms = 7;
             var alternator = numRooms % 2 == 1;
             var isFirst = true;

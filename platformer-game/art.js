@@ -41,6 +41,26 @@ class Boink{
 }
 
 
+class RisingTextBoink{
+    constructor(text, game){
+        this.text = text;
+        this.game = game;
+        this.TTL = 200;
+        this.maxTTL = 200;
+    }
+
+    loop(framesElapsed){
+        this.TTL -= framesElapsed;
+        this.game.ctx.font = "bold 48px sans-serif";
+        this.game.ctx.fillStyle = "gold";
+        this.game.ctx.textAlign = "center";
+        this.game.ctx.globalAlpha = this.TTL/this.maxTTL;
+        this.game.ctx.fillText(this.text, -this.game.viewPos.x + window.innerWidth/2, -this.game.viewPos.y + window.innerHeight/2 * (this.TTL/this.maxTTL));
+        this.game.ctx.globalAlpha = 1;
+    }
+}
+
+
 const BrickDrawer = {
     coinPulse: 30,
     coinPulseFlip: false,

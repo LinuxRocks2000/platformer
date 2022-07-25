@@ -95,8 +95,8 @@ class Brick extends PhysicsObject{
             this.game.ctx.closePath();
         }
         if (!this.dead){
-            BrickDrawer.drawBrick(this.game.ctx, this.artPos.x,
-                                                 this.artPos.y,
+            BrickDrawer.drawBrick(this.game.ctx, Math.round(this.game.artOff.x + this.x),
+                                                 Math.round(this.game.artOff.y + this.y),
                                                  this.width,
                                                  this.height,
                                                  this.style,
@@ -116,7 +116,7 @@ class Brick extends PhysicsObject{
                     var sign = document.getElementById("sign");
                     sign.classList.remove("active");
                 }
-                BrickDrawer.drawText(this.game.ctx, this.artPos.x, this.artPos.y, this.width, this.height, this.signName);
+                BrickDrawer.drawText(this.game.ctx, this.game.artOff.x + this.x, this.game.artOff.y + this.y, this.width, this.height, this.signName);
             }
         }
         if (this.studioSelected){
@@ -193,8 +193,6 @@ class Brick extends PhysicsObject{
     loop(framesElapsed){
         this.playerSight -= framesElapsed;
         if (!this.dead){
-            this.artPos.x = Math.round(this.x);
-            this.artPos.y = Math.round(this.y);
             if (this.harmImmune > 0){
                 this.game.ctx.globalAlpha = 0.5;
             }
@@ -285,9 +283,9 @@ class Brick extends PhysicsObject{
 
     drawHealthBar(){
         this.game.ctx.fillStyle = "grey";
-        this.game.ctx.fillRect(this.artPos.x - this.maxHealth/2 + this.width/2, this.artPos.y - 10, this.maxHealth, 10);
+        this.game.ctx.fillRect(this.game.artOff.x + this.x - this.maxHealth/2 + this.width/2, this.game.artOff.y + this.y - 10, this.maxHealth, 10);
         this.game.ctx.fillStyle = "red";
-        this.game.ctx.fillRect(this.artPos.x - this.maxHealth/2 + this.width/2, this.artPos.y - 10, this.health, 10);
+        this.game.ctx.fillRect(this.game.artOff.x + this.x - this.maxHealth/2 + this.width/2, this.game.artOff.y + this.y - 10, this.health, 10);
     }
 
     damage(amount){

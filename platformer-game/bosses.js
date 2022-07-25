@@ -177,7 +177,7 @@ class BatGunnerEnemy extends BatEnemy{
         this.angleV *= angleFric;
         var ctx = this.game.ctx;
         ctx.save();
-        ctx.translate(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+        ctx.translate(this.x + this.game.artOff.x + this.width/2, this.y + this.game.artOff.y + this.height/2);
         ctx.rotate(this.angle * Math.PI/180);
         ctx.fillStyle = "grey";
         ctx.beginPath();
