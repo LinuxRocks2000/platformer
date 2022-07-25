@@ -36,6 +36,10 @@ class Pathfinder{
         return total;
     }
 
+    heuristic(p1, p2){ // Manhattan distance
+        return Math.abs(p1[0] - p2[0]) + Math.abs(p1[1] - p2[1]);
+    }
+
     findShortestPath(){
         var shortestD = Infinity;
         var shortestObj = [];
@@ -74,7 +78,11 @@ class Pathfinder{
                         }
                         toDispatch.push({
                             path: toPath,
-                            sort: distBetweenPoints(node, curPath[curPath.length - 1])
+                            sort: this.heuristic(node, this.endPos) // Greedy best-first. Nodes that get closer first should be considered first.
+                            // In theory, this means the pathfinding algorithm will take longer to calculate circituitous routes, but there will be a significant reduction in processing time for fairly direct paths.
+                            // Test results (level name: test, phase -1: voidlands): as predicted, fairly direct courses (the ones most used by the pathfinding enemy) take almost no time to calculate. This is because it doesn't have to consider waste paths, so it can almost immediately find the perfect route.
+                            // Intensive (high node count) test results (level name: honeycomb, phase -1: voidlands): Significant improvements. The level is still not going to be publishable because the object count is too high and it isn't very fun, but at least we know it doesn't perform awful.
+                            // Conclusion: greedy best-first is optimal for Platformer.
                         });
                         if (node == this.endPos){ // Terminate the chain early instead of parsing lots of waste paths.
                             //this.possiblePaths.push(toPath);
@@ -87,6 +95,9 @@ class Pathfinder{
                 }
             });
             if (!skipPaths){
+                toDispatch.sort((a, b) => {
+                    return a.sort - b.sort;
+                });
                 toDispatch.forEach((item, i) => {
                     this.find(item.path);
                 });
