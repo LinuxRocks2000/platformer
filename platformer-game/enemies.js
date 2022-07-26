@@ -846,7 +846,7 @@ class PathfinderEnemy extends Brick{
         this.isStatic = false;
         this.frictionX = 0.95;
         this.tolerance = this.width/2;
-        this.collisions.push("player");
+        this.collisions.push("player", "splenectifyu", "killu");
         this.specialCollisions.push("player");
         this.giveupWhen = 0;
         this.sightRange = Infinity;
@@ -877,9 +877,9 @@ class PathfinderEnemy extends Brick{
             this.game.ctx.beginPath();
             this.game.ctx.lineWidth = 1;
             this.game.ctx.strokeStyle = "green";
-            this.game.ctx.moveTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+            this.game.ctx.moveTo(this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
             this.path.forEach((item, i) => {
-                this.game.ctx.lineTo(this.artPos.x - this.x + item[0], this.artPos.y - this.y + item[1])
+                this.game.ctx.lineTo(this.game.artOff.x + item[0], this.game.artOff.y + item[1])
             });
             this.game.ctx.stroke();
             this.game.ctx.closePath();

@@ -146,7 +146,7 @@ var BasicGun = {
         var ctx = this.player.game.ctx;
         if (this.phase > 0){
             ctx.fillStyle = "black";
-            ctx.fillRect(this.player.artPos.x + this.player.width/2 - this.phase/2, this.player.artPos.y + this.player.height/2 - 20, this.phase, 5);
+            ctx.fillRect(this.player.x + this.player.game.artOff.x + this.player.width/2 - this.phase/2, this.player.y + this.player.game.artOff.y + this.player.height/2 - 20, this.phase, 5);
         }
         ctx.save();
         ctx.strokeStyle = "blue";

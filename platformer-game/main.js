@@ -507,7 +507,7 @@ class Game {
         };
     }
 
-    isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu", "splenectifyu"]){
+    isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu"]){
         var ret = true;
         this.tileset.forEach((item, i) => {
             if (transparent.indexOf(item.type) == -1){
@@ -967,7 +967,7 @@ class GameManager{
     won(){
         var ret = true;
         this.levels.forEach((item, i) => {
-            if (this.beaten.indexOf(item.name) == -1){
+            if (this.curPhase <= item.phase){
                 ret = false;
             }
         });
