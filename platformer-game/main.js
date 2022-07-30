@@ -15,9 +15,6 @@ class Player extends PhysicsObject{
         this.keysHeld = {}; // {} means a new dictionary-like object.
         this.game.canvas.addEventListener("keydown", (event) => {
             this.keysHeld[event.key] = true;
-            if (this.weapon && event.key == " "){
-                this.weapon.trigger();
-            }
         });
         this.game.canvas.addEventListener("keyup", (event) => {
             this.keysHeld[event.key] = false;
@@ -29,7 +26,7 @@ class Player extends PhysicsObject{
                         }
                     });
                 }
-                if (event.key == "s"){
+                if (event.key == "s" && this.game.studioMode){
                     this.phaseShift();
                 }
             }
@@ -218,6 +215,9 @@ class Player extends PhysicsObject{
     loop(framesElapsed){
         framesElapsed *= this.timerate;
         super.loop(framesElapsed);
+        if (this.weapon && this.keysHeld[" "]){
+            this.weapon.trigger();
+        }
         if (this.keysHeld["ArrowUp"] || this.keysHeld["w"]){
             if (this.flightMode){
                 this.yv = -5;
