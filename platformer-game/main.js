@@ -1213,6 +1213,20 @@ class GameManager{
     exitSaveslotManager(){
         document.getElementById("saveslotman").style.display = "none";
     }
+
+    do(command){ // spoof.
+        if (command == "game_open_studio"){
+            alert("You suck.");
+            alert("Like, really.");
+            alert("Honestly you're the suckiest person I know.");
+            alert("Stop trying to cheat!");
+            alert("Well, I hope you enjoy the Void Lands.")
+            alert("P.S. I never give people things easy, look in the source code for real studio!");
+            this.curPhase = -1; // bounce them down to void lands
+            window.location.hash = "#voidlands";
+            this.showMenu();
+        }
+    }
 }
 
 var game = new Game(50, 50);
