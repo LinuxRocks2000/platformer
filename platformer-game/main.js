@@ -538,7 +538,6 @@ class Game {
             this.translate(-x, -y);
         };
         this.studioSelectorScroll = 0;
-        this.studio();
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu"]){
