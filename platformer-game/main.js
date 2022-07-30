@@ -13,58 +13,39 @@ class Player extends PhysicsObject{
         document.body.appendChild(this.healthbar);
         this.healthbar.innerHTML = "<span></span>";
         this.keysHeld = {}; // {} means a new dictionary-like object.
-        document.addEventListener("keydown", (event) => {
+        this.game.canvas.addEventListener("keydown", (event) => {
             this.keysHeld[event.key] = true;
             if (this.weapon && event.key == " "){
                 this.weapon.trigger();
             }
         });
-        document.addEventListener("keyup", (event) => {
+        this.game.canvas.addEventListener("keyup", (event) => {
             this.keysHeld[event.key] = false;
+            if (this.game.studio){
+                if (event.key == "Delete"){
+                    this.game.tileset.forEach((item, i) => {
+                        if (item.studioSelected){
+                            this.game.deleteBrick(item);
+                        }
+                    });
+                }
+                if (event.key == "s"){
+                    this.phaseShift();
+                }
+            }
         });
-        document.getElementById("game").addEventListener("mousedown", (event) => {
+        this.game.canvas.addEventListener("mousedown", (event) => {
+            this.game.tileset.forEach((item, i) => {
+                item.mouseDown();
+            });
             if (this.weapon){
                 this.weapon.trigger();
             }
-            if (this.studioMode){
-                this.game.tileset.forEach((item, i) => {
-                    item.endResize();
-                });
-                this.game.tileset.forEach((item, i) => {
-                    if (item.studioSelected){
-                        item.beginResize();
-                    }
-                });
-            }
         });
-        document.getElementById("game").addEventListener("mouseup", (event) => {
-            if (this.studioMode){
-                this.game.tileset.forEach((item, i) => {
-                    if (item.studioSelected){
-                        item.endResize();
-                    }
-                });
-            }
-        });
-        document.getElementById("game").addEventListener("click", (event) => {
-            if (this.studioMode){
-                var deselected = true;
-                this.game.tileset.forEach((item, i) => {
-                    item.endResize();
-                });
-                this.game.tileset.forEach((item, i) => {
-                    if (item.mouseOver){
-                        item.studioSelect();
-                        deselected = false;
-                    }
-                    else{
-                        item.studioUnselect();
-                    }
-                });
-                if (deselected){
-                    document.getElementById("curStudioSelected").innerHTML = "[Select a brick!]";
-                }
-            }
+        this.game.canvas.addEventListener("mouseup", (event) => {
+            this.game.tileset.forEach((item, i) => {
+                item.mouseUp();
+            });
         });
         this.specialCollisions.push("killu", "splenectifyu"); // Register killu as a special collision type
         this.specialCollisions.push("tencoin") // Add ten coins to special collisions
@@ -175,8 +156,8 @@ class Player extends PhysicsObject{
 
     draw(framesElapsed){
         this.game.ctx.fillStyle = "green";
-        this.game.ctx.fillRect(Math.round(this.game.artOff.x + this.x),
-                               Math.round(this.game.artOff.y + this.y),
+        this.game.ctx.fillRect(this.game.artOff.x + this.x,
+                               this.game.artOff.y + this.y,
                                this.width,
                                this.height);
         this.game.ctx.fillStyle = "black";
@@ -217,20 +198,6 @@ class Player extends PhysicsObject{
                 this.risingTextBoinks.splice(i, 1);
             }
         });
-        if (this.begoneCycle > 0){
-            this.begoneCycle -= framesElapsed;
-            this.game.ctx.strokeStyle = "black";
-            this.game.ctx.lineWidth = 1;
-            this.game.tileset.forEach((item, i) => {
-                if (!item.isStatic){
-                    this.game.ctx.beginPath();
-                    this.game.ctx.moveTo(this.artPos.x, this.artPos.y);
-                    this.game.ctx.lineTo(item.artPos.x, item.artPos.y);
-                    this.game.ctx.stroke();
-                    this.game.ctx.closePath();
-                }
-            });
-        }
     }
 
     Jump(){
@@ -259,7 +226,7 @@ class Player extends PhysicsObject{
                 this.Jump();
             }
         }
-        if (this.yv > 15){
+        if (this.yv > 15){ // fall through jumpthroughs if you're moving fast
             this.jumpthroughing = true;
         }
         if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"]){
@@ -332,8 +299,8 @@ class Player extends PhysicsObject{
         }
         if (type == "splenectifyu"){
             this.harm(0.3, false);
-            this.frictionChangeX = 0.3;
-            this.frictionChangeY = 0.3;
+            this.frictionChangeX = 0.7;
+            this.frictionChangeY = 0.7;
         }
         if (type == "tencoin"){
             items.forEach((item, index) => {
@@ -461,7 +428,6 @@ class Game {
         this.tileset = [];
         this.startX = 50;
         this.startY = 0;
-        this.player = new Player(this, this.startX, this.startY, this.blockWidth, this.blockHeight * 2); // Players are usually 1x2 blocks. Feel free to change as you wish.
         this.playing = false;
         this.win = false;
         this.keyCount = 0;
@@ -495,7 +461,7 @@ class Game {
         var resize = () => {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
-        }
+        };
         window.addEventListener("resize", resize);
         resize();
         this.ctx = this.canvas.getContext("2d");
@@ -505,6 +471,69 @@ class Game {
             x: 0,
             y: 0
         };
+        this.player = new Player(this, this.startX, this.startY, this.blockWidth, this.blockHeight * 2); // Players are usually 1x2 blocks. Feel free to change as you wish.
+        this.ctx.imageSmoothingEnabled = false;
+        this.studioBlocks = [
+            this.create(0, 0, 1, 1),
+            this.create(0, 0, 1, 1, "lava", "killu"),
+            this.create(0, 0, 1, 1, "jumpthrough", "jumpthrough"),
+            this.create(0, 0, 1, 1, "coin", "fiftycoin"),
+            this.create(0, 0, 1, 1, "coin", "tencoin"),
+            this.create(0, 0, 1, 1, "heal", "heal"),
+            this.create(0, 0, 1, 1, "key", "key"),
+            this.create(0, 0, 1, 1, "bullet", "enemy", BatEnemy),
+            this.create(0, 0, 1, 1, "shooter", "enemy", ShooterEnemy),
+            this.create(0, 0, 1, 1, "lava", "enemy", NormalEnemy),
+            this.create(0, 0, 1, 1, "glass", "field"),
+            this.create(0, 0, 1, 1, "glass", "glass"),
+            this.create(0, 0, 1, 1, "water", "water"),
+            this.create(0, 0, 1, 1, "tar", "tar"),
+            this.create(0, 0, 1, 1, "ice", "ice")
+        ];
+        this.studioBlocks.forEach((item, i) => {
+            item.wasStatic = item.isStatic;
+            item.isStatic = true; // Don't allow physics on these objects
+        });
+        this.tileset.splice(this.tileset.length - this.studioBlocks.length, this.studioBlocks.length);
+        this.canvas.addEventListener("click", (event) => {
+            this.mouseClick();
+        });
+        this.canvas.addEventListener("wheel", (event) => {
+            this.scrollAbit(event.deltaY);
+        });
+        /*this.studioTools = [
+            {
+                draw: () => {
+                    this.ctx.fillStyle = "purple";
+                    this.ctx.beginPath();
+                    this.ctx.makeRoundRect(5, 5, 40, 30, 20, 10);
+                    this.ctx.fill();
+                    this.ctx.closePath();
+                    this.ctx.fillStyle = "pink";
+                    this.ctx.beginPath();
+                    this.ctx.makeRoundRect(0, 0, 40, 30, 20, 10);
+                    this.ctx.fill();
+                    this.ctx.closePath();
+                },
+                do: () => {
+
+                }
+            }
+        ];*/
+        this.ctx.makeRoundRect = function(x, y, width, height, rx, ry){
+            this.translate(x, y);
+            this.moveTo(rx, 0);
+            this.lineTo(width - rx, 0);
+            this.quadraticCurveTo(width, 0, width, ry);
+            this.lineTo(width, height - ry);
+            this.quadraticCurveTo(width, height, width - rx, height);
+            this.lineTo(rx, height);
+            this.quadraticCurveTo(0, height, 0, height - ry);
+            this.lineTo(0, ry);
+            this.quadraticCurveTo(0, 0, rx, 0);
+            this.translate(-x, -y);
+        };
+        this.studioSelectorScroll = 0;
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu"]){
@@ -519,6 +548,12 @@ class Game {
             }
         });
         return ret;
+    }
+
+    scrollAbit(amount){
+        if (this.mousePos.x < 60){
+            this.studioSelectorScroll += amount;
+        }
     }
 
     nearestGridX(x){
@@ -565,7 +600,7 @@ class Game {
     studioExport(){
         var t = "";
         this.tileset.forEach((item, i) => {
-            t += "game.create(" + item.x/50 + ", " + item.y/50 + ", " + item.width/50 + ", " + item.height/50 + ", '" + item.style + "', '" + item.type + "'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.<br />";
+            t += "game.create(" + item.x/50 + ", " + item.y/50 + ", " + item.width/50 + ", " + item.height/50 + ", '" + item.style + "', '" + item.type + "'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.<br/>";
         });
         t += "<br/><br/><button onclick='this.parentNode.style.display = \"none\"'>Exit</button>"
         var el = document.getElementById("studioCopyExport");
@@ -576,7 +611,8 @@ class Game {
     studio(){
         this.player.studio();
         this.studioMode = true;
-        document.getElementById("studioDock").style.display = "";
+        this.fallingKills = false; // falling doesn't kill in studio mode
+        //document.getElementById("studioDock").style.display = "";
     }
 
     jitter(amount){
@@ -647,6 +683,21 @@ class Game {
             this.artOff.x = -1 * (this.viewPos.x + this.player.x + this.player.width/2 - window.innerWidth/2);
             this.artOff.y = -1 * (this.viewPos.y + this.player.y + this.player.height/2 - window.innerHeight/2);
             this.player.loop(framesElapsed);
+            if (this.player.keysHeld["p"]){
+                this.toggleP = true;
+            }
+            else if (this.toggleP){
+                this.toggleP = false;
+                if (!this.studioIsP){
+                    this.studioIsP = true;
+                }
+                else{
+                    this.studioIsP = false;
+                }
+            }
+            if (this.studioIsP){ // pause
+                framesElapsed = 0;
+            }
             this.tileset.forEach((item, i) => {
                 item.loop(framesElapsed);
             });
@@ -655,7 +706,7 @@ class Game {
             this.end();
             return 1;
         }
-        else if (this.win){
+        else if (this.win && !this.studioMode){
             this.end();
             return 2;
         }
@@ -671,7 +722,7 @@ class Game {
         }
         this.mousePos.gameX = this.player.x + this.player.width/2 + (this.mousePos.x - window.innerWidth/2) + this.viewPos.x;
         this.mousePos.gameY = this.player.y + this.player.height/2 + (this.mousePos.y - window.innerHeight/2) + this.viewPos.y;
-        if (this.keyCount > 0){
+        if (this.keyCount > 0 && !this.studioMode){
             this.ctx.textAlign = "center";
             this.ctx.font = "bold 30px monospace";
             this.ctx.fillStyle = "black";
@@ -702,7 +753,65 @@ class Game {
         this.ctx.strokeStyle = "black";
         this.ctx.closePath();
         this.ctx.stroke();
+        if (this.studioMode){
+            this.studioMode = false; // so the bricks don't draw studio handles
+            this.studioBlocks.forEach((item, i) => {
+                item.x = this.artOff.x * -1 + 10;
+                item.y = this.studioSelectorScroll + this.artOff.y * -1 + 10 + (i * 60);
+                item.loop(0); // loop 0 fe
+                if (item.isStudioOptionSelected){
+                    this.ctx.strokeStyle = "brown";
+                    this.ctx.lineWidth = 10;
+                    this.ctx.strokeRect(5, this.studioSelectorScroll + 5 + i * 60, 60, 60);
+                }
+                if (item.mouseOver){
+                    this.ctx.strokeStyle = "grey";
+                    this.ctx.lineWidth = 5;
+                    this.ctx.strokeRect(5, this.studioSelectorScroll + 5 + i * 60, 60, 60);
+                    var text = item.style + ", " + item.type;
+                    var textSize = this.ctx.measureText(text);
+                    /*this.ctx.beginPath();
+                    this.ctx.moveTo(73, 30 + i * 60);
+                    this.ctx.lineTo(80, 25 + i * 60 - textSize.height/2);
+                    this.ctx.quadraticCurveTo()*/
+                    this.ctx.font = "bold 12px monospace";
+                    this.ctx.fillStyle = "black";
+                    this.ctx.fillText(text, 73, this.studioSelectorScroll + 24 + i * 60);
+                }
+            });
+            /*this.ctx.save();
+            this.ctx.translate(window.innerWidth - 60, 10);
+            this.studioTools.forEach((item, i) => {
+                item.draw();
+                this.ctx.translate(0, 60);
+            });
+            this.ctx.restore();*/
+            this.studioMode = true;
+        }
         return 0; // 0 = nothing, 1 = loss, 2 = win.
+    }
+
+    mouseClick(){
+        this.studioBlocks.forEach((item, i) => {
+            if (item.mouseOver){ // If the mouse is over when you click, do things.
+                var wasSelected = item.isStudioOptionSelected;
+                this.studioBlocks.forEach((item, i) => {
+                    item.isStudioOptionSelected = false;
+                });
+                if (!wasSelected){
+                    item.isStudioOptionSelected = true;
+                }
+            }
+            else if (item.isStudioOptionSelected){
+                var v = Object.assign(Object.create(Object.getPrototypeOf(item)), item); // Thank you, Stack Overflow!
+                this.tileset.push(v);
+                v.x = this.mousePos.gameX - v.width/2;
+                v.y = this.mousePos.gameY - v.height/2;
+                v.interlock();
+                v.isStatic = v.wasStatic;
+                item.isStudioOptionSelected = false;
+            }
+        });
     }
 
     checkCollision(object, objects = this.tileset){
@@ -779,6 +888,7 @@ class Game {
         this.player.start();
         this.viewJitter = 0;
         HarmAnimator.clear();
+        this.canvas.focus();
     }
 }
 
@@ -792,6 +902,7 @@ class GameManager{
         this.curPhase = 0;
         if (window.location.hash == "#voidlands"){
             this.curPhase = -1;
+            this.isVoidlands = true;
         }
         this.frameDuration = 1000 / timerate;
         this.lastFrameTime = 0;
@@ -1071,11 +1182,13 @@ class GameManager{
     }
 
     switchToSlot(num){
-        this.beaten = this.storage.savedGames[num].levelsBeaten;
-        this.curPhase = this.storage.savedGames[num].curPhase;
-        this.game.player.score = this.storage.savedGames[num].curScore;
-        this.saveSlot = num;
-        this.showMenu();
+        if (!this.isVoidlands){
+            this.beaten = this.storage.savedGames[num].levelsBeaten;
+            this.curPhase = this.storage.savedGames[num].curPhase;
+            this.game.player.score = this.storage.savedGames[num].curScore;
+            this.saveSlot = num;
+            this.showMenu();
+        }
     }
 
     manageSaveslots(){

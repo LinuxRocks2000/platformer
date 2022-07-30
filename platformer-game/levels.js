@@ -773,7 +773,8 @@ const levels = [
 
             this.chambers.push({
                 door: game.create(-5, -2, 1, 2, "tar"),
-                enemies: [game.create(3, -1, 1, 1, "lava", "enemy", NormalEnemy), game.create(14, -1, 1, 1, "lava", "enemy", NormalEnemy)]
+                enemies: [game.create(3, -1, 1, 1, "lava", "enemy", NormalEnemy), game.create(14, -1, 1, 1, "lava", "enemy", NormalEnemy)],
+                score: game.player.score
             });
 
             // Pretty PC passage (Yes, this is an alliteration, thank you for noticing)
@@ -858,7 +859,10 @@ const levels = [
                         this.chambers.splice(i, 1);
                         game.deleteBrick(item.door);
                         game.jitter(30);
-                        game.player.collect(20);
+                        game.player.collect(Math.abs(item.score - game.player.score) * 3);
+                        if (this.chambers.length > 0){
+                            this.chambers[i].score = game.player.score;
+                        }
                     }
                 }
             });
@@ -1037,6 +1041,23 @@ const levels = [
 
         },
         ondestroy(game){
+        }
+    },
+    {
+        name: "unknown",
+        phase: -1,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.startX = 0;
+            game.startY = 0;
+            game.create(-4, 5, 10, 1);
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+
         }
     }
 ];

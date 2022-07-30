@@ -47,41 +47,46 @@ class Brick extends PhysicsObject{
     }
 
     beginResize(){
+
+    }
+
+    mouseDown(){
+        var isMoving = true;
         if (this.studioTopHovered){
             this.studioResizingTop = true;
+            isMoving = false;
         }
-        else if (this.studioLeftHovered){
+        if (this.studioLeftHovered){
             this.studioResizingLeft = true;
+            isMoving = false;
         }
-        else if (this.studioRightHovered){
+        if (this.studioRightHovered){
             this.studioResizingRight = true;
+            isMoving = false;
         }
-        else if (this.studioBottomHovered){
+        if (this.studioBottomHovered){
             this.studioResizingBottom = true;
+            isMoving = false;
         }
-        else{
+        if (isMoving && this.mouseOver){
             this.studioMoving = true;
             this.studioMotionOffx = this.game.mousePos.gameX - this.x;
             this.studioMotionOffy = this.game.mousePos.gameY - this.y;
         }
     }
 
-    endResize(){
+    mouseUp(){
         this.studioResizingTop = false;
         this.studioResizingLeft = false;
         this.studioResizingRight = false;
         this.studioResizingBottom = false;
         this.studioMoving = false;
-    }
-
-    studioSelect(){
-        this.studioSelected = true;
-        var el = document.getElementById("curStudioSelected");
-        el.innerHTML = this.style + "/" + this.type + " block at " + "(" + this.x + ", " + this.y + ")";
-    }
-
-    studioUnselect(){
-        this.studioSelected = false;
+        if (this.mouseOver){
+            this.studioSelected = true;
+        }
+        else{
+            this.studioSelected = false;
+        }
     }
 
     draw(){
@@ -95,8 +100,8 @@ class Brick extends PhysicsObject{
             this.game.ctx.closePath();
         }
         if (!this.dead){
-            BrickDrawer.drawBrick(this.game.ctx, Math.round(this.game.artOff.x + this.x),
-                                                 Math.round(this.game.artOff.y + this.y),
+            BrickDrawer.drawBrick(this.game.ctx, this.game.artOff.x + this.x,
+                                                 this.game.artOff.y + this.y,
                                                  this.width,
                                                  this.height,
                                                  this.style,
@@ -119,25 +124,24 @@ class Brick extends PhysicsObject{
                 BrickDrawer.drawText(this.game.ctx, this.game.artOff.x + this.x, this.game.artOff.y + this.y, this.width, this.height, this.signName);
             }
         }
-        if (this.studioSelected){
-            this.game.ctx.strokeStyle = "green";
-            this.game.ctx.lineWidth = 4;
-            this.game.ctx.strokeRect(this.artPos.x, this.artPos.y, this.width, this.height);
-        }
         if (this.game.studioMode){
+            if (this.studioSelected){
+                this.game.ctx.strokeStyle = "green";
+                this.game.ctx.lineWidth = 4;
+                this.game.ctx.strokeRect(this.x + this.game.artOff.x, this.y + this.game.artOff.y, this.width, this.height);
+            }
             if (this.mouseOver){
                 this.game.ctx.strokeStyle = "blue";
                 this.game.ctx.lineWidth = 2;
-                this.game.ctx.strokeRect(this.artPos.x, this.artPos.y, this.width, this.height);
+                this.game.ctx.strokeRect(this.x + this.game.artOff.x, this.y + this.game.artOff.y, this.width, this.height);
             }
-        }
-        if (this.studioSelected){
+
             if (Math.abs(this.game.mousePos.gameX - this.x) < 10 && this.game.mousePos.gameY > this.y && this.game.mousePos.gameY < this.y + this.height){
                 this.game.ctx.strokeStyle = "yellow";
                 this.game.ctx.lineWidth = 3;
                 this.game.ctx.beginPath();
-                this.game.ctx.moveTo(this.artPos.x, this.artPos.y);
-                this.game.ctx.lineTo(this.artPos.x, this.artPos.y + this.height);
+                this.game.ctx.moveTo(this.x + this.game.artOff.x, this.y + this.game.artOff.y);
+                this.game.ctx.lineTo(this.x + this.game.artOff.x, this.y + this.game.artOff.y + this.height);
                 this.game.ctx.closePath();
                 this.game.ctx.stroke();
                 this.studioLeftHovered = true;
@@ -150,8 +154,8 @@ class Brick extends PhysicsObject{
                 this.game.ctx.strokeStyle = "yellow";
                 this.game.ctx.lineWidth = 3;
                 this.game.ctx.beginPath();
-                this.game.ctx.moveTo(this.artPos.x + this.width, this.artPos.y);
-                this.game.ctx.lineTo(this.artPos.x + this.width, this.artPos.y + this.height);
+                this.game.ctx.moveTo(this.x + this.game.artOff.x + this.width, this.y + this.game.artOff.y);
+                this.game.ctx.lineTo(this.x + this.game.artOff.x + this.width, this.y + this.game.artOff.y + this.height);
                 this.game.ctx.closePath();
                 this.game.ctx.stroke();
                 this.studioRightHovered = true;
@@ -164,8 +168,8 @@ class Brick extends PhysicsObject{
                 this.game.ctx.strokeStyle = "yellow";
                 this.game.ctx.lineWidth = 3;
                 this.game.ctx.beginPath();
-                this.game.ctx.moveTo(this.artPos.x, this.artPos.y);
-                this.game.ctx.lineTo(this.artPos.x + this.width, this.artPos.y);
+                this.game.ctx.moveTo(this.x + this.game.artOff.x, this.y + this.game.artOff.y);
+                this.game.ctx.lineTo(this.x + this.game.artOff.x + this.width, this.y + this.game.artOff.y);
                 this.game.ctx.closePath();
                 this.game.ctx.stroke();
                 this.studioTopHovered = true;
@@ -178,8 +182,8 @@ class Brick extends PhysicsObject{
                 this.game.ctx.strokeStyle = "yellow";
                 this.game.ctx.lineWidth = 3;
                 this.game.ctx.beginPath();
-                this.game.ctx.moveTo(this.artPos.x, this.artPos.y + this.height);
-                this.game.ctx.lineTo(this.artPos.x + this.width, this.artPos.y + this.height);
+                this.game.ctx.moveTo(this.x + this.game.artOff.x, this.y + this.game.artOff.y + this.height);
+                this.game.ctx.lineTo(this.x + this.game.artOff.x + this.width, this.y + this.game.artOff.y + this.height);
                 this.game.ctx.closePath();
                 this.game.ctx.stroke();
                 this.studioBottomHovered = true;
@@ -238,6 +242,14 @@ class Brick extends PhysicsObject{
             this.x = this.game.mousePos.gameX - this.studioMotionOffx;
             this.y = this.game.mousePos.gameY - this.studioMotionOffy;
             this.interlock();
+        }
+        if (this.game.studioMode){
+            if (this.width == 0){
+                this.width = this.game.blockWidth;
+            }
+            if (this.height == 0){
+                this.height = this.game.blockHeight;
+            }
         }
     }
 

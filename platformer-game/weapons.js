@@ -209,7 +209,7 @@ class HyperslingBrick extends Brick{
     deploy(){
         if (this.duration <= 0){
             if (this.game.player.score >= 2){
-                this.game.player.collect(-1);
+                this.game.player.collect(-2);
                 this.duration = 70;
             }
             else{
