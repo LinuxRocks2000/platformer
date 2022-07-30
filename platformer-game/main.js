@@ -494,6 +494,7 @@ class Game {
             this.create(0, 0, 1, 1, "fish", "enemy", FishEnemy),
             this.create(0, 0, 1, 1, "jumpthrough", "enemy", PathfinderEnemy)
         ];
+        this.keyCount --; // Because we created a 'key' brick.
         this.studioBlocks.forEach((item, i) => {
             item.wasStatic = item.isStatic;
             item.isStatic = true; // Don't allow physics on these objects
