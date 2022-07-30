@@ -488,7 +488,11 @@ class Game {
             this.create(0, 0, 1, 1, "glass", "glass"),
             this.create(0, 0, 1, 1, "water", "water"),
             this.create(0, 0, 1, 1, "tar", "tar"),
-            this.create(0, 0, 1, 1, "ice", "ice")
+            this.create(0, 0, 1, 1, "ice", "ice"),
+            this.create(0, 0, 1, 1, "cannon", "enemy", CannonEnemy),
+            this.create(0, 0, 1, 1, "averagingenemy", "enemy", AverageSwarmEnemy),
+            this.create(0, 0, 1, 1, "fish", "enemy", FishEnemy),
+            this.create(0, 0, 1, 1, "jumpthrough", "enemy", PathfinderEnemy)
         ];
         this.studioBlocks.forEach((item, i) => {
             item.wasStatic = item.isStatic;
@@ -534,6 +538,7 @@ class Game {
             this.translate(-x, -y);
         };
         this.studioSelectorScroll = 0;
+        this.studio();
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu"]){
@@ -768,13 +773,14 @@ class Game {
                     this.ctx.strokeStyle = "grey";
                     this.ctx.lineWidth = 5;
                     this.ctx.strokeRect(5, this.studioSelectorScroll + 5 + i * 60, 60, 60);
-                    var text = item.style + ", " + item.type;
+                    var text = item.style + ", " + item.type + " (" + item.constructor.name + ")";
                     var textSize = this.ctx.measureText(text);
                     /*this.ctx.beginPath();
                     this.ctx.moveTo(73, 30 + i * 60);
                     this.ctx.lineTo(80, 25 + i * 60 - textSize.height/2);
                     this.ctx.quadraticCurveTo()*/
                     this.ctx.font = "bold 12px monospace";
+                    this.ctx.textAlign = "left";
                     this.ctx.fillStyle = "black";
                     this.ctx.fillText(text, 73, this.studioSelectorScroll + 24 + i * 60);
                 }
