@@ -32,7 +32,13 @@ class Player extends PhysicsObject{
                 if (event.key == "e" && this.game.studioMode){
                     this.game.studioExport();
                 }
-                if (event.key == "r"){
+                if (event.key == "r" && this.game.studioMode){
+                    this.x = this.game.startX;
+                    this.y = this.game.startY;
+                    this.xv = 0;
+                    this.yv = 0;
+                }
+                if (event.key == "z" && this.game.studioMode){
                     this.game.startX = this.game.mousePos.gameX;
                     this.game.startY = this.game.mousePos.gameY;
                     this.x = this.game.startX;
@@ -208,7 +214,7 @@ class Player extends PhysicsObject{
         });
     }
 
-    Jump(){
+    Jump(framesElapsed){
         if (this.touchingBottom || this.monkey > 0 || this.inWater){
             this.yv = this.inWater ? -13 : -22;
             this.monkey = 0;
@@ -231,10 +237,10 @@ class Player extends PhysicsObject{
         }
         if (this.keysHeld["ArrowUp"] || this.keysHeld["w"]){
             if (this.flightMode){
-                this.yv = -5;
+                this.yv += -this.gravity * 3/2;
             }
             else{
-                this.Jump();
+                this.Jump(framesElapsed);
             }
         }
         if (this.yv > 15){ // fall through jumpthroughs if you're moving fast
@@ -262,7 +268,7 @@ class Player extends PhysicsObject{
         if (this.studioMode || this.cheatMode){
             if (this.keysHeld["f"]){
                 this.toggleFlightmode = true;
-                this.yv = 0; // Freeze and Flight
+                this.yv = -this.gravity * framesElapsed; // Freeze and Flight
             }
             else if (this.toggleFlightmode){
                 this.flightMode = !this.flightMode;
@@ -286,7 +292,22 @@ class Player extends PhysicsObject{
             if (item.loop(this.game.ctx, framesElapsed)){
                 this.boinks.splice(i, 1);
             }
-        });
+        });/*
+        if (this.y <= this.highestPoint){
+            this.highestPoint = this.y;
+        }
+        else{
+            console.log("Highest point: " + this.highestPoint);*/
+            /* Old code
+            55FPS Cataclysm: -186.95429999999985
+            200FPS Cataclysm: -173.6399999999999
+            */
+            /* New (FE-relevant) code
+            55FPS Cataclysm: -5
+            200FPS Cataclysm: -1416.3599999999997
+            */
+            // Clearly, FE-relevance makes it worse. It is now discarded. We shall confront this bug at a later date.
+        //}
     }
 
     collect(amount){
@@ -309,24 +330,38 @@ class Player extends PhysicsObject{
             this.frictionChangeX = 0.7;
             this.frictionChangeY = 0.7;
         }
-        if (type == "tencoin"){
-            items.forEach((item, index) => {
-            	this.game.deleteBrick(item);
-                this.collect(10);
-            });
-        }
-        if (type == "fiftycoin"){
-            items.forEach((item, index) => {
-            	this.game.deleteBrick(item);
-                this.collect(50);
-            });
-        }
-        if (type == "heal"){
-            items.forEach((item, index) => {
-            	this.game.deleteBrick(item);
-                this.health += Math.random() * 100;
-                this.collect(5);
-            });
+        if (!this.game.studioMode){
+            if (type == "tencoin"){
+                items.forEach((item, index) => {
+                	this.game.deleteBrick(item);
+                    this.collect(10);
+                });
+            }
+            if (type == "fiftycoin"){
+                items.forEach((item, index) => {
+                	this.game.deleteBrick(item);
+                    this.collect(50);
+                });
+            }
+            if (type == "heal"){
+                items.forEach((item, index) => {
+                	this.game.deleteBrick(item);
+                    this.health += Math.random() * 100;
+                    this.collect(5);
+                });
+            }
+            if (type == "key"){
+                items.forEach((item, i) => {
+                    this.collect(1);
+                    this.game.deleteBrick(item);
+                });
+            }
+            if (type == "begone"){
+                items.forEach((item, i) => {
+                    this.game.deleteBrick(item);
+                    this.begone();
+                });
+            }
         }
         if (type == "jumpthrough"){
             if (this.yv < 0){ // It's moving up
@@ -337,12 +372,6 @@ class Player extends PhysicsObject{
                     return true;
                 }
             }
-        }
-        if (type == "key"){
-            items.forEach((item, i) => {
-                this.collect(1);
-                this.game.deleteBrick(item);
-            });
         }
         if (type == "ice"){
             this.frictionChangeX = 0.99/this.friction; // Arithmetic. this.friction * 1 / this.friction == this.friction / this.friction == 1. We can do the same thing with 0.99, 0.8, etc, but 1 will do for now.
@@ -363,12 +392,6 @@ class Player extends PhysicsObject{
             this.gravityChangeY = 0.7;
             this.frictionChangeY = 0.9;
             this.frictionChangeX = 0.7;
-        }
-        if (type == "begone"){
-            items.forEach((item, i) => {
-                this.game.deleteBrick(item);
-                this.begone();
-            });
         }
     }
 
@@ -613,7 +636,9 @@ class Game {
         var t = "game.startX = " + this.startX + "; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.\n";
         t += "game.startY = " + this.startY + "; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.\n";
         this.tileset.forEach((item, i) => {
-            t += "game.create(" + item.x/50 + ", " + item.y/50 + ", " + item.width/50 + ", " + item.height/50 + ", '" + item.style + "', '" + item.type + "', " + item.constructor.name + "); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.\n";
+            if (item.constructor.name != "BulletEnemy"){ // Bullets are *always* dynamic.
+                t += "game.create(" + item.x/50 + ", " + item.y/50 + ", " + item.width/50 + ", " + item.height/50 + ", '" + item.style + "', '" + item.type + "', " + item.constructor.name + "); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.\n";
+            }
         });
         console.log(t);
         navigator.clipboard.writeText(t).then(() => {
@@ -624,10 +649,7 @@ class Game {
     }
 
     studio(){
-        this.player.studio();
-        this.studioMode = true;
-        this.fallingKills = false; // falling doesn't kill in studio mode
-        //document.getElementById("studioDock").style.display = "";
+        console.log("No, that doesn't work.");
     }
 
     jitter(amount){
@@ -958,6 +980,16 @@ class GameManager{
             };
         }
         this.saveSlot = -1;
+    }
+
+    enableStudio(secretKey){
+        if (localStorage.secretKey && secretKey == localStorage.secretKey){
+            this.game.studio = function(){
+                this.studioMode = true;
+                this.player.studio();
+                this.fallingKills = false; // falling doesn't kill in studio mode
+            };
+        }
     }
 
     set curLevel(val){

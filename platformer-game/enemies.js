@@ -10,6 +10,7 @@ class NormalEnemy extends Brick{
         this.collisions.push("tencoin");
         this.collisions.push("fiftycoin");
         this.collisions.push("player");
+        this.collisions.push("jumpthrough");
         this.specialCollisions.push("player");
         this.doSignalCollisions = true;
         this.health = 100;
