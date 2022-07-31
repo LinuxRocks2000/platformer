@@ -980,6 +980,10 @@ class GameManager{
             };
         }
         this.saveSlot = -1;
+        if (localStorage.isStudioAllowedByDefault){
+            localStorage.secretKey = "not so secret anymore";
+            this.enableStudio(localStorage.secretKey);
+        }
     }
 
     enableStudio(secretKey){
@@ -989,6 +993,7 @@ class GameManager{
                 this.player.studio();
                 this.fallingKills = false; // falling doesn't kill in studio mode
             };
+            localStorage.isStudioAllowedByDefault = "TRUE";
         }
     }
 
