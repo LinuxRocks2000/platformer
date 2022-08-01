@@ -994,6 +994,7 @@ class GameManager{
                 this.fallingKills = false; // falling doesn't kill in studio mode
             };
             localStorage.isStudioAllowedByDefault = "TRUE";
+            console.log("Studio permanently-ish (if you clear site data it's undone) enabled");
         }
     }
 

@@ -9,7 +9,7 @@ They're a fun part of the game but serve no other purpose.
 
 Useful note: Phases are 0-indexed, so 0 is phase 1, 1 is phase 2, etc. If it seems annoying, you aren't a coder.
 */
-const levels = [
+const levels = [/*
     {
         name: "Training",
         skippable: true,
@@ -749,10 +749,10 @@ const levels = [
             game.isShadow = false;
             BrickDrawer.isRadiating = false;
         }
-    },
+    },*/
     {
         name: "Chambers",
-        phase: 2,
+        phase: 0,//2
         skippable: false,
         difficulty: 1,
         chambers: [],
@@ -760,6 +760,11 @@ const levels = [
             game.startX = 0;
             game.startY = -150;
             game.player.giveWeapon(BasicGun);
+
+            this.chambers = []; // Fixes the nan score bug hopefully
+            // the issue was that the score value of some chambers was undefined (see below for why)
+            // and those weren't cleared out of the chambers list at start
+            // so if you died, you would have undefined chambers adding to your score
 
             // Entry chamber
             game.create(-5, 0, 32, 1);

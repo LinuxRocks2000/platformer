@@ -68,7 +68,7 @@ class Brick extends PhysicsObject{
             this.studioResizingBottom = true;
             isMoving = false;
         }
-        if (isMoving && this.mouseOver){
+        if (isMoving && this.mouseOver && this.game.studioMode){
             this.studioMoving = true;
             this.studioMotionOffx = this.game.mousePos.gameX - this.x;
             this.studioMotionOffy = this.game.mousePos.gameY - this.y;
