@@ -243,9 +243,9 @@ class Player extends PhysicsObject{
                 this.Jump(framesElapsed);
             }
         }
-        if (this.yv > 15){ // fall through jumpthroughs if you're moving fast
-            this.jumpthroughing = true;
-        }
+        /*if (this.yv > 15){ // fall through jumpthroughs if you're moving fast
+            this.jumpthroughing = true; // deprecated because it's super annoying
+        }*/
         if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"]){
             this.Left(framesElapsed);
             this.direction = -1;
@@ -984,6 +984,11 @@ class GameManager{
             localStorage.secretKey = "not so secret anymore";
             this.enableStudio(localStorage.secretKey);
         }
+        this.game.canvas.addEventListener("click", (event) => {
+            if (this.curLevelObj.onclick){
+                this.curLevelObj.onclick(this.game);
+            }
+        });
     }
 
     enableStudio(secretKey){
@@ -1165,8 +1170,8 @@ class GameManager{
             var distTime = window.performance.now() - this.lastFrameTime;
             this.lastFrameTime = window.performance.now();
             var framesElapsed = distTime/this.frameDuration;
-            this.curLevelObj.onloop(this.game, framesElapsed);
             var retVal = this.game.loop(framesElapsed);
+            this.curLevelObj.onloop(this.game, framesElapsed); // some levels have extra art, so let them do art after the game is finished clearing and drawing
             if (retVal == 1){
                 this.youLoseEl.style.display = "";
                 window.setTimeout(() => {

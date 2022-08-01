@@ -134,6 +134,12 @@ class Brick extends PhysicsObject{
                 this.game.ctx.strokeStyle = "blue";
                 this.game.ctx.lineWidth = 2;
                 this.game.ctx.strokeRect(this.x + this.game.artOff.x, this.y + this.game.artOff.y, this.width, this.height);
+                this.game.ctx.fillStyle = "black";
+                this.game.ctx.textAlign = "left";
+                this.game.ctx.font = "bold 12px monospace";
+                var dataText = "(" + (this.x/this.game.blockWidth) + ", " + (this.y/this.game.blockHeight) + "), " + (this.width/this.game.blockWidth) + "x" + (this.height/this.game.blockHeight);
+                dataText += " [" + this.style + ", " + this.type + "] - " + this.constructor.name;
+                this.game.ctx.fillText(dataText, this.game.mousePos.x, this.game.mousePos.y);
             }
 
             if (Math.abs(this.game.mousePos.gameX - this.x) < 10 && this.game.mousePos.gameY > this.y && this.game.mousePos.gameY < this.y + this.height){

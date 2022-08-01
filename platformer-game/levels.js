@@ -9,7 +9,7 @@ They're a fun part of the game but serve no other purpose.
 
 Useful note: Phases are 0-indexed, so 0 is phase 1, 1 is phase 2, etc. If it seems annoying, you aren't a coder.
 */
-const levels = [
+const levels = [/*
     {
         name: "Training",
         skippable: true,
@@ -749,10 +749,10 @@ const levels = [
             game.isShadow = false;
             BrickDrawer.isRadiating = false;
         }
-    },
+    },*/
     {
         name: "Chambers",
-        phase: 2,
+        phase: 0,//2,
         skippable: false,
         difficulty: 1,
         chambers: [],
@@ -789,7 +789,8 @@ const levels = [
 
             game.create(14, 4, 1, 1, "cannon", "enemy", CannonEnemy, {fireRate: 20, sightRange: Infinity});
 
-            game.create(26, 1, 1, 15);
+            game.create(26, 0, 1, 4, "normal", "none");
+            game.create(26, 3, 1, 13);
             game.create(17, 6, 1, 1);
 
             game.create(20, 6, 1, 5);
@@ -830,6 +831,20 @@ const levels = [
             });
 
             game.create(-5, 20, 1, 1, "end", "end");
+
+            // Heaven
+            game.create(-3, 195, 1, 10);
+            game.create(3, 208, 21, 1);
+            game.create(-3, 204, 5, 1);
+            game.create(2, 204, 1, 5);
+            for (var x = 0; x < 19; x ++){
+                game.create(x + 3, 207, 1, 1, "coin", "fiftycoin");
+                game.create(x + 3, 206, 1, 1, "coin", "fiftycoin");
+            }
+            game.create(23, 204, 1, 5);
+            game.create(23, 204, 5, 1);
+            game.create(28, 195, 1, 10);
+            game.create(26, 203, 1, 1, "end", "end");
         },
         onloop(game, framesElapsed){
             this.chambers.forEach((item, i) => {
@@ -871,6 +886,32 @@ const levels = [
                     }
                 }
             });
+            if (game.player.x > 799 && game.player.y > -500 && game.player.x + game.player.width < 1400 && game.player.y + game.player.height < 50){
+                game.ctx.fillStyle = "white";
+                game.ctx.fillRect(0, 0, game.artOff.x + 801, window.innerHeight);
+                game.ctx.fillRect(0, game.artOff.y - 1, window.innerWidth, window.innerHeight);
+                game.ctx.fillStyle = "black";
+                game.ctx.textAlign = "center";
+                game.ctx.font = "bold 24px Arial";
+                BrickDrawer.drawText(game.ctx, game.artOff.x + 800, game.artOff.y, game.innerWidth * 2/3, Infinity, "Welcome to the Gateway to Heaven. This is a fantastical realm of magic and wonder - which is to say, it's a hidden room in Platformer. \n I'll probably hide more of these in later levels, so keep looking for them. \n \n If you go to the right, you'll end up back in Reality, falling off a cliff. If you click the button, you'll be teleported to Heaven. \n Your choice.");
+                game.ctx.fillStyle = "red";
+                if (game.mousePos.gameX > 700 && game.mousePos.gameY > -400 && game.mousePos.gameX < 800 && game.mousePos.gameY < -350){
+                    game.ctx.fillStyle = "green";
+                }
+                game.ctx.fillRect(game.artOff.x + 700, game.artOff.y - 400, 100, 50);
+                this.isStairwayToHeaven = true;
+            }
+            else{
+                this.isStairwayToHeaven = false;
+            }
+        },
+        onclick(game){
+            if (this.isStairwayToHeaven){
+                if (game.mousePos.gameX > 700 && game.mousePos.gameX < 800 && game.mousePos.gameY > -400 && game.mousePos.gameY < -350){
+                    game.player.x = 0;
+                    game.player.y = 10000;
+                }
+            }
         },
         ondestroy(game){
 
