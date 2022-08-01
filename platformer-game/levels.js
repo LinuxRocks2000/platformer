@@ -9,7 +9,7 @@ They're a fun part of the game but serve no other purpose.
 
 Useful note: Phases are 0-indexed, so 0 is phase 1, 1 is phase 2, etc. If it seems annoying, you aren't a coder.
 */
-const levels = [/*
+const levels = [
     {
         name: "Training",
         skippable: true,
@@ -749,7 +749,7 @@ const levels = [/*
             game.isShadow = false;
             BrickDrawer.isRadiating = false;
         }
-    },*/
+    },
     {
         name: "Chambers",
         phase: 0,//2
