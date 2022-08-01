@@ -752,7 +752,7 @@ const levels = [
     },
     {
         name: "Chambers",
-        phase: 0,//2
+        phase: 2,
         skippable: false,
         difficulty: 1,
         chambers: [],
