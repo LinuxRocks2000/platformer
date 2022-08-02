@@ -4,19 +4,21 @@ class Pathfinder{
         this.startPos = [start.x, start.y];
         this.endPos = [end.x, end.y];
         this.tolerance = tolerance;
-        this.calcNodes();
         this.possiblePaths = [];
         this.path = [];
         this.pointsVisited = [];
-        this.find([this.startPos]);
+        this.allNodes = [];
         this.shortestPath = Infinity;
         this.excludedTypes = excludedTypes;
+        this.exclusions = exclusions;
+        this.calcNodes();
+        this.find([this.startPos]);
     }
 
     calcNodes(){
         this.allNodes = [this.endPos];
         this.game.tileset.forEach((item, i) => {
-            if (exclusions.indexOf(item) == -1 && excludedTypes.indexOf(item.type) == -1){
+            if (this.exclusions.indexOf(item) == -1 && this.excludedTypes.indexOf(item.type) == -1){
                 this.allNodes.push([item.x - this.tolerance, item.y - this.tolerance]);
                 this.allNodes.push([item.x - this.tolerance, item.y + item.height + this.tolerance]);
                 this.allNodes.push([item.x + item.width + this.tolerance, item.y + item.height + this.tolerance]);
