@@ -508,10 +508,7 @@ class Game {
         };
         this.viewJitter = 0;
         window.addEventListener("mousemove", () => {
-            this.mousePos.x = event.clientX;
-            this.mousePos.y = event.clientY;
-            this.viewPos_real.x = (this.mousePos.x - window.innerWidth/2)/4;
-            this.viewPos_real.y = (this.mousePos.y - window.innerHeight/2)/4;
+            this.setMousePos(event.clientX, event.clientY);
         });
         this.toDelete = [];
         this.minimumExtent = -Infinity;
@@ -598,6 +595,13 @@ class Game {
             this.translate(-x, -y);
         };
         this.studioSelectorScroll = 0;
+    }
+
+    setMousePos(x, y){
+        this.mousePos.x = x;
+        this.mousePos.y = y;
+        this.viewPos_real.x = (this.mousePos.x - window.innerWidth/2)/4;
+        this.viewPos_real.y = (this.mousePos.y - window.innerHeight/2)/4;
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu"]){

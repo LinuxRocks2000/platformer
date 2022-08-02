@@ -1,6 +1,7 @@
 // What do you think? It's a Platformer joystick. Kermit yay.
 
-
+/*
+// Old PJoystick: Dirty and hard to use, graphics
 class PJoystick{
     constructor(game, radius = 200, x = window.innerWidth - radius, y = window.innerHeight - radius){
         this.game = game;
@@ -134,5 +135,70 @@ class PJoystick{
                 }
             }
         }
+    }
+}
+*/
+
+// New PJoystick: Hopefully cleaner and easier, no graphics.
+
+class PJoystick{
+    constructor(game){
+        this.game = game;
+        this.startX = window.innerWidth/2;
+        this.startY = window.innerHeight/2;
+        this.tapWasntAction = true;
+        game.canvas.addEventListener("touchmove", (evt) => {
+            evt.preventDefault();
+            if (evt.touches.length == 1){
+                this.game.setMousePos(evt.touches[0].clientX, evt.touches[0].clientY);
+                var dx = evt.touches[0].clientX - this.startX;
+                var dy = evt.touches[0].clientY - this.startY;
+                this.isBottom = false;
+                this.isTop = false;
+                this.isLeft = false;
+                this.isRight = false;
+                if (dx < -100){
+                    this.isLeft = true;
+                    this.tapWasntAction = false;
+                }
+                else if (dx > 100){
+                    this.isRight = true;
+                    this.tapWasntAction = false;
+                }
+                if (dy < -100){
+                    this.isTop = true;
+                    this.startY = evt.touches[0].clientY + 105;
+                    this.tapWasntAction = false;
+                }
+                else if (dy > 100){
+                    this.isBottom = true;
+                    this.tapWasntAction = false;
+                }
+            }
+        });
+        game.canvas.addEventListener("touchstart", (evt) => {
+            evt.preventDefault();
+            if (evt.touches.length == 1){
+                this.startX = evt.touches[0].clientX;
+                this.startY = evt.touches[0].clientY;
+            }
+        });
+        game.canvas.addEventListener("touchend", (evt) => {
+            this.isLeft = false;
+            this.isRight = false;
+            this.isTop = false;
+            this.isBottom = false;
+            if (this.tapWasntAction){
+                if (this.game.player.weapon){
+                    this.game.player.weapon.trigger();
+                }
+            }
+            this.tapWasntAction = true;
+        });
+        this.isActive = false;
+    }
+
+    loop(){
+
     }
 }
