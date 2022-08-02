@@ -470,6 +470,15 @@ class BulletEnemy extends Brick{
         this.friction = 1;
         this.gravity = 0;
         this.isDamageable = true;
+        this.TTL = 500; // 10 seconds, about
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        this.TTL -= framesElapsed;
+        if (this.TTL < 0){
+            this.game.deleteBrick(this);
+        }
     }
 
     onDie(){
@@ -866,7 +875,7 @@ class PathfinderEnemy extends Brick{
     loop(framesElapsed){
         super.loop(framesElapsed);
         if (!this.active){
-            if (this.canSeePlayer()){
+            if (this.canSeePlayer() && !this.isStatic){
                 this.active = true;
             }
         }
