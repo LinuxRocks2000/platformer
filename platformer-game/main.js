@@ -114,6 +114,10 @@ class Player extends PhysicsObject{
         this.risingTextBoinks = [];
         this.begonCycle = 0;
         this.maxHeight = 0;
+        this.joystick = new PJoystick(game);
+        if ((('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))){// Thank you, SO
+            this.joystick.isActive = true;
+        }
     }
 
     studio(){
@@ -248,7 +252,7 @@ class Player extends PhysicsObject{
         if (this.weapon && this.keysHeld[" "]){
             this.weapon.trigger();
         }
-        if (this.keysHeld["ArrowUp"] || this.keysHeld["w"]){
+        if (this.keysHeld["ArrowUp"] || this.keysHeld["w"] || this.joystick.isTop){
             if (this.flightMode){
                 this.yv += -this.gravity * 3/2;
             }
@@ -259,15 +263,15 @@ class Player extends PhysicsObject{
         /*if (this.yv > 15){ // fall through jumpthroughs if you're moving fast
             this.jumpthroughing = true; // deprecated because it's super annoying
         }*/
-        if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"]){
+        if (this.keysHeld["ArrowLeft"] || this.keysHeld["a"] || this.joystick.isLeft){
             this.Left(framesElapsed);
             this.direction = -1;
         }
-        if (this.keysHeld["ArrowRight"] || this.keysHeld["d"]){
+        if (this.keysHeld["ArrowRight"] || this.keysHeld["d"] || this.joystick.isRight){
             this.Right(framesElapsed);
             this.direction = 1;
         }
-        if (this.keysHeld["ArrowDown"] || this.keysHeld["s"]){
+        if (this.keysHeld["ArrowDown"] || this.keysHeld["s"] || this.joystick.isBottom){
             if (this.flightMode){
                 this.yv = 5;
             }
@@ -332,6 +336,7 @@ class Player extends PhysicsObject{
             // FE-irrelevance also makes it worse?? Discarded.
             // Hypothesis: Drift.
         }
+        this.joystick.loop();
     }
 
     collect(amount){
