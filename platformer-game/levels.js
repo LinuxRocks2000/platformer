@@ -634,9 +634,10 @@ const levels = [
 
             // The end!
             game.create(1, 29, 1, 1, "end", "end");
+            this.isFinished = false;
         },
         onloop(game){
-            if (game.keyCount == 0 && !this.flooded) {
+            if (game.keyCount == 0 && !this.flooded && game.player.health > 0) {
                 game.create(1, 22, 48, 8, "water", "water");
                 //game.create(15, 27, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true, health: 20});
                 game.create(35, 27, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true, health: 20});
@@ -647,6 +648,7 @@ const levels = [
         },
         ondestroy(){
             this.flooded = false;
+            this.isFinished = true;
         }
     },
     {
