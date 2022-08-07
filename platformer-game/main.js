@@ -1,6 +1,208 @@
 const VERSION_LATEST = 1.3;
 
 
+var LR2KSkin = {
+    startAnchor: {
+        x: 0,
+        y: 0
+    },
+    topMidAnchor: {
+        x: 0,
+        y: 0
+    },
+    headBottomAnchor: {
+        x: 0,
+        y: 0
+    },
+    centerAnchor: {
+        x: 0,
+        y: 0
+    },
+    width: 0,
+    height: 0,
+    walkCycle: 0,
+    reversed: false,
+    walkKeyframes: [
+        {
+            frame: 0,
+            knee: {
+                x: 0,
+                y: 0
+            },
+            foot: {
+                x: 0,
+                y: 0
+            }
+        },
+        {
+            frame: 100,
+            knee: {
+                x: 5,
+                y: 0
+            },
+            foot: {
+                x: -15,
+                y: -20
+            }
+        },
+        {
+            frame: 200,
+            knee: {
+                x: 10,
+                y: 0
+            },
+            foot: {
+                x: 10,
+                y: 0
+            }
+        },
+        {
+            frame: 400,
+            knee: {
+                x: -2,
+                y: 0
+            },
+            foot: {
+                x: -5, // Watchdog frame
+                y: 0
+            }
+        },
+    ],
+    calculate(player){ // Set anchors.
+        this.startAnchor.x = player.x + player.game.artOff.x;
+        this.startAnchor.y = player.y + player.game.artOff.y;
+        this.width = player.width;
+        this.height = player.height;
+        this.topMidAnchor.x = this.startAnchor.x + player.width/2;
+        this.topMidAnchor.y = this.startAnchor.y;
+        this.centerAnchor.x = this.startAnchor.x + player.width/2;
+        this.centerAnchor.y = this.startAnchor.y + player.height/2;
+    },
+    _drawHead(ctx, x, y, width, height){
+        ctx.fillStyle = "white";
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.ellipse(x, // X
+                    y, // Y
+                    width/2, // RX
+                    height/2, // RY
+                    0, // rotation
+                    0,
+                    Math.PI * 2);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+    },
+    drawHead(ctx, aspectRatio = 17/20){ // MUST be called before other routines!
+        this.headWidth = this.width * 1/2;
+        this.headHeight = this.headWidth * aspectRatio;
+        this.headBottomAnchor.x = this.topMidAnchor.x;
+        this.headBottomAnchor.y = this.topMidAnchor.y + this.headHeight;
+        this._drawHead(ctx, this.topMidAnchor.x, this.topMidAnchor.y + this.headHeight/2, this.headWidth, this.headHeight);
+    },
+    drawBody(ctx){
+        ctx.beginPath();
+        ctx.moveTo(this.topMidAnchor.x, this.topMidAnchor.y + this.headHeight);
+        ctx.lineTo(this.centerAnchor.x, this.centerAnchor.y);
+        ctx.closePath();
+        ctx.stroke();
+    },
+    _drawLeg(ctx, kneeX, kneeY, footX, footY){
+        if (this.reversed){
+            footX *= -1;
+            kneeX *= -1;
+        }
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(this.centerAnchor.x, this.centerAnchor.y);
+        ctx.lineTo(this.centerAnchor.x + kneeX, this.centerAnchor.y + this.height/4 + kneeY);
+        ctx.lineTo(this.centerAnchor.x + footX, this.centerAnchor.y + this.height/2 + footY);
+        ctx.moveTo(this.centerAnchor.x, this.centerAnchor.y);
+        ctx.closePath();
+        ctx.stroke();
+    },
+    _findLegAt(curFrame){
+        var firstKeyframe = undefined;
+        var nextKeyframe = undefined;
+        var lastOne = this.walkKeyframes[this.walkKeyframes.length - 1];
+        this.walkKeyframes.forEach((item, i) => {
+            if (!firstKeyframe){
+                if (item.frame > curFrame){
+                    nextKeyframe = item;
+                    firstKeyframe = lastOne;
+                }
+            }
+            lastOne = item;
+        });
+        //var footTotalDist = calcPythagorean(firstKeyframe.foot.x, firstKeyframe.foot.y, nextKeyframe.foot.x, nextKeyframe.foot.y);
+        var frameDist = Math.abs(nextKeyframe.frame - firstKeyframe.frame);
+        /*if (nextKeyframe == this.walkKeyframes[0] || lastOne == this.walkKeyframes[this.walkKeyframes.length - 1]){
+            frameDist = 100;
+        }*/
+        var percentageFromLast = Math.abs(curFrame - firstKeyframe.frame)/frameDist;
+        var percentageFromFirst = 1 - percentageFromLast;
+        var footX = firstKeyframe.foot.x * percentageFromFirst + nextKeyframe.foot.x * percentageFromLast;
+        var footY = firstKeyframe.foot.y * percentageFromFirst + nextKeyframe.foot.y * percentageFromLast;
+        var kneeX = firstKeyframe.knee.x * percentageFromFirst + nextKeyframe.knee.x * percentageFromLast;
+        var kneeY = firstKeyframe.knee.y * percentageFromFirst + nextKeyframe.knee.y * percentageFromLast;
+        return [kneeX, kneeY, footX, footY];
+    },
+    drawWalkingLeg(ctx, cycleOffset = 0){
+        while (this.walkCycle > this.walkKeyframes[this.walkKeyframes.length - 1].frame){
+            this.walkCycle -= this.walkKeyframes[this.walkKeyframes.length - 1].frame;
+        }
+        while (curKeyframe < 0){
+            curKeyframe += this.walkKeyframes[this.walkKeyframes.length - 1].frame;
+        }
+        var curKeyframe = this.walkCycle + cycleOffset;
+        while (curKeyframe > this.walkKeyframes[this.walkKeyframes.length - 1].frame){
+            curKeyframe -= this.walkKeyframes[this.walkKeyframes.length - 1].frame;
+        }
+        while (curKeyframe < 0){
+            curKeyframe += this.walkKeyframes[this.walkKeyframes.length - 1].frame;
+        }
+        var leg = this._findLegAt(curKeyframe);
+        var kneeX = leg[0];
+        var kneeY = leg[1];
+        var footX = leg[2];
+        var footY = leg[3];
+        this._drawLeg(ctx, kneeX, kneeY, footX, footY);
+    },
+    drawStandingLegs(ctx){
+        this._drawLeg(ctx, -1, 0, -5, 0);
+        this._drawLeg(ctx, 4, 0, 3, 0);
+    },
+    drawJumpingLegs(ctx){
+        this._drawLeg(ctx, 14, -40, 7, -40);
+        this._drawLeg(ctx, -2, 0, -6, 0);
+    },
+    _drawArm(ctx, elbowX, elbowY, handX, handY){
+        if (this.reversed){
+            elbowX *= -1;
+            handX *= -1;
+        }
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(this.headBottomAnchor.x, this.headBottomAnchor.y);
+        ctx.lineTo(this.centerAnchor.x + elbowX, this.centerAnchor.y + elbowY);
+        ctx.lineTo(this.centerAnchor.x + handX, this.centerAnchor.y + handY);
+        ctx.moveTo(this.headBottomAnchor.x, this.headBottomAnchor.y);
+        ctx.closePath();
+        ctx.stroke();
+    },
+    drawNormalArms(ctx){
+        this._drawArm(ctx, -10, -15, 5, 0);
+        this._drawArm(ctx, -2, -12, 10, 3);
+    },
+    drawJumpingArms(ctx){
+        this._drawArm(ctx, -7, -15, -3, 3);
+        this._drawArm(ctx, 10, -20, 20, -50);
+    }
+};
+
 
 class Player extends PhysicsObject{
     constructor(game, x, y, width, height){
@@ -186,15 +388,48 @@ class Player extends PhysicsObject{
     }
 
     draw(framesElapsed){
-        this.game.ctx.fillStyle = "green";
-        this.game.ctx.fillRect(this.game.artOff.x + this.x,
-                               this.game.artOff.y + this.y,
-                               this.width,
-                               this.height);
-        this.game.ctx.fillStyle = "black";
-        this.game.ctx.font = "bold 16px sans-serif";
-        this.game.ctx.textAlign = "left";
-        this.game.ctx.fillText(this.score + "", this.game.artOff.x + this.x, this.game.artOff.y + this.y + 16);
+        if (this.game.skin == "lr2k"){
+            LR2KSkin.calculate(this);
+            LR2KSkin.drawHead(this.game.ctx);
+            LR2KSkin.drawBody(this.game.ctx);
+            if (this.xv < 0){
+                LR2KSkin.reversed = true;
+            }
+            else{
+                LR2KSkin.reversed = false;
+            }
+            if (this.touchingBottom){
+                if (Math.abs(this.xv) > 0.01){
+                    LR2KSkin.walkCycle += framesElapsed * Math.abs(this.xv) * 3/2;
+                    LR2KSkin.drawWalkingLeg(this.game.ctx);
+                    LR2KSkin.drawWalkingLeg(this.game.ctx, 200);
+                }
+                else{
+                    LR2KSkin.drawStandingLegs(this.game.ctx);
+                }
+                LR2KSkin.drawNormalArms(this.game.ctx);
+            }
+            else{
+                LR2KSkin.drawJumpingLegs(this.game.ctx);
+                LR2KSkin.drawJumpingArms(this.game.ctx);
+            }
+            //LR2KSkin.drawLeg(this.game.ctx);
+            this.game.ctx.fillStyle = "black";
+            this.game.ctx.font = "bold 16px sans-serif";
+            this.game.ctx.textAlign = "center";
+            this.game.ctx.fillText(this.score + "", this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y - 16);
+        }
+        else{
+            this.game.ctx.fillStyle = "green";
+            this.game.ctx.fillRect(this.game.artOff.x + this.x,
+                                    this.game.artOff.y + this.y,
+                                    this.width,
+                                    this.height);
+            this.game.ctx.fillStyle = "black";
+            this.game.ctx.font = "bold 16px sans-serif";
+            this.game.ctx.textAlign = "left";
+            this.game.ctx.fillText(this.score + "", this.game.artOff.x + this.x, this.game.artOff.y + this.y + 16);
+        }
         if (this.shielding > 0){
             this.shielding -= framesElapsed / 4;
             this.game.ctx.fillStyle = "lightgrey";
@@ -318,7 +553,6 @@ class Player extends PhysicsObject{
             this.highestPoint = this.y;
         }
         else{
-            console.log("Highest point: " + this.highestPoint);
             /* Old code (control group)
             5PPS Cataclysm: -191.53912500000047
             55PPS Cataclysm: -186.95429999999985, -186.9573249999998
@@ -595,6 +829,7 @@ class Game {
             this.translate(-x, -y);
         };
         this.studioSelectorScroll = 0;
+        this.skin = "lr2k";
     }
 
     setMousePos(x, y){
@@ -976,13 +1211,15 @@ class GameManager{
         this.curLevelObj = undefined;
         this.curPhase = 0;
         this.beaten = [];
-        if (window.location.hash == "#voidlands"){
+
+        var hashData = this.getHashdata();
+        if (hashData.voidlands == "true"){
             this.curPhase = -1;
             this.isVoidlands = true;
         }
-        else {
+        else if (hashData.level){
             levels.forEach((item, i) => {
-                if ("#" + item.name == decodeURI(window.location.hash)){
+                if (item.name == hashData.level){
                     this.curPhase = item.phase;
                     levels.forEach((toBeat, i) => {
                         if (item != toBeat){
@@ -993,6 +1230,7 @@ class GameManager{
                 }
             });
         }
+        this.game.skin = hashData.skin;
         this.frameDuration = 1000 / timerate;
         this.lastFrameTime = 0;
         this.youWinEl = document.getElementById("youwin");
@@ -1042,6 +1280,37 @@ class GameManager{
         if (localStorage.isHell == "yes"){
             this.isHell = true;
         }
+    }
+
+    getHashdata(){
+        var processingPhase = 0;
+        var results = {};
+        var currentName = "";
+        var currentValue = "";
+        decodeURI(window.location.hash).split("").forEach((byte, bIndex) => {
+            if (bIndex > 0){
+                if (processingPhase == 0){
+                    if (byte == "="){
+                        processingPhase = 1;
+                    }
+                    else{
+                        currentName += byte;
+                    }
+                }
+                else if (processingPhase == 1) {
+                    if (byte == ";"){
+                        processingPhase = 0;
+                        results[currentName] = currentValue;
+                        currentValue = "";
+                        currentName = "";
+                    }
+                    else{
+                        currentValue += byte;
+                    }
+                }
+            }
+        });
+        return results;
     }
 
     enableStudio(secretKey){

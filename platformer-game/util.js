@@ -81,3 +81,9 @@ function distBetweenPoints(p1, p2){
     var distY = p1[1] - p2[1];
     return Math.sqrt(distX * distX + distY * distY);
 }
+
+function calcPythagorean(x1, y1, x2, y2){
+    var distX = x2 - x1;
+    var distY = y2 - y1;
+    return Math.sqrt(distX * distX + distY * distY);
+}

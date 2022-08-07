@@ -794,6 +794,7 @@ class BruiserEnemy extends Brick{
         this.maxHealth = config.health || 80;
         this.isDamageable = true;
         this.doDropHeal = config.dropHealth;
+        this.TTL = Infinity;
     }
 
     onDie(){
@@ -805,6 +806,10 @@ class BruiserEnemy extends Brick{
     loop(framesElapsed){
         super.loop(framesElapsed);
         this.xv = 10/this.xv;
+        this.TTL -= framesElapsed;
+        if (this.TTL < 0){
+            this.game.deleteBrick(this);
+        }
     }
 
     hitLeft(){

@@ -92,6 +92,10 @@ const BrickDrawer = {
                 isStroke = true;
                 isRect = true;
                 break;
+            case "orange":
+                ctx.fillStyle = "orange";
+                isRect = true;
+                break;
             case "heal":
                 ctx.fillStyle = "green";
                 isRect = true;
