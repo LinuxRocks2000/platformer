@@ -87,3 +87,11 @@ function calcPythagorean(x1, y1, x2, y2){
     var distY = y2 - y1;
     return Math.sqrt(distX * distX + distY * distY);
 }
+
+function isInt(value) { // Thank you, Stackoverflow!
+  if (isNaN(value)) {
+    return false;
+  }
+  var x = parseFloat(value);
+  return (x | 0) === x;
+}

@@ -59,7 +59,7 @@ class PlayerbossBoss extends Brick{
         super.loop(framesElapsed);
         if (this.mode == 0){
             if (this.seekPlayer(framesElapsed)){
-                if (Math.random() < 0.5){
+                if (Math.random() < 0.9){
                     this.shootBat();
                 }
                 var rand = Math.random();
@@ -101,7 +101,7 @@ class PlayerbossBoss extends Brick{
     }
 
     shootBat(){
-        this.game._create(this.x + this.width/2 - this.game.blockWidth/2, this.y - this.game.blockHeight - 20, this.game.blockWidth, this.game.blockHeight, "bullet", "enemy", BatEnemy, {health: 10}).sightRange = Infinity;
+        this.game._create(this.x + this.width/2 - this.game.blockWidth/2, this.y - this.game.blockHeight - 20, this.game.blockWidth, this.game.blockHeight, "bullet", "enemy", BatEnemy, {health: (Math.random() < 0.3 ? 20: 10)}).sightRange = Infinity;
     }
 
     shootSmall(){ // Same equations as for shooter enemies.

@@ -576,9 +576,15 @@ class Player extends PhysicsObject{
     collect(amount){
         this.score += amount;
         this.collectedRecently += amount;
-        //this.collectAnimation.amount = amount;
-        //this.collectAnimation.yPos = window.innerHeight/2;
-        //this.collectAnimation.startPos = window.innerHeight/2;
+        if (this.risingTextBoinks.length > 0){
+            var lastBoink = this.risingTextBoinks[this.risingTextBoinks.length - 1];
+            if (window.innerWidth/2 - (window.innerWidth/2 * (lastBoink.TTL/lastBoink.maxTTL)) < 48){
+                if (isInt(lastBoink.text)){
+                    lastBoink.text = parseInt(lastBoink.text) + amount;
+                    return;
+                }
+            }
+        }
         this.risingTextBoinks.push(new RisingTextBoink("" + amount, this.game));
     }
 
