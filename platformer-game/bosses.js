@@ -255,7 +255,7 @@ class FinalBossEnemy extends Brick{
             }
         }
         if ((this.touchingLeft || this.touchingRight) && this.createPhase <= 0){
-            this.game._create(this.x + this.width/2 - 25, this.y, 50, 50, "lava", "enemy", BruiserEnemy).TTL = 100;
+            this.game._create(this.x + this.width/2 - 25, this.y, 50, 50, "lava", "enemy", NormalEnemy).TTL = 100;
             this.createPhase = 100;
             this.Jump();
         }

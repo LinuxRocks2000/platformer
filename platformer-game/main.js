@@ -95,7 +95,7 @@ var LR2KSkin = {
         ctx.stroke();
     },
     drawHead(ctx, aspectRatio = 17/20){ // MUST be called before other routines!
-        this.headWidth = this.width * 1/2;
+        this.headWidth = 25;
         this.headHeight = this.headWidth * aspectRatio;
         this.headBottomAnchor.x = this.topMidAnchor.x;
         this.headBottomAnchor.y = this.topMidAnchor.y + this.headHeight;
@@ -200,6 +200,13 @@ var LR2KSkin = {
     drawJumpingArms(ctx){
         this._drawArm(ctx, -7, -15, -3, 3);
         this._drawArm(ctx, 10, -20, 20, -50);
+    },
+    drawFallingLegs(ctx){
+        this._drawLeg(ctx, -4, -7, -10, -60);
+        this._drawLeg(ctx, 2, 0, 2, 0);
+    },
+    drawFallingArms(ctx){
+        this.drawNormalArms(ctx);
     }
 };
 
@@ -298,6 +305,7 @@ class Player extends PhysicsObject{
         this.weapon = undefined;
         this.direction = 0;
         this.inWater = false;
+        this.jumpAmount = 0;
         this.artPos = {
             x: 0,
             y: 0
@@ -320,6 +328,8 @@ class Player extends PhysicsObject{
         if ((('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0))){// Thank you, SO
             this.joystick.isActive = true;
         }
+        this.jumpMax = 20;
+        this.jumpMin = 10;
     }
 
     studio(){
@@ -342,7 +352,8 @@ class Player extends PhysicsObject{
     }
 
     hitBottom(){
-        this.monkey = 10;
+        this.monkey = 10; // 10 frames to hop if you fall off a platform
+        this.jumpAmount = 0; // Reset the spring if it touches the ground, effectively
     }
 
     setDifficulty(difficulty){
@@ -395,7 +406,7 @@ class Player extends PhysicsObject{
             if (this.xv < 0){
                 LR2KSkin.reversed = true;
             }
-            else{
+            else if (this.xv > 0){
                 LR2KSkin.reversed = false;
             }
             if (this.touchingBottom){
@@ -409,9 +420,13 @@ class Player extends PhysicsObject{
                 }
                 LR2KSkin.drawNormalArms(this.game.ctx);
             }
-            else{
+            else if (this.yv < 0){
                 LR2KSkin.drawJumpingLegs(this.game.ctx);
                 LR2KSkin.drawJumpingArms(this.game.ctx);
+            }
+            else{
+                LR2KSkin.drawFallingLegs(this.game.ctx);
+                LR2KSkin.drawFallingArms(this.game.ctx);
             }
             //LR2KSkin.drawLeg(this.game.ctx);
             this.game.ctx.fillStyle = "black";
@@ -467,8 +482,15 @@ class Player extends PhysicsObject{
     }
 
     Jump(framesElapsed){
-        if (this.touchingBottom || this.monkey > 0 || this.inWater){
-            this.yv = this.inWater ? -13 : -22;
+        if (this.touchingBottom || this.jumpAmount < this.jumpMax || this.monkey > 0 || this.inWater){
+            if (this.jumpAmount < this.jumpMin){
+                this.jumpAmount = this.jumpMin;
+            }
+            this.yv = this.inWater ? -13 : -this.jumpAmount;
+            this.jumpAmount += framesElapsed * 3;
+            if (this.jumpAmount > this.jumpMax){
+                this.jumpAmount = this.jumpMax;
+            }
             this.monkey = 0;
         }
     }
@@ -494,6 +516,9 @@ class Player extends PhysicsObject{
             else{
                 this.Jump(framesElapsed);
             }
+        }
+        else{
+            this.jumpAmount = this.jumpMax; // If you are no longer touching the Up key, you have reached absolute max jump.
         }
         /*if (this.yv > 15){ // fall through jumpthroughs if you're moving fast
             this.jumpthroughing = true; // deprecated because it's super annoying
@@ -717,6 +742,12 @@ class Player extends PhysicsObject{
             delete this.weapon;
         }
     }
+
+    setSkin(skin){
+        if (skin == "lr2k"){
+            this.width = this.game.blockWidth/2;
+        }
+    }
 }
 
 
@@ -835,7 +866,12 @@ class Game {
             this.translate(-x, -y);
         };
         this.studioSelectorScroll = 0;
-        this.skin = "lr2k";
+        this.skin = "";
+    }
+
+    setSkin(skin){
+        this.skin = skin;
+        this.player.setSkin(skin);
     }
 
     setMousePos(x, y){
@@ -1236,7 +1272,7 @@ class GameManager{
                 }
             });
         }
-        this.game.skin = hashData.skin;
+        this.game.setSkin(hashData.skin);
         this.frameDuration = 1000 / timerate;
         this.lastFrameTime = 0;
         this.youWinEl = document.getElementById("youwin");

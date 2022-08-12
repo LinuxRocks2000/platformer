@@ -108,3 +108,19 @@ class RicketyPlatform extends Brick{
         }
     }
 }
+
+class DoWhateverWhenPlayerIsNear extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.callback = config.callback;
+        this.isStatic = true;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.canSeePlayer()){
+            this.callback();
+            this.game.deleteBrick(this);
+        }
+    }
+}

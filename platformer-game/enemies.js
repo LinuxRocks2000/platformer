@@ -594,7 +594,7 @@ class CannonEnemy extends Brick{
         if (this.canSeePlayer()){
             this.phase += framesElapsed;
             if (this.phase > this.fireRate){
-                this.phase = 0;
+                this.phase = Math.random() * 50 - 25;
                 this.shoot();
             }
         }
@@ -917,5 +917,154 @@ class PathfinderEnemy extends Brick{
 
     recalculate(){
         this.path = new Pathfinder({x: this.x + this.width/2, y: this.y + this.height/2}, {x: this.game.player.x + this.game.player.width/2, y: this.game.player.y + this.game.player.height/2}, this.game, [this], ["bullet", "enemy", "tencoin", "fiftycoin", "heal", "jumpthrough"], this.tolerance).path; // Pathfinder is optimized enough that as long as there isn't an obstruction you're fine.
+    }
+}
+
+
+class TankEnemy extends NormalEnemy{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type, config);
+        this.turret = false; // Go into turret mode, zoom around a bit, turret again.
+        this.turretTimeout = 0;
+        this.turretExtend = 0;
+        this.turretExtendTime = 20;
+        this.xv = 10;
+        this.sightRange = 1000;
+        this.turretAngle = Math.PI/2;
+        this.volley = 0;
+        this.volleyPhase = 0;
+        this.collisions.push("tar");
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        var width = 10 * this.turretExtend/this.turretExtendTime;
+        var height = 17 * this.turretExtend/this.turretExtendTime;
+        var tx = this.x + this.width/2 + this.game.artOff.x - width/2;
+        var ty = this.y + this.game.artOff.y - height;
+        if (this.turret){
+            if (this.turretExtend >= this.turretExtendTime){
+                if (this.game.player.x > this.x){
+                    this.xv = 5;
+                }
+                else if (this.game.player.x < this.x){
+                    this.xv = -5;
+                }
+                this.turretExtend = this.turretExtendTime;
+                this.game.ctx.fillStyle = "black";
+                this.game.ctx.translate(tx + width/2, ty);
+                this.game.ctx.rotate(this.turretAngle);
+                this.game.ctx.beginPath();
+                this.game.ctx.arc(0, 0, 5, Math.PI/6, Math.PI * 2 - Math.PI/6);
+                this.game.ctx.lineTo(20, 0);
+                this.game.ctx.closePath();
+                this.game.ctx.fill();
+                this.game.ctx.rotate(-this.turretAngle);
+                this.game.ctx.translate(-tx - width/2, -ty);
+                var distX = this.x + this.width/2 - (this.game.player.x + this.game.player.width/2);
+                var distY = this.y - 17 - (this.game.player.y + this.game.player.height/2);
+                var goalAngle = Math.atan(distY/distX) + Math.PI;
+                if (distX < 0){
+                    goalAngle += Math.PI;
+                }
+                var angleDif = goalAngle - this.turretAngle;
+                if (angleDif > 0){
+                    this.turretAngle += Math.PI/20 * framesElapsed;
+                }
+                else if (angleDif < 0){
+                    this.turretAngle -= Math.PI/20 * framesElapsed;
+                }
+                if (Math.abs(angleDif) < Math.PI/12){
+                    this.volleyPhase += framesElapsed;
+                    if (this.volleyPhase >= 1){
+                        this.volleyPhase = 0;
+                        this.shoot();
+                        this.volley ++;
+                        if (this.volley >= 20){
+                            this.turret = false;
+                            this.xv = 10 * (this.x > this.game.player.x ? -1 : 1);
+                        }
+                    }
+                }
+            }
+            else{
+                this.turretExtend += framesElapsed;
+            }
+        }
+        else{
+            this.turretTimeout -= framesElapsed;
+            if (this.canSeePlayer()){
+                if (this.turretTimeout <= 0){
+                    this.turretTimeout = (Math.random() * 40) + 50;
+                    this.turret = true;
+                    this.turretExtend = 0;
+                    this.xv = 0;
+                    this.volley = 0;
+                }
+            }
+            if (this.turretExtend > 0){
+                this.turretExtend -= framesElapsed * 2;
+            }
+            else{
+                this.turretExtend = 0;
+            }
+        }
+        this.game.ctx.fillStyle = "red";
+        this.game.ctx.strokeStyle = "black";
+        this.game.ctx.lineWidth = 1;
+        this.game.ctx.fillRect(tx, ty, width, height);
+        this.game.ctx.strokeRect(tx, ty, width, height);
+    }
+
+    shoot(sprayRand = Math.PI/5){
+        var randAngle = Math.random() * sprayRand - sprayRand/2;
+        var thingX = Math.cos(this.turretAngle + randAngle);
+        var thingY = Math.sin(this.turretAngle + randAngle);
+        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava", "bullet", BulletEnemy, {xv: thingX * 20, yv: thingY * 20, danger: 20});
+    }
+}
+
+
+class ThwompTrapEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.mode = "trap";
+        this.isStatic = false;
+        this.gravity = 0;
+        this.collisions.push("glass");
+        this.stayUntil = 0;
+        this.tolerance = config.tolerance || 150;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.mode == "trap"){
+            if (this.game.player.x > this.x - this.tolerance && this.game.player.x < this.x + this.width + this.tolerance) {
+                this.mode = "thwomp";
+            }
+        }
+        else if (this.mode == "thwomp"){
+            this.gravity = 3;
+            if (this.touchingBottom){
+                if (this.stayUntil == 0){
+                    this.game.jitter(40);
+                }
+                this.stayUntil += framesElapsed;
+                if (this.stayUntil >= 50){
+                    this.mode = "reset";
+                    this.stayUntil = 0;
+                    this.gravity = 0;
+                }
+            }
+        }
+        else if (this.mode == "reset"){
+            this.gravity = -1;
+        }
+    }
+
+    hitTop(){
+        if (this.mode == "reset"){
+            this.mode = "trap";
+        }
     }
 }
