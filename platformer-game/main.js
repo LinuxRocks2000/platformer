@@ -486,8 +486,8 @@ class Player extends PhysicsObject{
             if (this.jumpAmount < this.jumpMin){
                 this.jumpAmount = this.jumpMin;
             }
-            this.yv = this.inWater ? -13 : -this.jumpAmount;
-            this.jumpAmount += framesElapsed * 3;
+            this.yv = (this.inWater ? -13 : -this.jumpAmount);
+            this.jumpAmount += 3 * framesElapsed;
             if (this.jumpAmount > this.jumpMax){
                 this.jumpAmount = this.jumpMax;
             }

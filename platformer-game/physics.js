@@ -66,7 +66,6 @@ class PhysicsObject{
             this.yv *= Math.pow(this.frictionY * this.frictionChangeY, framesElapsed);
             this.frictionChangeX = 1;
             this.frictionChangeY = 1;
-            this.yv += (this.gravity * framesElapsed * this.gravityChangeY);
             this.gravityChangeY = 1;
             this.move(0, this.yv * framesElapsed);
             var collY = this.doCollision(this.game.checkCollision(this));
@@ -120,6 +119,7 @@ class PhysicsObject{
             }
             this.restrictInteger = doRestrictInt;
         }
+        this.yv += (this.gravity * framesElapsed * this.gravityChangeY);
     }
 
     impartForce(xm, ym){
