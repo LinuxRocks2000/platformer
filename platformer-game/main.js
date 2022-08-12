@@ -329,6 +329,7 @@ class Player extends PhysicsObject{
             this.joystick.isActive = true;
         }
         this.jumpMax = 20;
+        this.classicJumpHeight = 22;
         this.jumpMin = 10;
         this.forceClassicJump = false;
     }
@@ -484,7 +485,7 @@ class Player extends PhysicsObject{
 
     Jump(framesElapsed){
         if (this.forceClassicJump){
-            this.jumpAmount = this.jumpMax;
+            this.jumpAmount = this.classicJumpHeight;
         }
         if (this.touchingBottom || this.jumpAmount < this.jumpMax || this.monkey > 0 || this.inWater){
             if (this.jumpAmount < this.jumpMin){
@@ -837,25 +838,6 @@ class Game {
         this.canvas.addEventListener("wheel", (event) => {
             this.scrollAbit(event.deltaY);
         });
-        /*this.studioTools = [
-            {
-                draw: () => {
-                    this.ctx.fillStyle = "purple";
-                    this.ctx.beginPath();
-                    this.ctx.makeRoundRect(5, 5, 40, 30, 20, 10);
-                    this.ctx.fill();
-                    this.ctx.closePath();
-                    this.ctx.fillStyle = "pink";
-                    this.ctx.beginPath();
-                    this.ctx.makeRoundRect(0, 0, 40, 30, 20, 10);
-                    this.ctx.fill();
-                    this.ctx.closePath();
-                },
-                do: () => {
-
-                }
-            }
-        ];*/
         this.ctx.makeRoundRect = function(x, y, width, height, rx, ry){
             this.translate(x, y);
             this.moveTo(rx, 0);
@@ -1018,6 +1000,7 @@ class Game {
     }
 
     loop(framesElapsed){
+        this.totalFrames ++;
         if (framesElapsed > 2.5){
             framesElapsed = 2.5; // If performance scaling goes to 2.5 blockiness, there's something wrong.
         }
@@ -1108,6 +1091,12 @@ class Game {
         this.ctx.strokeStyle = "black";
         this.ctx.closePath();
         this.ctx.stroke();
+        this.ctx.fillStyle = "black";
+        this.ctx.font = "bold 12px monospace";
+        this.ctx.textAlign = "right";
+        var timeSinceStart = (window.performance.now() - this.startTimeSecs)/1000;
+        var framesPerSecond = this.totalFrames/timeSinceStart;
+        this.ctx.fillText(Math.round(framesPerSecond * 100)/100 + " FPS", window.innerWidth - 50, window.innerHeight - 30);
         if (this.studioMode){
             this.studioMode = false; // so the bricks don't draw studio handles
             this.studioBlocks.forEach((item, i) => {
@@ -1238,6 +1227,8 @@ class Game {
     }
 
     start(){
+        this.totalFrames = 0;
+        this.startTimeSecs = window.performance.now();
         this.playing = true;
         this.win = false;
         this.die = false;
