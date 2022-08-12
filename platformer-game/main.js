@@ -1597,12 +1597,19 @@ class GameManager{
     }
 
     newSlot(name){
-        this.storage.savedGames.push({
+        var slot = {
             name: name,
             levelsBeaten: [],
             curPhase: 0,
             curScore: 0
-        });
+        };
+        if (this.saveSlot == -1){
+            slot.levelsBeaten = this.beaten;
+            slot.curPhase = this.curPhase;
+            slot.curScore = this.game.player.score;
+        }
+        this.storage.savedGames.push(slot);
+        this.saveToStorage();
         return this.storage.savedGames.length - 1;
     }
 
