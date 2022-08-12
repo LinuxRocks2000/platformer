@@ -800,6 +800,7 @@ const levels = [
         phase: 1,
         skippable: false,
         difficulty: 1,
+        forceClassicJump: true, // Don't want Mario jumps in this level because of the CPU drag and the fact that all the jumps are meant to be done in classic mode.
         oncreate(game){
             game.startX = -500;
             game.startY = -800;

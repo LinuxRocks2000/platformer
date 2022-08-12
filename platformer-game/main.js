@@ -330,6 +330,7 @@ class Player extends PhysicsObject{
         }
         this.jumpMax = 20;
         this.jumpMin = 10;
+        this.forceClassicJump = false;
     }
 
     studio(){
@@ -482,6 +483,9 @@ class Player extends PhysicsObject{
     }
 
     Jump(framesElapsed){
+        if (this.forceClassicJump){
+            this.jumpAmount = this.jumpMax;
+        }
         if (this.touchingBottom || this.jumpAmount < this.jumpMax || this.monkey > 0 || this.inWater){
             if (this.jumpAmount < this.jumpMin){
                 this.jumpAmount = this.jumpMin;
@@ -1272,6 +1276,7 @@ class GameManager{
                 }
             });
         }
+        timerate = hashData.timerate || timerate;
         this.game.setSkin(hashData.skin);
         this.frameDuration = 1000 / timerate;
         this.lastFrameTime = 0;
@@ -1467,6 +1472,7 @@ class GameManager{
         else{
             this.game.fallingKills = true;
         }
+        this.game.player.forceClassicJump = this.curLevelObj.forceClassicJump;
         this.game.player.setDifficulty(this.curLevelObj.difficulty);
         this.game.player.cantCollect = this.curLevelObj.cantCollect;
         this.hideMenu();
