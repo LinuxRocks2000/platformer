@@ -792,7 +792,7 @@ const levels = [
 
         },
         ondestroy(game){
-
+            game.isShadow = false;
         }
     },
     {
