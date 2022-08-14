@@ -1420,11 +1420,6 @@ const levels = [
             // base and shooters
             game.create(-2, -5, 1, 11);
             game.create(-2, 6, 57, 1);
-            game.create(3, -13, 53, 1, "jumpthrough", "jumpthrough");
-            game.create(3, -9, 46, 1, "glass", "glass");
-            for (var x = 0; x < 8; x ++){
-                game.create(5 + 6 * x, -10, 1, 1, "coin", "tencoin");
-            }
             game.create(58, -5, 1, 1, "shooter", "enemy", ShooterEnemy);
             game.create(58, -4, 1, 1, "shooter", "enemy", ShooterEnemy);
             game.create(58, -3, 1, 1, "shooter", "enemy", ShooterEnemy);
