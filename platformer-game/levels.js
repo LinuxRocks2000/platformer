@@ -904,6 +904,7 @@ const levels = [
         difficulty: 1,
         chambers: [],
         oncreate(game){
+            this.heaven = false;
             game.startX = 0;
             game.startY = -150;
             game.player.giveWeapon(BasicGun);
@@ -956,7 +957,11 @@ const levels = [
             game.attachMaces(game.create(21.5, 6, 1, 1, "shooter", "enemy", ShooterEnemy), 3, {doesExtend: true});
 
             game.create(-6, 16, 33, 1);
-            game.create(-8, 6, 1, 15);
+            game.create(-8, 8, 1, 13);
+            game.create(-7, 9, 1, 1);
+            game.create(9, 9, 1, 1);
+            game.create(-8, 5, 1, 4, "normal", "none");
+            game.create(-15, 9, 6, 1, "none", "solid");
             game.create(-3, 17, 1, 5);
             game.create(-8, 21, 5, 1);
 
@@ -978,144 +983,118 @@ const levels = [
             });
 
             game.create(-5, 20, 1, 1, "end", "end");
-
-            // Heaven
-            game.create(-3, 195, 1, 10);
-            game.create(3, 208, 21, 1);
-            game.create(-3, 204, 5, 1);
-            game.create(2, 204, 1, 5);
-            for (var x = 0; x < 19; x ++){
-                game.create(x + 3, 207, 1, 1, "coin", "fiftycoin");
-                game.create(x + 3, 206, 1, 1, "coin", "fiftycoin");
-            }
-            game.create(23, 204, 1, 5);
-            game.create(23, 204, 5, 1);
-            game.create(28, 195, 1, 10);
-            game.create(26, 203, 1, 1, "end", "end");
         },
         onloop(game, framesElapsed){
-            this.chambers.forEach((item, i) => {
-                var isDead = true;
-                item.enemies.forEach((enemy, enemyi) => {
-                    if (enemy.dead){
-                        item.enemies.splice(enemyi, 1);
-                    }
-                    else{
-                        isDead = false;
+            if (!this.heaven){
+                this.chambers.forEach((item, i) => {
+                    var isDead = true;
+                    item.enemies.forEach((enemy, enemyi) => {
+                        if (enemy.dead){
+                            item.enemies.splice(enemyi, 1);
+                        }
+                        else{
+                            isDead = false;
+                        }
+                    });
+                    if (isDead){
+                        var doDelete = false;
+                        if (item.isSideways){
+                            if (item.door.width > 0){
+                                item.door.width -= framesElapsed;
+                            }
+                            else{
+                                doDelete = true;
+                            }
+                        }
+                        else{
+                            if (item.door.height > 0){
+                                item.door.height -= framesElapsed;
+                            }
+                            else{
+                                doDelete = true;
+                            }
+                        }
+                        if (doDelete){
+                            this.chambers.splice(i, 1);
+                            game.deleteBrick(item.door);
+                            game.jitter(30);
+                            game.player.collect(Math.abs(item.score - game.player.score) * 3);
+                            if (this.chambers.length > 0){
+                                this.chambers[i].score = game.player.score;
+                            }
+                        }
                     }
                 });
-                if (isDead){
-                    var doDelete = false;
-                    if (item.isSideways){
-                        if (item.door.width > 0){
-                            item.door.width -= framesElapsed;
-                        }
-                        else{
-                            doDelete = true;
-                        }
+                if ((game.player.x > 799 && game.player.y > -500 && game.player.x + game.player.width < 1400 && game.player.y + game.player.height < 50) || game.player.x < -400){
+                    game.ctx.fillStyle = "white";
+                    game.ctx.fillRect(0, 0, game.artOff.x + 800, window.innerHeight);
+                    game.ctx.fillRect(0, game.artOff.y - 1, window.innerWidth, window.innerHeight);
+                    game.ctx.fillStyle = "black";
+                    game.ctx.textAlign = "center";
+                    game.ctx.font = "bold 24px Arial";
+                    BrickDrawer.drawText(game.ctx, window.innerWidth/2, window.innerHeight/2, game.innerWidth * 2/3, Infinity, "Welcome to the Gateway to Heaven. This is a fantastical realm of magic and wonder - which is to say, it's a hidden room in Platformer. \n I'll probably hide more of these in later levels, so keep looking for them. \n \n If you go to the right, you'll end up back in Reality, falling off a cliff. If you click the button, you'll be teleported to Heaven. \n Your choice.");
+                    game.ctx.fillStyle = "red";
+                    if ((game.mousePos.x > window.innerWidth/2 - 50) && (game.mousePos.x < window.innerWidth/2 + 50) && (game.mousePos.y > window.innerHeight/2 - 400) && (game.mousePos.y < window.innerHeight/2 - 350)){
+                        game.ctx.fillStyle = "green";
+                        this.isButton = true;
                     }
                     else{
-                        if (item.door.height > 0){
-                            item.door.height -= framesElapsed;
-                        }
-                        else{
-                            doDelete = true;
-                        }
+                        this.isButton = false;
                     }
-                    if (doDelete){
-                        this.chambers.splice(i, 1);
-                        game.deleteBrick(item.door);
-                        game.jitter(30);
-                        game.player.collect(Math.abs(item.score - game.player.score) * 3);
-                        if (this.chambers.length > 0){
-                            this.chambers[i].score = game.player.score;
-                        }
-                    }
+                    game.ctx.fillRect(window.innerWidth/2 - 50, window.innerHeight/2 - 400, 100, 50);
+                    this.isStairwayToHeaven = true;
                 }
-            });
-            if (game.player.x > 799 && game.player.y > -500 && game.player.x + game.player.width < 1400 && game.player.y + game.player.height < 50){
-                game.ctx.fillStyle = "white";
-                game.ctx.fillRect(0, 0, game.artOff.x + 801, window.innerHeight);
-                game.ctx.fillRect(0, game.artOff.y - 1, window.innerWidth, window.innerHeight);
-                game.ctx.fillStyle = "black";
-                game.ctx.textAlign = "center";
-                game.ctx.font = "bold 24px Arial";
-                BrickDrawer.drawText(game.ctx, game.artOff.x + 800, game.artOff.y, game.innerWidth * 2/3, Infinity, "Welcome to the Gateway to Heaven. This is a fantastical realm of magic and wonder - which is to say, it's a hidden room in Platformer. \n I'll probably hide more of these in later levels, so keep looking for them. \n \n If you go to the right, you'll end up back in Reality, falling off a cliff. If you click the button, you'll be teleported to Heaven. \n Your choice.");
-                game.ctx.fillStyle = "red";
-                if (game.mousePos.gameX > 700 && game.mousePos.gameY > -400 && game.mousePos.gameX < 800 && game.mousePos.gameY < -350){
-                    game.ctx.fillStyle = "green";
+                else{
+                    this.isStairwayToHeaven = false;
                 }
-                game.ctx.fillRect(game.artOff.x + 700, game.artOff.y - 400, 100, 50);
-                this.isStairwayToHeaven = true;
-            }
-            else{
-                this.isStairwayToHeaven = false;
             }
         },
         onclick(game){
             if (this.isStairwayToHeaven){
-                if (game.mousePos.gameX > 700 && game.mousePos.gameX < 800 && game.mousePos.gameY > -400 && game.mousePos.gameY < -350){
+                if (this.isButton){
+                    game.deleteAllBricks();
                     game.player.x = 0;
-                    game.player.y = 10000;
+                    game.player.y = 0;
+
+                    // Create Heaven
+                    for (var n = 0; n < 5; n ++){
+                        var x = n * 25;
+                        var y = 0 + n * 3;
+                        game.create(-3 + x, y - 3, 1, 8);
+                        game.create(-2 + x, y + 4, 19, 1);
+                        game.create(-2 + x + 20, y, 1, 5);
+                        game.create(-2 + x + 20, y, 5, 1);
+                        game.create(x + 20, y - 4, 1, 4, "glass", "none");
+                        game.create(x + 20, y - 5, 1, 1, "shooter", "enemy", ShooterEnemy);
+                        for (var cx = 0; cx < 20; cx ++){
+                            if (cx % 4 == 0){
+                                game.create(-2 + x + cx, y, 1, 1, "heal", "heal");
+                            }
+                            game.create(-2 + x + cx, y + 1, 1, 1, "coin", "tencoin");
+                            game.create(-2 + x + cx, y + 2, 1, 1, "coin", "fiftycoin");
+                            game.create(-2 + x + cx, y + 3, 1, 1, "coin", "fiftycoin");
+                        }
+                        var r = Math.random();
+                        if (r > 0.8){
+                            game.create(x + 8, y + 1, 1, 1, "lava", "enemy", NormalEnemy);
+                        }
+                        else if (r > 0.4){
+                            game.create(x + 8, y + 1, 1, 1, "lava", "enemy", TankEnemy);
+                        }
+                        else if (r > 0.2){
+                            game.create(x + 8, y + 1, 1, 1, "lava", "killu", MacerEnemy);
+                        }
+                        else {
+                            game.attachMaces(game.create(x + 8, y + 1, 1, 1, "lava", "enemy", NormalEnemy), 8);
+                        }
+                    }
+                    game.createRect(-5, -10, 135, 30);
+                    game.create(129, 19, 1, 1, "end", "end");
+                    game.create(122, 14, 1, 1, "lava", "enemy", TankEnemy);
+                    game.create(119, 16, 11, 1, "jumpthrough", "jumpthrough");
+                    this.heaven = true;
                 }
             }
-        },
-        ondestroy(game){
-
-        }
-    },
-    {
-        name: "Trenches",
-        phase: -1, // I don't like this level much because it's far too hard, so I'm pushing it over to the Void Lands.
-        skippable: true,
-        difficulty: 1.5,
-        oncreate(game){
-            game.startX = 0;
-            game.startY = 0;
-            game.player.giveWeapon(Hypersling);
-            // base and shooters
-            game.create(-2, -5, 1, 11);
-            game.create(-2, 6, 57, 1);
-            game.create(3, -13, 53, 1, "jumpthrough", "jumpthrough");
-            game.create(3, -9, 46, 1, "glass", "glass");
-            for (var x = 0; x < 8; x ++){
-                game.create(5 + 6 * x, -10, 1, 1, "coin", "tencoin");
-            }
-            game.create(58, -5, 1, 1, "shooter", "enemy", ShooterEnemy);
-            game.create(58, -4, 1, 1, "shooter", "enemy", ShooterEnemy);
-            game.create(58, -3, 1, 1, "shooter", "enemy", ShooterEnemy);
-            game.create(58, -2, 1, 1, "shooter", "enemy", ShooterEnemy);
-            game.create(58, -1, 1, 8);
-
-            game.create(5, -2, 1, 8);
-            game.create(5, -3, 1, 1, "coin", "tencoin");
-            game.create(4, 2, 3, 1);
-
-            game.create(6, 1, 16, 5, "water", "water");
-            game.create(22, 1, 1, 5);
-            game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
-
-            game.create(6, 5, 1, 1, "end", "end");
-            game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
-
-            game.create(28, 2, 1, 4, "glass", "glass");
-            game.create(30, 3, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
-
-            game.create(54, 13, 40, 1);
-            game.create(54, 7, 1, 6);
-
-            game.create(59, 6, 30, 1, "glass", "glass");
-            game.create(59, 12, 1, 1);
-            game.create(90, 12, 1, 1);
-            //game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
-            game.create(77, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
-            game.create(57, 12, 1, 1, "coin", "fiftycoin");
-            game.create(56, 12, 1, 1, "heal", "heal");
-
-            game.create(92, 12, 1, 1, "key", "key");
-        },
-        onloop(game, framesElapsed){
-
         },
         ondestroy(game){
 
@@ -1427,6 +1406,63 @@ const levels = [
                 gm.hell();
                 game.player.health = 0;
             }
+        }
+    },
+    {
+        name: "Trenches",
+        phase: 2,
+        skippable: true, // Just keep it skippable for now so nobody has to hate me.
+        difficulty: 1.5,
+        oncreate(game){
+            game.startX = 0;
+            game.startY = 0;
+            game.player.giveWeapon(Hypersling);
+            // base and shooters
+            game.create(-2, -5, 1, 11);
+            game.create(-2, 6, 57, 1);
+            game.create(3, -13, 53, 1, "jumpthrough", "jumpthrough");
+            game.create(3, -9, 46, 1, "glass", "glass");
+            for (var x = 0; x < 8; x ++){
+                game.create(5 + 6 * x, -10, 1, 1, "coin", "tencoin");
+            }
+            game.create(58, -5, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -4, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -3, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -2, 1, 1, "shooter", "enemy", ShooterEnemy);
+            game.create(58, -1, 1, 8);
+
+            game.create(5, -2, 1, 8);
+            game.create(5, -3, 1, 1, "coin", "tencoin");
+            game.create(4, 2, 3, 1);
+
+            game.create(6, 1, 16, 5, "water", "water");
+            game.create(22, 1, 1, 5);
+            game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+
+            game.create(6, 5, 1, 1, "end", "end");
+            game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+
+            game.create(28, 2, 1, 4, "glass", "glass");
+            game.create(30, 3, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
+
+            game.create(54, 13, 40, 1);
+            game.create(54, 7, 1, 6);
+
+            game.create(59, 6, 30, 1, "glass", "glass");
+            game.create(59, 12, 1, 1);
+            game.create(90, 12, 1, 1);
+            //game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+            game.create(77, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+            game.create(57, 12, 1, 1, "coin", "fiftycoin");
+            game.create(56, 12, 1, 1, "heal", "heal");
+
+            game.create(92, 12, 1, 1, "key", "key");
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+
         }
     }
 ];

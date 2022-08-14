@@ -198,8 +198,8 @@ class HyperslingBrick extends Brick{
             reqY = this.game.mousePos.gameY;
             this.game.ctx.strokeStyle = "black";
             this.game.ctx.beginPath();
-            this.game.ctx.moveTo(this.game.mousePos.gameX, this.game.mousePos.gameY);
-            this.game.ctx.lineTo(this.artPos.x + this.width/2, this.artPos.y + this.height/2);
+            this.game.ctx.moveTo(this.game.mousePos.x, this.game.mousePos.y);
+            this.game.ctx.lineTo(this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
             this.game.ctx.stroke();
         }
         this.yv += framesElapsed * (reqY - this.y)/50;
@@ -242,7 +242,7 @@ var Hypersling = {
     },
     loop(framesElapsed){
         this.brick.game.ctx.fillStyle = "black";
-        this.brick.game.ctx.fillRect(this.brick.game.player.artPos.x + this.brick.game.player.width/2 - this.brick.duration/2, this.brick.game.player.artPos.y, this.brick.duration, 10);
+        this.brick.game.ctx.fillRect(this.brick.game.player.x + this.brick.game.artOff.x + this.brick.game.player.width/2 - this.brick.duration/2, this.brick.game.player.y + this.brick.game.artOff.y, this.brick.duration, 10);
     },
     destroy(){
         this.brick.game.deleteBrick(this.brick);
