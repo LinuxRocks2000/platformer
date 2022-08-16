@@ -234,7 +234,7 @@ const levels = [
             game.create(6, -1, 1, 1, "lava", "enemy", NormalEnemy);
             game.create(16, -1, 1, 1, "lava", "enemy", NormalEnemy);
             game.create(17, -1, 1, 1, "lava", "killu");
-            game.create(18, -1, 1, 1, "lava", "enemy", NormalEneYahoomy);
+            game.create(18, -1, 1, 1, "lava", "enemy", NormalEnemy);
             game.create(27, -1, 1, 1, "lava", "killu");
 
             game.create(40, -1, 1, 1, "lava", "killu");
