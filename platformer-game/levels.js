@@ -1420,8 +1420,8 @@ const levels = [
             // base and shooters
             game.create(-2, -5, 1, 11);
             game.create(-2, 6, 57, 1);
-            game.create(58, -5, 1, 1, "shooter", "enemy", ShooterEnemy);
-            game.create(58, -4, 1, 1, "shooter", "enemy", ShooterEnemy);
+            //game.create(58, -5, 1, 1, "shooter", "enemy", ShooterEnemy);
+            //game.create(58, -4, 1, 1, "shooter", "enemy", ShooterEnemy);
             game.create(58, -3, 1, 1, "shooter", "enemy", ShooterEnemy);
             game.create(58, -2, 1, 1, "shooter", "enemy", ShooterEnemy);
             game.create(58, -1, 1, 8);
@@ -1435,7 +1435,7 @@ const levels = [
             game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
 
             game.create(6, 5, 1, 1, "end", "end");
-            game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+            game.create(70, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50, enemySpeed: 5});
 
             game.create(28, 2, 1, 4, "glass", "glass");
             game.create(30, 3, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
@@ -1447,14 +1447,17 @@ const levels = [
             game.create(59, 12, 1, 1);
             game.create(90, 12, 1, 1);
             //game.create(67, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
-            game.create(77, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
+            //game.create(80, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50});
             game.create(57, 12, 1, 1, "coin", "fiftycoin");
             game.create(56, 12, 1, 1, "heal", "heal");
 
             game.create(92, 12, 1, 1, "key", "key");
+            game.create(91, 12, 1, 1, "heal", "heal");
         },
         onloop(game, framesElapsed){
-
+            if (game.player.x > 29 * 50 && game.player.x < 58 * 50){
+                game.feChange = 1/3;
+            }
         },
         ondestroy(game){
 

@@ -839,6 +839,7 @@ class TricklerEnemy extends Brick{
         this.waitTime = config.waitTime || 100;
         this.phase = Math.random() * this.waitTime;
         this.enemyTTL = 250;
+        this.enemySpeed = config.enemySpeed || 10;
     }
 
     loop(framesElapsed){
@@ -846,7 +847,7 @@ class TricklerEnemy extends Brick{
         this.phase += framesElapsed;
         if (this.phase > this.waitTime){
             var e = this.game._create(this.x, this.y, this.width, this.height, "lava", "enemy", NormalEnemy);
-            e.xv = 10 * (Math.random() > 0.5 ? -1 : 1);
+            e.xv = this.enemySpeed * (Math.random() > 0.5 ? -1 : 1);
             e.TTL = this.enemyTTL;
             this.phase = 0;
         }

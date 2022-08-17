@@ -646,7 +646,9 @@ class Game {
         this.skin = "";
 
         this.framesPerSecond = 0;
-        this.FPSWeighting = 100;
+        this.FPSWeighting = 10;
+
+        this.feChange = 1;
     }
 
     setSkin(skin){
@@ -795,6 +797,7 @@ class Game {
 
     loop(framesElapsed){
         this.totalFrames ++;
+        framesElapsed *= this.feChange;
         if (framesElapsed > 2.5){
             framesElapsed = 2.5; // If performance scaling goes to 2.5 blockiness, there's something wrong.
         }
@@ -929,6 +932,7 @@ class Game {
             this.ctx.restore();*/
             this.studioMode = true;
         }
+        this.feChange = 1;
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
