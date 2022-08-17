@@ -763,7 +763,9 @@ class Game {
     }
 
     create(x, y, width, height, style = "normal", type = "solid", bricktype = Brick, config = {}){
-        return this._create(x * this.blockWidth, y * this.blockHeight, width * this.blockWidth, height * this.blockHeight, style, type, bricktype, config);
+        if (width * height > 0){
+            return this._create(x * this.blockWidth, y * this.blockHeight, width * this.blockWidth, height * this.blockHeight, style, type, bricktype, config);
+        }
     }
 
     createRect(x, y, width, height, style = "normal", type = "solid"){

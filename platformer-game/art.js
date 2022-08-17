@@ -198,6 +198,19 @@ const BrickDrawer = {
                 ctx.fillStyle = "orange";
                 isCircle = true;
                 break;
+            case "tank":
+                ctx.fillStyle = "grey";
+                ctx.beginPath();
+                ctx.moveTo(x, y + height - 10);
+                ctx.lineTo(x + width, y + height - 10);
+                ctx.quadraticCurveTo(x + width, y, x + width/2, y);
+                ctx.quadraticCurveTo(x, y, x, y + height - 10);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = "black";
+                ctx.fillRect(x, y + height - 10, width/2, 10 - (this.coinPulse % 60) / 6);
+                ctx.fillRect(x + width/2, y + height - 10, width/2, 10 - ((this.coinPulse + 30) % 60)/6)
+                break;
         }
         ctx.save();
         if (isTransparent){
