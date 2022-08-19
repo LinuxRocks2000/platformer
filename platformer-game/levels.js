@@ -1475,22 +1475,32 @@ const levels = [
                 game.create(-20 + 2 * x, -4 * x, 41 - 4 * x, 1, "jumpthrough", "jumpthrough");
                 game.create(-20, -4 * x, 2 * x, 1);
                 game.create(21 - 2 * x, -4 * x, 2 * x, 1);
+                if (x % 3 == 0){
+                    game.create(-20, -1 - 4 * x, 1, 1, "key", "key");
+                }
+                else if (x % 3 == 1){
+                    game.create(20, -1 - 4 * x, 1, 1, "key", "key");
+                }
             }
-            game.create(-20, -36, 1, 37, "none", "field");
-            game.create(-20, -36, 1, 37, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
+            game.create(-20, -42, 1, 43, "none", "field");
+            game.create(-21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
                 for (var x = 0; x < 10; x ++){
                     game.create(-19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
                 }
             }});
 
-            game.create(20, -36, 1, 37, "none", "field");
-            game.create(20, -36, 1, 37, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
+            game.create(20, -42, 1, 43, "none", "field");
+            game.create(21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
                 for (var x = 0; x < 10; x ++){
                     game.create(19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
                 }
             }});
 
-            game.create(-5, -1, 1, 1, "tank", "enemy", TankEnemy);
+            game.create(0, -4, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
+            game.create(0, -8, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
+            game.create(0, -12, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
+
+            game.create(20, -1, 1, 1, "end", "end");
         },
         onloop(game, framesElapsed){
 

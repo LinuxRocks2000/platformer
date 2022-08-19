@@ -649,6 +649,8 @@ class Game {
         this.FPSWeighting = 10;
 
         this.feChange = 1;
+
+        this.isMapview = false;
     }
 
     setSkin(skin){
@@ -798,12 +800,7 @@ class Game {
     }
 
     loop(framesElapsed){
-        this.totalFrames ++;
-        framesElapsed *= this.feChange;
-        if (framesElapsed > 2.5){
-            framesElapsed = 2.5; // If performance scaling goes to 2.5 blockiness, there's something wrong.
-        }
-        BrickDrawer.upPulse(framesElapsed);
+        this.ctx.resetTransform(); // We know eventually it's gonna screw up so here ya go
         if (this.isShadow){
             this.ctx.fillStyle = "rgb(100, 100, 100)";
         }
@@ -811,6 +808,16 @@ class Game {
             this.ctx.fillStyle = "white";
         }
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.isMapview){
+            this.ctx.scale(0.2, 0.2);
+            this.ctx.translate(window.innerWidth * 2, window.innerHeight * 2);
+        }
+        this.totalFrames ++;
+        framesElapsed *= this.feChange;
+        if (framesElapsed > 2.5){
+            framesElapsed = 2.5; // If performance scaling goes to 2.5 blockiness, there's something wrong.
+        }
+        BrickDrawer.upPulse(framesElapsed);
         if (this.playing){
             this.viewPos.x += (this.viewPos_real.x - this.viewPos.x) / 20 - this.player.xv/10;
             this.viewPos.y += (this.viewPos_real.y - this.viewPos.y) / 20 - this.player.yv/10;
@@ -1038,6 +1045,10 @@ class Game {
         this.viewJitter = 0;
         HarmAnimator.clear();
         this.canvas.focus();
+    }
+
+    toggleMapview(){
+        this.isMapview = !this.isMapview;
     }
 }
 

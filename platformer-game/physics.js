@@ -144,7 +144,7 @@ class PhysicsObject{
         });
         var noSpecial = true;
         this.specialCollisions.forEach((item, index) => {
-            if (coll[item][0] > 0){
+            if (this.phaser == 0 && coll[item][0] > 0){
                 if (this.specialCollision(item, coll[item][1])){
                     returner[0] = true;
                     returner[1].push(...coll[item][1]);

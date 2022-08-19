@@ -71,6 +71,7 @@ class TrapperPlatformVertical extends Brick{
                     if (this.onClose){
                         this.onClose();
                     }
+                    this.isStatic = true;
                 }
             }
         }

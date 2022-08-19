@@ -1069,3 +1069,86 @@ class ThwompTrapEnemy extends Brick{
         }
     }
 }
+
+
+class HopperEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.specialCollisions.push("jumpthrough");
+        this.collisions.push("player");
+        this.specialCollisions.push("player");
+        this.specialCollisions.push("enemy");
+        this.friction = 1;
+        this.spawnPoint = [x, y];
+    }
+
+    specialCollision(type){
+        if (type == "jumpthrough"){
+            if (this.yv < 0){ // It's moving up
+                this.jumpthroughing = true;
+            }
+            else{
+                if (!this.jumpthroughing){
+                    return true;
+                }
+            }
+        }
+        else if (type == "player"){
+            this.game.player.harm(10);
+            this.phaseShift();
+        }
+        else if (type == "enemy"){
+            this.yv = Math.random() * 30;
+            this.xv = Math.random() * 60 - 30;
+        }
+    }
+
+    noSpecial(type){
+        if (type == "jumpthrough"){
+            this.jumpthroughing = false;
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.touchingBottom){
+            if (this.game.player.y < this.y){
+                this.Jump();
+            }
+            else{
+                this.jumpthroughing = true;
+            }
+            this.friction = 0.8;
+            if (this.game.player.x > this.x){
+                this.xv += 1;
+            }
+            else{
+                this.xv -= 1;
+            }
+        }
+        else{
+            this.friction = 0.99;
+        }
+        if (this.y > this.game.minimumExtent){
+            this.x = this.spawnPoint[0];
+            this.y = this.spawnPoint[1];
+            this.yv = Math.random() * 30;
+            this.xv = Math.random() * 60 - 30;
+        }
+    }
+
+    calculateJumpheight(reqHeight){
+        return Math.sqrt(2 * reqHeight); // Don't screw with this. It took me literal hours of Desmos to figure it out.
+    }
+
+    Jump(){
+        this.yv = -this.calculateJumpheight(Math.abs(this.game.player.y - this.y));
+        if (this.game.player.x > this.x){
+            this.xv += 20;
+        }
+        else{
+            this.xv -= 20;
+        }
+    }
+}

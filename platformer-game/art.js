@@ -72,6 +72,7 @@ const BrickDrawer = {
         var isTransparent = false;
         var isCircle = false;
         var isStroke = false;
+        var isRoundRect = false;
         switch(style){
             case "normal":
                 ctx.fillStyle = "brown";
@@ -198,6 +199,10 @@ const BrickDrawer = {
                 ctx.fillStyle = "orange";
                 isCircle = true;
                 break;
+            case "hopper":
+                ctx.fillStyle = "lightgreen";
+                isRoundRect = true;
+                break;
             case "tank":
                 ctx.fillStyle = "grey";
                 ctx.beginPath();
@@ -239,6 +244,15 @@ const BrickDrawer = {
                     ctx.strokeRect(x - (realOff/2), y - (realOff/2), width + realOff, height + realOff);
                     ctx.globalAlpha = 1;
                 }
+            }
+        }
+        else if (isRoundRect){
+            ctx.beginPath();
+            ctx.makeRoundRect(x, y, width, height, width/4, height/4);
+            ctx.closePath();
+            ctx.fill();
+            if (type == "enemy" || isStroke){
+                ctx.stroke();
             }
         }
         else if (isCircle){
