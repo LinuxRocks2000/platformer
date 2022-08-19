@@ -1464,8 +1464,8 @@ const levels = [
         }
     },
     {
-        name: "Qbert",
-        phase: -1,
+        name: "Pyramid",
+        phase: 1,
         difficulty: 1,
         oncreate(game){
             game.startX = 0;
