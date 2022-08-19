@@ -796,6 +796,52 @@ const levels = [
         }
     },
     {
+        name: "Pyramid",
+        phase: 1,
+        difficulty: 1,
+        oncreate(game){
+            game.startX = 0;
+            game.startY = -2000;
+            //game.create()
+            for (var x = 0; x < 10; x ++){
+                game.create(-20 + 2 * x, -4 * x, 41 - 4 * x, 1, "jumpthrough", "jumpthrough");
+                game.create(-20, -4 * x, 2 * x, 1);
+                game.create(21 - 2 * x, -4 * x, 2 * x, 1);
+                if (x % 3 == 0){
+                    game.create(-20, -1 - 4 * x, 1, 1, "key", "key");
+                }
+                else if (x % 3 == 1){
+                    game.create(20, -1 - 4 * x, 1, 1, "key", "key");
+                }
+            }
+            game.create(-20, -42, 1, 43, "none", "field");
+            game.create(-21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
+                for (var x = 0; x < 10; x ++){
+                    game.create(-19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
+                }
+            }});
+
+            game.create(20, -42, 1, 43, "none", "field");
+            game.create(21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
+                for (var x = 0; x < 10; x ++){
+                    game.create(19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
+                }
+            }});
+
+            game.create(0, -4, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
+            game.create(0, -8, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
+            game.create(0, -12, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
+
+            game.create(20, -1, 1, 1, "end", "end");
+        },
+        onloop(game, framesElapsed){
+
+        },
+        ondestroy(game){
+
+        }
+    },
+    {
         name: "Shadow: Phase 2 Bossfight",
         phase: 1,
         skippable: false,
@@ -1458,52 +1504,6 @@ const levels = [
             if (game.player.x > 29 * 50 && game.player.x < 58 * 50){
                 game.feChange = 1/3;
             }
-        },
-        ondestroy(game){
-
-        }
-    },
-    {
-        name: "Pyramid",
-        phase: 1,
-        difficulty: 1,
-        oncreate(game){
-            game.startX = 0;
-            game.startY = -2000;
-            //game.create()
-            for (var x = 0; x < 10; x ++){
-                game.create(-20 + 2 * x, -4 * x, 41 - 4 * x, 1, "jumpthrough", "jumpthrough");
-                game.create(-20, -4 * x, 2 * x, 1);
-                game.create(21 - 2 * x, -4 * x, 2 * x, 1);
-                if (x % 3 == 0){
-                    game.create(-20, -1 - 4 * x, 1, 1, "key", "key");
-                }
-                else if (x % 3 == 1){
-                    game.create(20, -1 - 4 * x, 1, 1, "key", "key");
-                }
-            }
-            game.create(-20, -42, 1, 43, "none", "field");
-            game.create(-21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
-                for (var x = 0; x < 10; x ++){
-                    game.create(-19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
-                }
-            }});
-
-            game.create(20, -42, 1, 43, "none", "field");
-            game.create(21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
-                for (var x = 0; x < 10; x ++){
-                    game.create(19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
-                }
-            }});
-
-            game.create(0, -4, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
-            game.create(0, -8, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
-            game.create(0, -12, 0.5, 0.5, "hopper", "enemy", HopperEnemy);
-
-            game.create(20, -1, 1, 1, "end", "end");
-        },
-        onloop(game, framesElapsed){
-
         },
         ondestroy(game){
 
