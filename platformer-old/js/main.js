@@ -2534,6 +2534,9 @@ class GameManager{
 var gm = new GameManager(window.phases);
 gm.displayGameMenu();
 
+var lastTick = 0;
+const FPS = 60;
+
 
 document.getElementById("playbutton").addEventListener("click",function(){
     /*if (!document.querySelector("#multiplayerCheckbox > input").checked)
@@ -2551,7 +2554,12 @@ document.getElementById("playbutton").addEventListener("click",function(){
     }*/
     gm.play();
     var fun = function(){
-        if (!gm.run()){
+        var doContinue = true;
+        if (window.performance.now() > lastTick + (1000/FPS)){
+            lastTick = window.performance.now();
+            doContinue = !gm.run();
+        }
+        if (doContinue){
             window.requestAnimationFrame(fun);
         }
     }
