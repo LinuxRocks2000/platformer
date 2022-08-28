@@ -817,7 +817,6 @@ class Game {
         if (framesElapsed > 2.5){
             framesElapsed = 2.5; // If performance scaling goes to 2.5 blockiness, there's something wrong.
         }
-        BrickDrawer.upPulse(framesElapsed);
         if (this.playing){
             this.viewPos.x += (this.viewPos_real.x - this.viewPos.x) / 20 - this.player.xv/10;
             this.viewPos.y += (this.viewPos_real.y - this.viewPos.y) / 20 - this.player.yv/10;
@@ -846,6 +845,7 @@ class Game {
                 item.loop(framesElapsed);
             });
         }
+        BrickDrawer.upPulse(framesElapsed);
         if (this.die){
             this.end();
             return 1;

@@ -1077,6 +1077,7 @@ class HopperEnemy extends Brick{
         this.isStatic = false;
         this.specialCollisions.push("jumpthrough");
         this.collisions.push("player");
+        this.collisions.push("field");
         this.specialCollisions.push("player");
         this.specialCollisions.push("enemy");
         this.friction = 1;
