@@ -291,11 +291,11 @@ class Player extends PhysicsObject{
     }
 
     Left(framesElapsed){
-        this.xv -= 3 * framesElapsed;
+        this.xv -= 3 * framesElapsed * (this.flightMode ? 3 : 1);
     }
 
     Right(framesElapsed){
-        this.xv += 3 * framesElapsed;
+        this.xv += 3 * framesElapsed * (this.flightMode ? 3 : 1);
     }
 
     loop(framesElapsed){
@@ -303,6 +303,16 @@ class Player extends PhysicsObject{
         super.loop(framesElapsed);
         if (this.weapon && this.keysHeld[" "]){
             this.weapon.trigger();
+        }
+        if (this.studioMode || this.cheatMode){
+            if (this.keysHeld["f"]){
+                this.toggleFlightmode = true;
+                this.yv = 0;//-this.gravity * framesElapsed; // Freeze and Flight
+            }
+            else if (this.toggleFlightmode){
+                this.flightMode = !this.flightMode;
+                this.toggleFlightmode = false;
+            }
         }
         if (this.keysHeld["ArrowUp"] || this.keysHeld["w"] || this.joystick.isTop){
             if (this.flightMode){
@@ -336,17 +346,6 @@ class Player extends PhysicsObject{
             this.harmImmune -= framesElapsed;
         }
         this.monkey -= framesElapsed;
-
-        if (this.studioMode || this.cheatMode){
-            if (this.keysHeld["f"]){
-                this.toggleFlightmode = true;
-                this.yv = -this.gravity * framesElapsed; // Freeze and Flight
-            }
-            else if (this.toggleFlightmode){
-                this.flightMode = !this.flightMode;
-                this.toggleFlightmode = false;
-            }
-        }
         if (this.game.fallingKills && this.y > this.game.minimumExtent){
             this.harm(25);
             this.x = this.game.startX;
@@ -646,7 +645,7 @@ class Game {
         this.skin = "";
 
         this.framesPerSecond = 0;
-        this.FPSWeighting = 10;
+        this.FPSWeighting = 30;
 
         this.feChange = 1;
 
@@ -1021,6 +1020,7 @@ class Game {
         this.player.endGame();
         this.playing = false;
         document.getElementById("menu").style.display = "";
+        this.minimumExtent = -Infinity;
     }
 
     deleteBrick(brick){
