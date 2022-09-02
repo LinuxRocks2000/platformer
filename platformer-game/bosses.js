@@ -320,7 +320,7 @@ class HopperBoss extends HopperEnemy{
     specialCollision(type, items){
         super.specialCollision(type, items);
         if (type == "player"){
-            game.player.yv -= 6;
+            game.player.yv -= 10;
         }
     }
 
