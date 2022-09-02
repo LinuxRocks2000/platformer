@@ -268,7 +268,7 @@ class BatEnemy extends Brick{
     loop(framesElapsed){
         super.loop(framesElapsed);
         if (this.state == 0){
-            if (this.canSeePlayer()){
+            if (this.canSeePlayer() && this.game.player.x > this.x - this.game.blockWidth && this.game.player.x < this.x + this.width + this.game.blockWidth){
                 this.state = 1;
                 this.isStatic = false;
                 this.xv = 0;

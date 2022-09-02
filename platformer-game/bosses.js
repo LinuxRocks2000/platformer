@@ -279,3 +279,52 @@ class FinalBossEnemy extends Brick{
         }
     }
 }
+
+
+class HopperBoss extends HopperEnemy{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.shiftPhase = 0;
+        this.isDamageable = true;
+        this.health = 30;
+        this.maxHealth = 30;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (!this.touchingBottom){
+            if (this.game.player.x < this.x){
+                this.xv -= 0.1;
+            }
+            else{
+                this.xv += 0.1;
+            }
+        }
+        if (this.game.player.y > this.y && Math.abs(this.game.player.x + this.game.player.width/2 - this.x - this.width/2) < this.width){
+            this.shiftPhase += framesElapsed;
+            if (this.shiftPhase > 10){
+                this.shiftPhase = 0;
+                this.phaseShift();
+            }
+        }
+        else{
+            this.shiftPhase = 0;
+        }
+    }
+
+    onDie(){
+        game.player.collect(100);
+        game.jitter(70);
+    }
+
+    specialCollision(type, items){
+        super.specialCollision(type, items);
+        if (type == "player"){
+            game.player.yv -= 6;
+        }
+    }
+
+    onDamage(){
+        this.Jump();
+    }
+}

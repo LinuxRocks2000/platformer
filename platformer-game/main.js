@@ -614,7 +614,8 @@ class Game {
             this.create(0, 0, 1, 1, "cannon", "enemy", CannonEnemy),
             this.create(0, 0, 1, 1, "averagingenemy", "enemy", AverageSwarmEnemy),
             this.create(0, 0, 1, 1, "fish", "enemy", FishEnemy),
-            this.create(0, 0, 1, 1, "jumpthrough", "enemy", PathfinderEnemy)
+            this.create(0, 0, 1, 1, "jumpthrough", "enemy", PathfinderEnemy),
+            this.create(0, 0, 1, 1, "hopper", "enemy", HopperEnemy)
         ];
         this.keyCount --; // Because we created a 'key' brick.
         this.studioBlocks.forEach((item, i) => {
