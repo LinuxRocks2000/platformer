@@ -250,6 +250,7 @@ class BatEnemy extends Brick{
         if (this.state == 0){ // Wake it up if it takes damage
             this.state = 1;
             this.isStatic = false;
+            this.yv = 0;
         }
     }
 
