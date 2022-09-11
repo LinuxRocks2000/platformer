@@ -349,3 +349,8 @@ h1{
     grid-area: things;
     text-align: center;
 }
+
+a{
+    text-decoration: none;
+    border: none;
+}
