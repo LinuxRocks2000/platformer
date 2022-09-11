@@ -281,7 +281,7 @@ class FinalBossEnemy extends Brick{
 }
 
 
-class HopperBoss extends HopperEnemy{
+class HopperBoss extends WeirdBoogerEnemy{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.shiftPhase = 0;

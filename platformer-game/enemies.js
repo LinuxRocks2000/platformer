@@ -1072,7 +1072,7 @@ class ThwompTrapEnemy extends Brick{
 }
 
 
-class HopperEnemy extends Brick{
+class WeirdBoogerEnemy extends Brick{
     constructor(game, x, y, width, height, style, type){
         super(game, x, y, width, height, style, type);
         this.isStatic = false;
