@@ -615,7 +615,8 @@ class Game {
             this.create(0, 0, 1, 1, "averagingenemy", "enemy", AverageSwarmEnemy),
             this.create(0, 0, 1, 1, "fish", "enemy", FishEnemy),
             this.create(0, 0, 1, 1, "jumpthrough", "enemy", PathfinderEnemy),
-            this.create(0, 0, 1, 1, "hopper", "enemy", WeirdBoogerEnemy)
+            this.create(0, 0, 1, 1, "hopper", "enemy", WeirdBoogerEnemy),
+            this.create(0, 0, 1, 1, "tank", "enemy", TankEnemy)
         ];
         this.keyCount --; // Because we created a 'key' brick.
         this.studioBlocks.forEach((item, i) => {
@@ -665,7 +666,7 @@ class Game {
         this.viewPos_real.y = (this.mousePos.y - window.innerHeight/2)/4;
     }
 
-    isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu"]){
+    isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu", "none"]){
         var ret = true;
         this.tileset.forEach((item, i) => {
             if (transparent.indexOf(item.type) == -1){
@@ -691,6 +692,17 @@ class Game {
             }
         });
         return ret;
+    }
+
+    detonate(brick, size = 200, power = 20, knockbackModifier = 1){
+        this.deleteBrick(brick); // Doesn't actually delete until the next cycle to avoid whatever crap was happening
+        this._create(brick.x + brick.width/2 - size,
+                     brick.y + brick.height/2 - size,
+                     size * 2, size * 2,
+                     "lava", "none",
+                     Explosion,
+                     {damage: power,
+                     knockbackModifier: knockbackModifier});
     }
 
     scrollAbit(amount){

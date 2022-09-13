@@ -823,15 +823,20 @@ const levels = [
         difficulty: 1,
         oncreate(game){
             game.startX = 150;
-            game.startY = 200;
-            game.create(0, 0, 49, 1);
+            game.startY = 1200;
+            game.create(0, 16, 112, 1);
+            game.create(0, 20, 112, 1, "glass", "solid", BreakableBrick);
+            for (var x = 0; x < 40; x ++){
+                game.create(5 + x * 4, 17, 1, 1, "mine", "enemy", ProximityMineEnemy);
+            }
             game.create(0, 1, 1, 30);
-            game.create(0, 30, 49, 1);
-            game.create(49, 0, 1, 31);
-            game.player.giveWeapon(ProximityBombs);
+            game.create(0, 30, 112, 1);
+            game.create(50, 20, 1, 10, "glass", "solid", BreakableBrick);
+            game.player.giveWeapon(Bombs);
+            game.player.score = 1000000;
 
             // Procedural generation of all the platforms
-            for (var x = 0; x < 5; x ++){
+            /*for (var x = 0; x < 5; x ++){
                 for (var y = 0; y < 7; y ++){
                     if ((x + y) % 2 == 1){
                         game.create(x * 10 + 2, y * 4 + 4, 7, 1);
@@ -854,8 +859,25 @@ const levels = [
                         }
                     }
                 }
+            }*/
+            //game.create(22, 25, 1, 1, "firespray", "enemy", FiresprayEnemy);
+            //game.create(15, 29, 1, 1, "mine", "enemy", ProximityMineEnemy);
+            for (var x = 1; x < 20; x ++){
+                game.create(12 + x * 4, 29, 0.5, 0.5, "lava", "enemy", ChainBomb);
             }
-            game.create(22, 1, 1, 1, "jumpthrough", "enemy", PathfinderEnemy);
+            var b = game.create(51, 25, 1, 1, "tar", "solid", ChainBomb);
+            //b.isStatic = true;
+            b.explodeRadius = 600;
+            b.explodeDamage = 100;
+            b.eject = 30;
+
+            b = game.create(49, 25, 1, 1, "tar", "solid", ChainBomb);
+            //b.isStatic = true;
+            b.explodeRadius = 600;
+            b.explodeDamage = 100;
+            b.eject = 30;
+
+            game.create(4, 25, 1, 1, "tank", "enemy", TankEnemy, {shootBombs: true});
         },
         onloop(game){
 

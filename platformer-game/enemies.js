@@ -936,6 +936,8 @@ class TankEnemy extends NormalEnemy{
         this.volley = 0;
         this.volleyPhase = 0;
         this.collisions.push("tar");
+        this.shootBombs = config.bomberTank || false;
+        this.immuneToBombs = true;
     }
 
     loop(framesElapsed){
@@ -1022,7 +1024,8 @@ class TankEnemy extends NormalEnemy{
         var randAngle = Math.random() * sprayRand - sprayRand/2;
         var thingX = Math.cos(this.turretAngle + randAngle);
         var thingY = Math.sin(this.turretAngle + randAngle);
-        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava", "bullet", BulletEnemy, {xv: thingX * 20, yv: thingY * 20, danger: 20});
+        var speed = (this.shootBombs ? 40 : 20);
+        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava", "bullet", (this.shootBombs ? BulletEnemy : ExplodingBullet), {xv: thingX * speed, yv: thingY * speed, danger: 20});
     }
 }
 
@@ -1152,5 +1155,138 @@ class WeirdBoogerEnemy extends Brick{
         else{
             this.xv -= 20;
         }
+    }
+}
+
+
+class FiresprayEnemy extends Brick{ // flamethrower-shooter.
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = true;
+        this.phase = 0;
+        this.angle = 0;
+        this.angleV = 0;
+        this.sightRange = config.sightRange || Infinity;
+        if (config.shootAbove == undefined){
+            this.shootAbove = true;
+        }
+        else{
+            this.shootAbove = config.shootAbove;
+        }
+        this.pause = 0;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        var goalAngle = 0;
+        var angleFric = 0.9;
+        this.pause -= framesElapsed;
+        if (this.pause <= -150){
+            this.pause = 70;
+        }
+        if (this.canSeePlayer()){
+            this.phase += framesElapsed;
+            var distX = this.x + this.width/2 - (this.game.player.x + this.game.player.width/2);
+            var distY = this.y + this.height/2 - (this.game.player.y + this.game.player.height/2);
+            var hypotenuse = Math.sqrt(distY * distY + distX * distX);
+            goalAngle = Math.acos(distX/hypotenuse) * 180/Math.PI + 90;
+            if (distY < 0){
+                goalAngle -= 180;
+                goalAngle *= -1;
+            }
+            if (this.phase > 1){
+                this.phase = 0;
+                if (this.pause < 0){
+                    this.shoot();
+                }
+            }
+            angleFric = 0.8;
+        }
+        var isMoreThan = goalAngle > this.angle;
+        var isLessThan = goalAngle < this.angle;
+        if (isMoreThan){
+            this.angleV += 2 * Math.random();
+        }
+        else if (isLessThan){
+            this.angleV -= 2 * Math.random();
+        }
+        this.angle += this.angleV * framesElapsed;
+        this.angleV *= angleFric;
+        var ctx = this.game.ctx;
+        ctx.save();
+        ctx.translate(this.x + this.game.artOff.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
+        ctx.rotate(this.angle * Math.PI/180);
+        ctx.fillStyle = "grey";
+        ctx.beginPath();
+        ctx.translate(0, 20);
+        ctx.moveTo(-5, -5);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(5, -5);
+        ctx.lineTo(0, 20);
+        ctx.lineTo(-5, -5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    shoot(){
+        var thingX = Math.cos((this.angle + 90) * Math.PI/180);
+        var thingY = Math.sin((this.angle + 90) * Math.PI/180);
+        var bomb = this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "bullet", "bullet", Bomb, {nitroglycerin: true, TTL: 5});
+        bomb.specialCollisions.push("player");
+        bomb.gravity = 0;
+        bomb.friction = 1;
+        bomb.xv = thingX * 20;
+        bomb.yv = thingY * 20;
+        bomb.explodeRadius = 50;
+    }
+}
+
+
+class ProximityMineEnemy extends Brick{ // These are actually meant to be fuses.
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type, config);
+        this.collisions.push("player");
+        this.isStatic = false;
+        this.sightRange = 400;
+        this.timer = 0;
+        this.active = false;
+    }
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        this.game.ctx.fillStyle = "green";
+        if (this.active){
+            this.timer -= framesElapsed;
+            if (this.timer % 10 < 5){
+                this.game.ctx.fillStyle = "red";
+            }
+            else{
+                this.game.ctx.fillStyle = "rgba(0, 0, 0, 0)";
+            }
+            if (this.timer <= 0){
+                this.game.detonate(this);
+            }
+            if (this.wasChain){
+                if (this.x < this.game.player.x){
+                    this.xv += framesElapsed/3;
+                }
+                else{
+                    this.xv -= framesElapsed/3;
+                }
+            }
+        }
+        else{
+            if (this.canSeePlayer()){
+                this.timer = 50; // These are really meant to be fuses for chains of explosions, so the have a longish timeout.
+                this.active = true;
+            }
+        }
+        this.game.ctx.fillRect(this.x + this.game.artOff.x + this.width/6, this.y + this.game.artOff.y + 1.5 * this.height/5, 2 * this.width/3, 2 * this.height/5);
+    }
+
+    chainReactionExplosion(){
+        this.active = true;
+        this.timer = 150;
+        this.wasChain = true;
     }
 }

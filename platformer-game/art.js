@@ -216,6 +216,14 @@ const BrickDrawer = {
                 ctx.fillRect(x, y + height - 10, width/2, 10 - (this.coinPulse % 60) / 6);
                 ctx.fillRect(x + width/2, y + height - 10, width/2, 10 - ((this.coinPulse + 30) % 60)/6)
                 break;
+            case "firespray":
+                ctx.fillStyle = "red";
+                isCircle = true;
+                break;
+            case "mine":
+                ctx.fillStyle = "orange";
+                isRect = true;
+                break;
         }
         ctx.save();
         if (isTransparent){

@@ -256,10 +256,43 @@ var Bombs = {
         this.game = player.game;
     },
     trigger(){
+        if (this.game.player.score < 15){
+            this.game.jitter(30);
+            return;
+        }
         if (this.timeout <= 0){
             var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 12.5, this.game.player.y + this.game.player.height/2 - 12.5, 25, 25, "tar", "none", Bomb);
-            bomb.explodeRadius = 100;
+            bomb.explodeRadius = 100;//300;
+            bomb.explodeDamage = 25;
+            this.game.player.collect(-15);
             this.timeout = 25;
+        }
+    },
+    loop(framesElapsed){
+        this.timeout -= framesElapsed;
+    },
+    destroy(){
+
+    }
+};
+
+var NuclearBombs = {
+    name: "Nukes",
+    timeout: 0,
+    init(player){
+        this.game = player.game;
+    },
+    trigger(){
+        if (this.game.player.score < 25){
+            this.game.jitter(30);
+            return;
+        }
+        if (this.timeout <= 0){
+            var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 25, this.game.player.y + this.game.player.height/2 - 25, 50, 50, "tar", "none", Bomb, {TTL: 500});
+            bomb.explodeRadius = 600;
+            bomb.explodeDamage = 80;
+            this.game.player.collect(-25);
+            this.timeout = 75;
         }
     },
     loop(framesElapsed){
@@ -277,14 +310,69 @@ var ProximityBombs = {
         this.game = player.game;
     },
     trigger(){
+        if (this.game.player.score < 10){
+            this.game.jitter(30);
+            return;
+        }
         if (this.timeout <= 0){
             var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 12.5, this.game.player.y + this.game.player.height/2 - 12.5, 25, 25, "tar", "none", Bomb, {TTL: 1000, proximity: true});
             bomb.explodeRadius = 100;
             this.timeout = 50;
+            this.game.player.collect(-10);
         }
     },
     loop(framesElapsed){
         this.timeout -= framesElapsed;
+    },
+    destroy(){
+
+    }
+};
+
+var RPGs = {
+    name: "Rocket-Propelled Grenades",
+    timeout: 0,
+    init(player){
+        this.game = player.game;
+    },
+    trigger(){
+        if (this.game.player.score < 10){
+            this.game.jitter(30);
+            return;
+        }
+        if (this.timeout <= 0){
+            var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 5, this.game.player.y + this.game.player.height/2 - 5, 10, 10, "tar", "none", Bomb, {TTL: 100, nitroglycerin: true});
+            bomb.explodeRadius = 100;
+            this.timeout = 25;
+            bomb.gravity = 0.1;
+            bomb.friction = 1;
+            var xDist = this.game.mousePos.gameX - bomb.x;
+            var yDist = this.game.mousePos.gameY - bomb.y;
+            var totalDist = Math.sqrt(xDist * xDist + yDist * yDist);
+            bomb.xv = xDist/totalDist * 30;
+            bomb.yv = yDist/totalDist * 30;
+            this.game.player.collect(-10);
+        }
+    },
+    loop(framesElapsed){
+        this.distX = this.game.player.x + this.game.player.width/2 - this.game.mousePos.gameX;
+        this.distY = this.game.player.y + this.game.player.height/2 - this.game.mousePos.gameY;
+        this.hypotenuse = Math.sqrt(this.distY * this.distY + this.distX * this.distX);
+        this.timeout -= framesElapsed;
+        ctx = this.game.ctx;
+        ctx.save();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2;
+        ctx.translate(this.game.player.x + this.game.player.game.artOff.x + this.game.player.width/2, this.game.player.y + this.game.player.game.artOff.y + this.game.player.height/2);
+        ctx.rotate((Math.acos(this.distY/this.hypotenuse) - Math.PI/2 + (this.distX > 0 ? Math.PI : 0)) * (this.distX > 0 ? -1 : 1));
+        ctx.beginPath();
+        ctx.arc(0, 0, 10, Math.PI * 0.2, Math.PI * 1.8);
+        ctx.lineTo(26, 0);
+        ctx.lineTo(10, 5);
+        ctx.stroke();
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.restore();
     },
     destroy(){
 
