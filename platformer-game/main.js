@@ -679,6 +679,20 @@ class Game {
         return ret;
     }
 
+    canSeeOneOf(thing, types, range=200){
+        var ret = false;
+        this.tileset.forEach((item, i) => {
+            if (types.indexOf(item.type) != -1){
+                if (!this.isLineObstructed(thing, item)){
+                    if (calcPythagorean(thing.x, thing.y, item.x, item.y) <= range){
+                        ret = true;
+                    }
+                }
+            }
+        });
+        return ret;
+    }
+
     scrollAbit(amount){
         if (this.mousePos.x < 60){
             this.studioSelectorScroll += amount;

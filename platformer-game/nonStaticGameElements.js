@@ -125,3 +125,54 @@ class DoWhateverWhenPlayerIsNear extends Brick{
         }
     }
 }
+
+class Bomb extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.TTL = config.TTL || 100;
+        this.startTTL = this.TTL;
+        this.explode = 0;
+        this.explodeDamage = config.explodeDamage || 20;
+        this.explodeRadius = config.explodeRadius || 200;
+        this.isProximity = config.proximity;
+    }
+
+    loop(framesElapsed){
+        this.game.ctx.globalAlpha = (this.TTL % 10) / 10;
+        super.loop(framesElapsed);
+        this.game.ctx.globalAlpha = 1;
+        if (this.explode > 0){
+            this.explode -= framesElapsed;
+            this.game.ctx.fillStyle = "red";
+            this.game.ctx.fillRect(this.x + this.game.artOff.x + this.width/2 - this.explodeRadius, this.y + this.game.artOff.y + this.height/2 - this.explodeRadius, this.explodeRadius * 2, this.explodeRadius * 2);
+            var toHurt = this.game.checkCollision({
+                x: this.x + this.width/2 - this.explodeRadius,
+                y: this.y + this.height/2 - this.explodeRadius,
+                width: this.explodeRadius * 2,
+                height: this.explodeRadius * 2
+            })["all"][1];
+            toHurt.forEach((item, i) => {
+                if (item.damage){
+                    item.damage(this.explodeDamage);
+                }
+                else{
+                    item.harm(this.explodeDamage);
+                }
+            });
+            if (this.explode <= 0){
+                this.game.deleteBrick(this);
+            }
+        }
+        else{
+            this.TTL -= framesElapsed;
+            var percentage = (this.startTTL - this.TTL)/this.startTTL;
+            var wPerc = this.width * percentage;
+            var hPerc = this.height * percentage;
+            this.game.ctx.fillRect(this.x + this.game.artOff.x + this.width/2 - wPerc/2, this.y + this.game.artOff.y + this.height/2 - hPerc/2, wPerc, hPerc);
+            if (this.TTL <= 0 || this.game.canSeeOneOf(this, ["enemy"])){
+                this.explode = 10;
+                this.game.jitter(this.width * this.height * this.explodeDamage / 300);
+            }
+        }
+    }
+}

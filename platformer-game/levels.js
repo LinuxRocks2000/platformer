@@ -822,12 +822,13 @@ const levels = [
         skippable: true,
         difficulty: 1,
         oncreate(game){
-            game.startX = 50;
+            game.startX = 150;
             game.startY = 200;
             game.create(0, 0, 49, 1);
             game.create(0, 1, 1, 30);
             game.create(0, 30, 49, 1);
             game.create(49, 0, 1, 31);
+            game.player.giveWeapon(ProximityBombs);
 
             // Procedural generation of all the platforms
             for (var x = 0; x < 5; x ++){

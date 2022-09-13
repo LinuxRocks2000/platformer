@@ -248,3 +248,45 @@ var Hypersling = {
         this.brick.game.deleteBrick(this.brick);
     }
 }
+
+var Bombs = {
+    name: "Bombs",
+    timeout: 0,
+    init(player){
+        this.game = player.game;
+    },
+    trigger(){
+        if (this.timeout <= 0){
+            var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 12.5, this.game.player.y + this.game.player.height/2 - 12.5, 25, 25, "tar", "none", Bomb);
+            bomb.explodeRadius = 100;
+            this.timeout = 25;
+        }
+    },
+    loop(framesElapsed){
+        this.timeout -= framesElapsed;
+    },
+    destroy(){
+
+    }
+}
+
+var ProximityBombs = {
+    name: "Proximity Mines",
+    timeout: 0,
+    init(player){
+        this.game = player.game;
+    },
+    trigger(){
+        if (this.timeout <= 0){
+            var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 12.5, this.game.player.y + this.game.player.height/2 - 12.5, 25, 25, "tar", "none", Bomb, {TTL: 1000, proximity: true});
+            bomb.explodeRadius = 100;
+            this.timeout = 50;
+        }
+    },
+    loop(framesElapsed){
+        this.timeout -= framesElapsed;
+    },
+    destroy(){
+
+    }
+}
