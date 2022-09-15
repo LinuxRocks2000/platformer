@@ -1815,7 +1815,7 @@ const levels = [
     },
     {
         name: "Pinball",
-        phase: 5,
+        phase: -1,
         skippable: false,
         difficulty: 1,
         oncreate(game){
