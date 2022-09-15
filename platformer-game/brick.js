@@ -8,7 +8,6 @@ class Brick extends PhysicsObject{
             x: 0,
             y: 0
         };
-        this.draw();
         this.dead = false; // I think there's some weird memory crap going on where things can die twice. Thus, this fixes it.
         this.isHealthbar = false;
         this.isDamageable = false;

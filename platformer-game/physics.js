@@ -68,7 +68,7 @@ class PhysicsObject{
             this.frictionChangeY = 1;
             this.gravityChangeY = 1;
             this.move(0, this.yv * framesElapsed);
-            var collY = this.doCollision(this.game.checkCollision(this));
+            var collY = this.doCollision(this.game.checkCollision(this), "y");
             if (collY[0]){
                 didCollide = true;
             }
@@ -91,7 +91,7 @@ class PhysicsObject{
 
             this.move(this.xv * framesElapsed, 0);
             var didCollide = false;
-            var collX = this.doCollision(this.game.checkCollision(this));
+            var collX = this.doCollision(this.game.checkCollision(this), "x");
             if (collX[0]){
                 didCollide = true;
             }
@@ -127,7 +127,7 @@ class PhysicsObject{
         //this.yv += ym;
     }
 
-    doCollision(coll){
+    doCollision(coll, direction){
         var returner = [false, []];
         this.collisions.forEach((item, i) => {
             if (coll[item][0] > 0){
@@ -136,7 +136,7 @@ class PhysicsObject{
                 if (this.doSignalCollisions){
                     coll[item][1].forEach((friend, index) => {
                         if (friend.specialCollisions.indexOf(this.type) != -1){
-                            friend.specialCollision(this.type, [this]);
+                            friend.specialCollision(this.type, [this], direction);
                         }
                     });
                 }
@@ -145,14 +145,14 @@ class PhysicsObject{
         var noSpecial = true;
         this.specialCollisions.forEach((item, index) => {
             if (this.phaser == 0 && coll[item][0] > 0){
-                if (this.specialCollision(item, coll[item][1])){
+                if (this.specialCollision(item, coll[item][1], direction)){
                     returner[0] = true;
                     returner[1].push(...coll[item][1]);
                 }
                 noSpecial = false;
             }
             else{
-                this.noSpecial(item);
+                this.noSpecial(item, direction);
             }
         });
         return returner;

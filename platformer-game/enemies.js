@@ -1251,6 +1251,8 @@ class ProximityMineEnemy extends Brick{ // These are actually meant to be fuses.
         this.sightRange = 400;
         this.timer = 0;
         this.active = false;
+        this.explodeDamage = config.explodeDamage;
+        this.timeout = config.timeout || 50;
     }
     loop(framesElapsed){
         super.loop(framesElapsed);
@@ -1264,7 +1266,7 @@ class ProximityMineEnemy extends Brick{ // These are actually meant to be fuses.
                 this.game.ctx.fillStyle = "rgba(0, 0, 0, 0)";
             }
             if (this.timer <= 0){
-                this.game.detonate(this);
+                this.game.detonate(this, undefined, this.explodeDamage);
             }
             if (this.wasChain){
                 if (this.x < this.game.player.x){
@@ -1277,7 +1279,7 @@ class ProximityMineEnemy extends Brick{ // These are actually meant to be fuses.
         }
         else{
             if (this.canSeePlayer()){
-                this.timer = 50; // These are really meant to be fuses for chains of explosions, so the have a longish timeout.
+                this.timer = this.timeout; // These are really meant to be fuses for chains of explosions, so they have a longish timeout.
                 this.active = true;
             }
         }
@@ -1285,8 +1287,100 @@ class ProximityMineEnemy extends Brick{ // These are actually meant to be fuses.
     }
 
     chainReactionExplosion(){
-        this.active = true;
-        this.timer = 150;
-        this.wasChain = true;
+        if (this.wasChain){
+            this.timer = 0;
+        }
+        else{
+            this.active = true;
+            this.timer = 150;
+            this.wasChain = true;
+        }
+    }
+}
+
+
+class AngleBomberEnemy extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        if (config.startAngle != undefined){
+            this.startAngle = config.startAngle;
+        }
+        else{
+            this.startAngle = 0;
+        }
+        this.endAngle = config.endAngle || Math.PI * 2;
+        this.gunAngles = [
+            0,
+            90,
+            180,
+            270
+        ];
+        this.changeAnglePhase = 0;
+        this.isStatic = true;
+        this.reversed = config.reversed;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        this.changeAnglePhase += framesElapsed;
+        if (this.changeAnglePhase > 60){
+            this.changeAnglePhase = 0;
+            this.gunAngles.forEach((item, i) => {
+                this.gunAngles[i] = findCoterminalDegrees(item + 20);
+                if (this.gunIsActive(this.gunAngles[i])){
+                    this.shoot(this.gunAngles[i]);
+                }
+            });
+        }
+    }
+
+    shoot(angle){
+        var xv = Math.cos(toRadians(angle));
+        var yv = Math.sin(toRadians(angle));
+        var bomb = game._create(this.x + xv * this.width, this.y + yv * this.height, 20, 20, "tar", "none", Bomb, {nitroglycerin: true, TTL: 200});
+        bomb.specialCollisions = ["player"];
+        bomb.gravity = 0;
+        bomb.elasticityX = 1;
+        bomb.elasticityY = 1;
+        bomb.xv = xv * 15;
+        bomb.yv = yv * 15;
+        bomb.friction = 1;
+        bomb.explodeRadius = 200;
+        bomb.explodeDamage = 10;
+    }
+
+    gunIsActive(angle){
+        var bool = (angle >= this.startAngle && angle <= this.endAngle);
+        if (this.reversed){
+            bool = (angle <= this.startAngle || angle >= this.endAngle);
+        }
+        return bool;
+    }
+
+    draw(){
+        var ctx = this.game.ctx;
+        ctx.fillStyle = "pink";
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1;
+        var transX = this.game.artOff.x + this.x + this.width/2;
+        var transY = this.game.artOff.y + this.y + this.height/2;
+        ctx.translate(transX, transY);
+        ctx.rotate(toRadians(this.gunAngles[0]));
+
+        ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height)
+        ctx.strokeRect(-this.width/2, -this.height/2, this.width, this.height)
+
+        ctx.rotate(-toRadians(this.gunAngles[0]));
+
+        this.gunAngles.forEach((item, i) => {
+            ctx.rotate(toRadians(item));
+            if (this.gunIsActive(item)){
+                ctx.fillRect(this.width/2, -10, 20, 20);
+                ctx.strokeRect(this.width/2, -10, 20, 20);
+            }
+            ctx.rotate(-toRadians(item));
+        });
+
+        ctx.translate(-transX, -transY);
     }
 }

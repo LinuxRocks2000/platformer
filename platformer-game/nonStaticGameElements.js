@@ -193,6 +193,7 @@ class Bomb extends Brick{
         this.isProximity = config.proximity;
         this.explodeOnCollision = config.nitroglycerin;
         this.collisions.push("enemy");
+        this.collisions.push("jumpthrough");
         this.specialCollisions = this.collisions;
         this.allowChainReaction = config.chainReaction || true;
         this.armTimeout = 0;
@@ -200,6 +201,7 @@ class Bomb extends Brick{
             this.armTimeout = config.arm;
         }
         this.timeBomb = true;
+        this.chainTimeout = config.chainTimeout || 3;
     }
 
     specialCollision(type, items){
@@ -244,7 +246,7 @@ class Bomb extends Brick{
 
     chainReactionExplosion(){
         if (this.armTimeout <= 0){
-            this.TTL = 3;
+            this.TTL = this.chainTimeout;
         }
     }
 }
@@ -257,6 +259,7 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         this.explodeRadius = config.explodeRadius;
         this.explodeDamage = config.explodeDamage;
         this.eject = 0; // Number of little bombs to spawn after exploding
+        this.chainTimeout = 1;
     }
     loop(framesElapsed){
         super.loop(framesElapsed);
@@ -280,7 +283,7 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         }
     }
     chainReactionExplosion(){
-        this.TTL = 1;
+        this.TTL = this.chainTimeout;
     }
 }
 
@@ -308,8 +311,8 @@ class BreakableBrick extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.cracks = [];
-        this.health = 100;
-        this.maxHealth = 100;
+        this.health = config.health || 100;
+        this.maxHealth = config.health || 100;
         this.isDamageable = true;
         this.isStatic = true; // I know. I know. Shut up.
         this.totalCracks = 0;

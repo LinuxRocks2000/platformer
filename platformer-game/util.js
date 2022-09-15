@@ -76,6 +76,16 @@ function findCoterminalRadians(angle){
     return angle;
 }
 
+function findCoterminalDegrees(angle){
+    while (angle < 0){
+        angle += 360;
+    }
+    while (angle > 360){
+        angle -= 360;
+    }
+    return angle;
+}
+
 function distBetweenPoints(p1, p2){
     var distX = p1[0] - p2[0];
     var distY = p1[1] - p2[1];
@@ -94,4 +104,8 @@ function isInt(value) { // Thank you, Stackoverflow!
   }
   var x = parseFloat(value);
   return (x | 0) === x;
+}
+
+function toRadians(degrees){
+    return degrees * Math.PI/180;
 }

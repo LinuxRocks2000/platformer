@@ -66,6 +66,7 @@ const BrickDrawer = {
     coinPulseFlip: false,
     isRadiating: false,
     radiationPulse: 0,
+    percentPulse: 0,
     drawBrick(ctx, x, y, width, height, style, type, game){
         ctx.fillStyle = "transparent"; // Default
         var isRect = false;
@@ -73,6 +74,7 @@ const BrickDrawer = {
         var isCircle = false;
         var isStroke = false;
         var isRoundRect = false;
+        var customArtCommand = undefined;
         switch(style){
             case "normal":
                 ctx.fillStyle = "brown";
@@ -224,6 +226,22 @@ const BrickDrawer = {
                 ctx.fillStyle = "orange";
                 isRect = true;
                 break;
+            case "bouncy":
+                ctx.fillStyle = "yellow";
+                isRect = true;
+                customArtCommand = () => {
+                    ctx.strokeStyle = "black";
+                    ctx.lineWidth = 1;
+                    var bump = 10 - this.percentPulse/10;
+                    ctx.beginPath();
+                    for (var i = 0; i < 3 + (bump < 5 ? 1 : 0); i ++){
+                        ctx.moveTo(x + width/2 - 10, y + 5 + bump + 10 * i);
+                        ctx.lineTo(x + width/2, y + bump + 10 * i);
+                        ctx.lineTo(x + width/2 + 10, y + 5 + bump + 10 * i);
+                    }
+                    ctx.stroke();
+                }
+                break;
         }
         ctx.save();
         if (isTransparent){
@@ -294,6 +312,9 @@ const BrickDrawer = {
         if (type == "fiftycoin"){
             ctx.fillText("50", x + width/2, y + height/2);
         }
+        if (customArtCommand){
+            customArtCommand();
+        }
         ctx.restore()
     },
     drawText(ctx, x, y, width, height, text, fontData = {}){
@@ -336,6 +357,10 @@ const BrickDrawer = {
             this.coinPulse = 10;
         }
         this.radiationPulse += fe;
+        this.percentPulse += fe * 2;
+        if (this.percentPulse >= 100){
+            this.percentPulse = 0;
+        }
     }
 };
 

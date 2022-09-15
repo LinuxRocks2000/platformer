@@ -825,7 +825,7 @@ const levels = [
             game.startX = 150;
             game.startY = 1200;
             game.create(0, 16, 112, 1);
-            game.create(0, 20, 112, 1, "glass", "solid", BreakableBrick);
+            //game.create(0, 20, 112, 1, "glass", "solid", BreakableBrick);
             for (var x = 0; x < 40; x ++){
                 game.create(5 + x * 4, 17, 1, 1, "mine", "enemy", ProximityMineEnemy);
             }
@@ -877,7 +877,7 @@ const levels = [
             b.explodeDamage = 100;
             b.eject = 30;
 
-            game.create(4, 25, 1, 1, "tank", "enemy", TankEnemy, {shootBombs: true});
+            //game.create(4, 25, 1, 1, "tank", "enemy", TankEnemy, {shootBombs: true});
         },
         onloop(game){
 
@@ -1807,6 +1807,99 @@ const levels = [
         onloop(game, framesElapsed){
             if (game.player.x > 29 * 50 && game.player.x < 58 * 50){
                 game.feChange = 1/3;
+            }
+        },
+        ondestroy(game){
+
+        }
+    },
+    {
+        name: "Pinball",
+        phase: 5,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.startX = 0;
+            game.startY = -100;
+            game.createRect(-15, -80, 30, 81);
+            game.create(-4, -3, 10, 1, "glass", "solid", BreakableBrick, {health: 100}); // The starting "room"
+            var b = game.create(-5, -2, 1, 1, "lava", "solid", ChainBomb);
+            b.collisions.push("enemy");
+            b.chainTimeout = 10;
+            b.explodeDamage = 100;
+            b.explodeRadius = 150;
+            var fuse = game.create(-5, 0, 1, 1, "mine", "enemy", ProximityMineEnemy);
+            fuse.sightRange = 100;
+            fuse.explodeDamage = 60;
+            game.create(-2, 0, 1, 1, "coin", "fiftycoin");
+            game.create(-1, 0, 1, 1, "coin", "fiftycoin");
+            game.create(-6, -3, 1, 4, "glass", "field", BreakableBrick, {health: 100});
+            game.create(5, -2, 1, 3, "glass", "field");
+            game.create(14, 0, 1, 1, "mine", "enemy", ProximityMineEnemy);
+            game.create(12, -1, 2, 2, "lava", "enemy", ChainBomb).chainTimeout = 50;
+
+            // Coin pocket #1:
+            game.create(-8, -27, 1, 3);
+            game.create(-4, -28, 1, 4);
+            game.create(-8, -28, 5, 1, "glass", "solid", BreakableBrick);
+            game.create(-7, -25, 3, 1, "glass", "solid", BreakableBrick);
+            game.create(-7, -26, 1, 1, "coin", "fiftycoin").isStatic = false;;
+            game.create(-6, -26, 1, 1, "heal", "heal").isStatic = false;
+            game.create(-5, -26, 1, 1, "coin", "fiftycoin").isStatic = false;
+            b = game.create(-5, -31, 1, 1, "lava", "solid", ChainBomb);
+            b.chainTimeout = 150;
+            b.explodeDamage = 50;
+            b.explodeRadius = 200;
+            game.create(-4, -25, 2, 1);
+            game.create(-4.75, -29, 0.5, 0.5, "lava", "solid", ChainBomb).explodeDamage = 200;
+
+            game.create(4, -7, 3, 1);
+            game.create(-1, -11, 3, 1);
+            game.create(0, -14, 1, 3, "glass", "field");
+            game.create(-1, -15, 3, 1, "jumpthrough", "jumpthrough");
+            game.create(-3, -16, 2, 2, "normal", "solid", BreakableBrick);
+            game.create(2, -16, 2, 2, "normal", "solid", BreakableBrick);
+            game.create(-3, -17, 1, 1, "bouncy", "bouncy", BreakableBrick);
+
+            game.create(0, -32, 9, 1, "normal", "solid", BreakableBrick, {health: 50});
+            game.create(9, -32, 6, 1);
+            fuse = game.create(1, -16, 1, 1, "mine", "enemy", ProximityMineEnemy, {timeout: 200});
+            fuse.collisions.push("jumpthrough");
+            fuse.sightRange = 200;
+            fuse.explodeDamage = 60;
+            b = game.create(1, -17, 1, 1, "lava", "solid", ChainBomb);
+            b.collisions.push("enemy");
+            b.chainTimeout = 8;
+            b.explodeDamage = 50;
+            b.explodeRadius = 200;
+
+            b = game.create(1, -33, 1, 1, "lava", "solid", ChainBomb);
+            b.chainTimeout = 50;
+            b.explodeDamage = 50;
+            b.explodeRadius = 200;
+
+            // Now on to part 2 - the one where you have to dodge!
+            game.create(-15, -40, 25, 1);
+            game.create(10, -40, 5, 1, "jumpthrough", "jumpthrough");
+            game.create(14, -36, 1, 1);
+            game.create(9, -39, 1, 7, "glass", "field");
+            game.create(14, -33, 1, 1, "heal", "heal");
+
+            game.create(0, -79, 1, 1, "none", "none", AngleBomberEnemy, {startAngle: 180, endAngle: 360, reversed: true}); // The initial bombers - might not need more than these!
+
+            game.create(-7, -44, 3, 1);
+            game.create(4, -44, 3, 1);
+            game.create(-6, -50, 1, 6, "glass", "none");
+            game.create(-6, -51, 1, 1, "firespray", "enemy", FiresprayEnemy);
+            game.create(-8, -43, 1, 1, "tank", "enemy", TankEnemy, {shootBombs: true});
+            game.create(-14, -79, 1, 1, "end", "end");
+            game.create(-14, -70, 10, 1);
+
+            game.player.giveWeapon(Bombs);
+        },
+        onloop(game, framesElapsed){
+            if (game.player.y < -2000){
+                game.feChange = 1/4;
             }
         },
         ondestroy(game){

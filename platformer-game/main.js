@@ -78,6 +78,8 @@ class Player extends PhysicsObject{
         this.specialCollisions.push("water");
         this.specialCollisions.push("key");
         this.specialCollisions.push("begone");
+        this.collisions.push("bouncy");
+        this.specialCollisions.push("bouncy");
         this.collisions.push("glass");
         this.collisions.push("enemy");
         this._score = 0;
@@ -407,7 +409,7 @@ class Player extends PhysicsObject{
         this.risingTextBoinks.push(new RisingTextBoink("" + amount, this.game));
     }
 
-    specialCollision(type, items){
+    specialCollision(type, items, direction){
         if (type == "killu"){
             this.harm(0.1, false); // Take a fixed 20 damage from any normal killu.
             this.frictionChangeX = 0.1;
@@ -417,6 +419,13 @@ class Player extends PhysicsObject{
             this.harm(0.3, false);
             this.frictionChangeX = 0.7;
             this.frictionChangeY = 0.7;
+        }
+        if (type == "bouncy"){
+            if (direction == "y"){
+                this.game.onNextCycle(() => {
+                    this.yv -= 30;
+                });
+            }
         }
         if (!this.game.studioMode){
             if (type == "tencoin"){
@@ -652,6 +661,12 @@ class Game {
         this.feChange = 1;
 
         this.isMapview = false;
+
+        this.nextCycleFuns = [];
+    }
+
+    onNextCycle(fun){
+        this.nextCycleFuns.push(fun);
     }
 
     setSkin(skin){
@@ -826,6 +841,11 @@ class Game {
     }
 
     loop(framesElapsed){
+        while (this.nextCycleFuns.length > 0){
+            this.nextCycleFuns[0]();
+            this.nextCycleFuns.splice(0, 1);
+        }
+
         this.ctx.resetTransform(); // We know eventually it's gonna screw up so here ya go
         if (this.isShadow){
             this.ctx.fillStyle = "rgb(100, 100, 100)";
@@ -1017,7 +1037,8 @@ class Game {
             "key": [0, []],
             "bullet": [0, []],
             "splenectifyu": [0, []],
-            "begone": [0, []]
+            "begone": [0, []],
+            "bouncy": [0, []]
         }
         var iter = (item, i) => {
             if (item != object && item.phaser == 0){ // Yes, this plagues me.
