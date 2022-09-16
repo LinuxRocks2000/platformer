@@ -297,6 +297,7 @@ const BrickDrawer = {
                     ctx.beginPath();
                     ctx.arc(x + width/2, y + width/2, width/2 + realOff, 0, 2 * Math.PI, false);
                     ctx.stroke();
+                    ctx.closePath();
                     ctx.globalAlpha = 1;
                 }
             }

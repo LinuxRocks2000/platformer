@@ -1821,7 +1821,7 @@ const levels = [
         oncreate(game){
             game.startX = 0;
             game.startY = -100;
-            game.createRect(-15, -80, 30, 81);
+            game.createRect(-15, -40, 30, 41);
             game.create(-4, -3, 10, 1, "glass", "solid", BreakableBrick, {health: 100}); // The starting "room"
             var b = game.create(-5, -2, 1, 1, "lava", "solid", ChainBomb);
             b.collisions.push("enemy");
@@ -1839,8 +1839,8 @@ const levels = [
             game.create(12, -1, 2, 2, "lava", "enemy", ChainBomb).chainTimeout = 50;
 
             // Coin pocket #1:
-            game.create(-8, -27, 1, 3);
-            game.create(-4, -28, 1, 4);
+            game.create(-8, -27, 1, 3, "normal", "solid", BreakableBrick, {health: 450});
+            game.create(-4, -28, 1, 4, "normal", "solid", BreakableBrick, {health: 450});
             game.create(-8, -28, 5, 1, "glass", "solid", BreakableBrick);
             game.create(-7, -25, 3, 1, "glass", "solid", BreakableBrick);
             game.create(-7, -26, 1, 1, "coin", "fiftycoin").isStatic = false;;
@@ -1850,7 +1850,7 @@ const levels = [
             b.chainTimeout = 150;
             b.explodeDamage = 50;
             b.explodeRadius = 200;
-            game.create(-4, -25, 2, 1);
+            game.create(-4, -25, 2, 1, "jumpthrough", "jumpthrough", BreakableBrick, {health: 250});
             game.create(-4.75, -29, 0.5, 0.5, "lava", "solid", ChainBomb).explodeDamage = 200;
 
             game.create(4, -7, 3, 1);
@@ -1861,7 +1861,20 @@ const levels = [
             game.create(2, -16, 2, 2, "normal", "solid", BreakableBrick);
             game.create(-3, -17, 1, 1, "bouncy", "bouncy", BreakableBrick);
 
-            game.create(0, -32, 9, 1, "normal", "solid", BreakableBrick, {health: 50});
+            game.create(0, -32, 1, 1, "normal", "solid", BreakableBrick, {health: 75});
+            game.create(1, -32, 2, 1, "normal", "solid", BreakableBrick, {health: 50});
+            b = game.create(1.5, -33, 1, 1, "lava", "solid", ChainBomb);
+            b.collisions.push("enemy");
+            b.chainTimeout = 50;
+            b.explodeDamage = 50;
+            b.explodeRadius = 200;
+            game.create(3, -32, 4, 1, "normal", "solid", BreakableBrick, {health: 75});
+            game.create(7, -32, 2, 1, "normal", "solid", BreakableBrick, {health: 50});
+            b = game.create(7.5, -33, 1, 1, "lava", "solid", ChainBomb);
+            b.collisions.push("enemy");
+            b.chainTimeout = 50;
+            b.explodeDamage = 50;
+            b.explodeRadius = 50;
             game.create(9, -32, 6, 1);
             fuse = game.create(1, -16, 1, 1, "mine", "enemy", ProximityMineEnemy, {timeout: 200});
             fuse.collisions.push("jumpthrough");
@@ -1873,29 +1886,23 @@ const levels = [
             b.explodeDamage = 50;
             b.explodeRadius = 200;
 
-            b = game.create(1, -33, 1, 1, "lava", "solid", ChainBomb);
-            b.chainTimeout = 50;
-            b.explodeDamage = 50;
-            b.explodeRadius = 200;
+            var r = game.create(-8, 1, 1, 2, "none", "solid", Rocket);
+            r.friction = 0;
+            r.chainTimeout = 400;
+            r.explodeDamage = 300;
+            r.explodeRadius = 200;
+            r.chainReactionExplosion();
 
-            // Now on to part 2 - the one where you have to dodge!
+            r = game.create(7, 1, 1, 2, "none", "solid", Rocket);
+            r.friction = 0;
+            r.chainTimeout = 0;
+            r.explodeDamage = 300;
+            r.explodeRadius = 200;
+            r.timeout = 55;
+
             game.create(-15, -40, 25, 1);
-            game.create(10, -40, 5, 1, "jumpthrough", "jumpthrough");
-            game.create(14, -36, 1, 1);
             game.create(9, -39, 1, 7, "glass", "field");
-            game.create(14, -33, 1, 1, "heal", "heal");
-
-            game.create(0, -79, 1, 1, "none", "none", AngleBomberEnemy, {startAngle: 180, endAngle: 360, reversed: true}); // The initial bombers - might not need more than these!
-
-            game.create(-7, -44, 3, 1);
-            game.create(4, -44, 3, 1);
-            game.create(-6, -50, 1, 6, "glass", "none");
-            game.create(-6, -51, 1, 1, "firespray", "enemy", FiresprayEnemy);
-            game.create(-8, -43, 1, 1, "tank", "enemy", TankEnemy, {shootBombs: true});
-            game.create(-14, -79, 1, 1, "end", "end");
-            game.create(-14, -70, 10, 1);
-
-            game.player.giveWeapon(Bombs);
+            game.create(14, -33, 1, 1, "end", "end");
         },
         onloop(game, framesElapsed){
             if (game.player.y < -2000){

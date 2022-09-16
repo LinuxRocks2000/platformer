@@ -260,14 +260,16 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         this.explodeDamage = config.explodeDamage;
         this.eject = 0; // Number of little bombs to spawn after exploding
         this.chainTimeout = 1;
+        this.explodeOnFastCollision = config.nitroglycerin;
+        this.specialCollisions = this.collisions;
+        this.mass = this.width * this.height/3;
     }
+
     loop(framesElapsed){
         super.loop(framesElapsed);
         var wasActive = this.TTL > 0;
         this.TTL -= framesElapsed;
         if (this.TTL < 0 && wasActive){
-            var mass = this.width * this.height/3;
-            game.myBombs = [];
             for (var x = 0; x < this.eject; x ++){
                 var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "tar", "solid", Bomb, {arm: 20, TTL: 20});
                 bomb.x += Math.random() * 20 - 10;
@@ -276,13 +278,23 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
                 bomb.explodeRadius = 50;
                 bomb.friction = 0.99;
                 bomb.gravity = 0.1;
-                game.myBombs.push(bomb);
             }
-            this.game.detonate(this, (this.explodeRadius ? this.explodeRadius * 2 : mass), this.explodeDamage || mass/10, 0.1);
-            console.log(game.myBombs)
+            this.explode();
         }
     }
+
+    explode(){
+        this.game.detonate(this, (this.explodeRadius ? this.explodeRadius * 2 : this.mass), this.explodeDamage || this.mass/10, 0.1);
+    }
+
+    specialCollision(){
+        if (this.explodeOnFastCollision && this.yv + this.xv > 10){
+            this.explode();
+        }
+    }
+
     chainReactionExplosion(){
+        this.isExploding = true;
         this.TTL = this.chainTimeout;
     }
 }
@@ -332,5 +344,95 @@ class BreakableBrick extends Brick{
         });
         this.game.ctx.translate(-this.game.artOff.x, -this.game.artOff.y);
         this.game.ctx.stroke();
+    }
+}
+
+class Rocket extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.TTL = Infinity;
+        this.timeout = 100;
+        this.chainTimeout = 0;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.active){
+            this.chainTimeout -= framesElapsed;
+            if (this.chainTimeout > 0){
+                return;
+            }
+        }
+        if (this.TTL < Infinity){
+            this.TTL -= framesElapsed;
+            this.yv -= framesElapsed * 2;
+            if (this.TTL < 0){
+                this.explode();
+            }
+        }
+    }
+
+    explode(){
+        this.game.detonate(this, this.explodeRadius, this.explodeDamage);
+    }
+
+    drawFlames(ctx){
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.moveTo(0, this.height);
+        ctx.lineTo(this.width/6, this.height * 6/4);
+        ctx.lineTo(this.width * 2/6, this.height * 12/10);
+        ctx.lineTo(this.width * 3/6, this.height * 13/8);
+        ctx.lineTo(this.width * 4/6, this.height * 12/10);
+        ctx.lineTo(this.width * 5/6, this.height * 6/4);
+        ctx.lineTo(this.width, this.height);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "orange";
+        ctx.beginPath();
+        ctx.moveTo(0, this.height);
+        ctx.lineTo(this.width/6, this.height * 5/4);
+        ctx.lineTo(this.width * 2/6, this.height * 11/10);
+        ctx.lineTo(this.width * 3/6, this.height * 11/8);
+        ctx.lineTo(this.width * 4/6, this.height * 11/10);
+        ctx.lineTo(this.width * 5/6, this.height * 5/4);
+        ctx.lineTo(this.width, this.height);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    draw(){
+        var ctx = this.game.ctx;
+        var transX = this.x + this.game.artOff.x;
+        var transY = this.y + this.game.artOff.y;
+        ctx.translate(transX, transY);
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 1;
+        ctx.fillStyle = "red";
+        ctx.moveTo(this.width/2, 0);
+        ctx.quadraticCurveTo(this.width, this.height/3, this.width, this.height/2);
+        ctx.lineTo(this.width, this.height);
+        ctx.lineTo(0, this.height);
+        ctx.lineTo(0, this.height/2);
+        ctx.quadraticCurveTo(0, this.height/3, this.width/2, 0);
+        ctx.stroke();
+        ctx.fill();
+        if (this.TTL < Infinity){
+            if (this.TTL % 2 < 1){
+                this.drawFlames(ctx);
+            }
+        }
+        ctx.translate(-transX, -transY);
+    }
+
+    chainReactionExplosion(){
+        this.active = true;
+        this.TTL = this.timeout;
+    }
+
+    hitTop(){
+        this.explode();
     }
 }
