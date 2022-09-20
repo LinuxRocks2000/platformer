@@ -663,6 +663,15 @@ class Game {
         this.isMapview = false;
 
         this.nextCycleFuns = [];
+
+        this.lossCount = 0;
+
+        if (Math.random() > 0.8){
+            this.acidDay = true;
+        }
+
+        // for testing
+        this.acidDay = true;
     }
 
     onNextCycle(fun){
@@ -893,10 +902,15 @@ class Game {
         }
         BrickDrawer.upPulse(framesElapsed);
         if (this.die){
+            this.lossCount ++;
+            if (this.lossCount >= 8){
+                this.acidDay = true; // Acid mode if you lose a lot
+            }
             this.end();
             return 1;
         }
         else if (this.win && !this.studioMode){
+            this.lossCount = 0;
             this.end();
             return 2;
         }
@@ -1156,7 +1170,7 @@ class GameManager{
                     value: 200
                 },
                 highscore2: {
-                    name: "Jackson",
+                    name: "Jakson",
                     value: 180
                 },
                 highscore3: {
@@ -1287,9 +1301,29 @@ class GameManager{
         document.getElementById("saveslot").innerHTML = "Save slot: " + (this.saveSlot == -1 ? "[nilch]" : "" + this.saveSlot + " [" + this.storage.savedGames[this.saveSlot].name + "]");
     }
 
+    showInsults(){
+        document.title = "Platformer 2nd Edition";
+        if (this.game.lossCount >= 5){
+            document.title = "Platformer | You aren't very good at this";
+        }
+        if (this.game.lossCount >= 8){
+            document.title = "Platformer | Honestly you kinda suck";
+        }
+        if (this.game.lossCount >= 11){
+            document.title = "Platformer | Get better, you N00B";
+        }
+        if (this.game.lossCount >= 14){
+            document.title = "Deeeeep breaths. You'll be a winner someday.";
+        }
+        if (this.game.lossCount > 17){
+            document.title = "Have you considered faking your death and leaving the country?";
+        }
+    }
+
     showMenu(){
         this.showLevels();
         this.showSaveslot();
+        this.showInsults(); // hee hee hee
         document.getElementById("menu").style.display = "";
         HarmAnimator.menuTime();
         this.menu = true;

@@ -67,7 +67,14 @@ const BrickDrawer = {
     isRadiating: false,
     radiationPulse: 0,
     percentPulse: 0,
+    renderCount: 0,
+    colorPulse: 0,
     drawBrick(ctx, x, y, width, height, style, type, game){
+        if (style == "normal"){
+            if (game.acidDay){
+                style = "acid";
+            }
+        }
         ctx.fillStyle = "transparent"; // Default
         var isRect = false;
         var isTransparent = false;
@@ -242,6 +249,24 @@ const BrickDrawer = {
                     ctx.stroke();
                 }
                 break;
+            case "acid":
+                var rand = seedRand(this.renderCount);
+                var colorP = (this.colorPulse + rand * 255 * 255 * 255) % (255 * 255 * 255);
+                var r = (colorP >> 4) % 510;
+                var g = (colorP >> 2) % 510;
+                var b = colorP % 510;
+                if (r > 255){
+                    r = 510 - r;
+                }
+                if (g > 255){
+                    g = 510 - g;
+                }
+                if (b > 255){
+                    b = 510 - b;
+                }
+                ctx.fillStyle = "rgb(" + r + ", " + g + ", " + b + ")";
+                isRect = true;
+                break;
         }
         ctx.save();
         if (isTransparent){
@@ -317,6 +342,7 @@ const BrickDrawer = {
             customArtCommand();
         }
         ctx.restore()
+        this.renderCount ++;
     },
     drawText(ctx, x, y, width, height, text, fontData = {}){
         var fontSize = fontData.fontSize || 10;
@@ -361,6 +387,11 @@ const BrickDrawer = {
         this.percentPulse += fe * 2;
         if (this.percentPulse >= 100){
             this.percentPulse = 0;
+        }
+        this.renderCount = 0;
+        this.colorPulse += fe * 2;
+        if (this.colorPulse > 255 * 255 * 255){
+            this.colorPulse = 0;
         }
     }
 };

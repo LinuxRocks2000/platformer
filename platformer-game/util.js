@@ -109,3 +109,8 @@ function isInt(value) { // Thank you, Stackoverflow!
 function toRadians(degrees){
     return degrees * Math.PI/180;
 }
+
+function seedRand(seed){
+    var z = Math.sin(seed) * 10000;
+    return (z - Math.floor(z));
+}

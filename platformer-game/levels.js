@@ -9,7 +9,7 @@ They're a fun part of the game but serve no other purpose.
 
 Useful note: Phases are 0-indexed, so 0 is phase 1, 1 is phase 2, etc. If it seems annoying, you aren't a coder.
 */
-const levels = [
+let levels = [ // If it's const, I can't dynamically add levels in Worker Levels.
     {
         name: "Training",
         skippable: true,
@@ -22,7 +22,7 @@ const levels = [
             game.startX = 0;
             game.startY = 0;
             this.stage = 0;
-            game.create(-2, 3, 12, 1);
+            game.create(-2, 3, 12, 1, "normal");
             game.sign(-1, 2, "Mouse Over Me", "Welcome to Platformer 2nd Edition! What you have put your mouse over is a sign. Signs always contain helpful information, and you should always put your mouse over them.<br />You can move in Platformer with the arrow keys. Up to jump, left to go left, right to go right. This level is a simple tutorial which introduces you to all the game elements. To go to the next phase of the tutorial, go right off this platform and fall.");
         },
         onloop(game, framesElapsed){
@@ -1888,7 +1888,7 @@ const levels = [
 
             var r = game.create(-8, 1, 1, 2, "none", "solid", Rocket);
             r.friction = 0;
-            r.chainTimeout = 400;
+            r.chainTimeout = 425;
             r.explodeDamage = 300;
             r.explodeRadius = 200;
             r.chainReactionExplosion();
@@ -1905,9 +1905,22 @@ const levels = [
             game.create(14, -33, 1, 1, "end", "end");
         },
         onloop(game, framesElapsed){
-            if (game.player.y < -2000){
-                game.feChange = 1/4;
-            }
+        },
+        ondestroy(game){
+
+        }
+    },
+    {
+        name: "Minefield",
+        phase: -1,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.create(-10, 5, 20, 1);
+            game.create(-5, 0, 1, 2, "none", "solid", Rocket, {proximity: true, isPlayerRide: true, chainTimeout: 20, timeout: 25, eject: 100});
+        },
+        onloop(game, framesElapsed){
+
         },
         ondestroy(game){
 

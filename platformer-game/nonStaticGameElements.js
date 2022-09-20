@@ -1,7 +1,6 @@
 class RaisingPlatform extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
-        console.log(config);
         this.gravity = 0;
         this.isStatic = false;
         if (config.speed){
@@ -14,7 +13,6 @@ class RaisingPlatform extends Brick{
         this.specialCollisions.push("player");
         this.collisions.push("stopblock");
         this.elasticityY = 1;
-        this.phase = 0;
         this.restrictInteger = true;
     }
 }
@@ -351,8 +349,25 @@ class Rocket extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.TTL = Infinity;
-        this.timeout = 100;
-        this.chainTimeout = 0;
+        this.timeout = config.timeout || 100;
+        this.chainTimeout = config.chainTimeout || 0;
+        this.fireWhenPlayerNear = config.proximity;
+        if (config.isPlayerRide){
+            this.specialCollisions.push("player");
+            this.restrictInteger = true;
+        }
+        if (config.eject != undefined){
+            this.eject = config.eject;
+        }
+        else{
+            this.eject = 0;
+        }
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            //this.game.player.yv = this.yv - 1;
+        }
     }
 
     loop(framesElapsed){
@@ -370,10 +385,24 @@ class Rocket extends Brick{
                 this.explode();
             }
         }
+        if (this.fireWhenPlayerNear && this.canSeePlayer()){
+            this.chainReactionExplosion();
+        }
     }
 
     explode(){
         this.game.detonate(this, this.explodeRadius, this.explodeDamage);
+        for (var x = 0; x < this.eject; x ++){
+            var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height, 10, 10, "tar", "solid", Bomb, {arm: 20, TTL: 50, nitroglycerin: true});
+            bomb._x += Math.random() * this.width * 2 - this.width;
+            bomb._y += Math.random() * 50 + 50;
+            bomb.specialCollisions.push("player");
+            bomb.explodeDamage = 5;
+            bomb.explodeRadius = 50;
+            bomb.friction = 1;
+            bomb.gravity = 0.1;
+            bomb.chainTimeout = 10;
+        }
     }
 
     drawFlames(ctx){
@@ -428,8 +457,10 @@ class Rocket extends Brick{
     }
 
     chainReactionExplosion(){
-        this.active = true;
-        this.TTL = this.timeout;
+        if (!this.active){
+            this.active = true;
+            this.TTL = this.timeout;
+        }
     }
 
     hitTop(){
