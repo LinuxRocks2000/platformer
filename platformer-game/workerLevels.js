@@ -143,9 +143,9 @@ function playLevel(level){
         levels.push(ctx.generateLevel());
     }
 }
-
+/*
 installLevels(registeredWorkerLevels).then((ret) => {
     installedLevels = ret;
     playLevel(installedLevels[0]);
     gm.showMenu();
-});
+});*/

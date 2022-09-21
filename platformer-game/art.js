@@ -252,7 +252,7 @@ const BrickDrawer = {
             case "acid":
                 var rand = seedRand(this.renderCount);
                 var colorP = (this.colorPulse + rand * 255 * 255 * 255) % (255 * 255 * 255);
-                var r = (colorP >> 4) % 510;
+                var r = (colorP >> 3) % 510;
                 var g = (colorP >> 2) % 510;
                 var b = colorP % 510;
                 if (r > 255){
@@ -389,7 +389,7 @@ const BrickDrawer = {
             this.percentPulse = 0;
         }
         this.renderCount = 0;
-        this.colorPulse += fe * 2;
+        this.colorPulse += fe * 10;
         if (this.colorPulse > 255 * 255 * 255){
             this.colorPulse = 0;
         }

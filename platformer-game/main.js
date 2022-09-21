@@ -670,8 +670,9 @@ class Game {
             this.acidDay = true;
         }
 
-        // for testing
-        this.acidDay = true;
+        this.acidDay = true; // Test
+
+        this.lastFramesElapsed = 0;
     }
 
     onNextCycle(fun){
@@ -681,6 +682,30 @@ class Game {
     setSkin(skin){
         this.skin = skin;
         this.player.setSkin(skin);
+    }
+
+    randomByFE(){
+        if (!this.feBoundLower){
+            this.feBoundLower = this.lastFramesElapsed - 1/16;
+        }
+        if (!this.feBoundHigher){
+            this.feBoundHigher = this.lastFramesElapsed + 1/16;
+        }
+
+        if (this.lastFramesElapsed > this.feBoundHigher){
+            this.feBoundHigher = this.lastFramesElapsed;
+        }
+        if (this.lastFramesElapsed < this.feBoundLower){
+            this.feBoundLower = this.lastFramesElapsed;
+        }
+
+        this.feBoundHigher -= (this.feBoundHigher - this.lastFramesElapsed)/8;
+        this.feBoundLower += (this.lastFramesElapsed - this.feBoundLower)/8;
+
+        var feRange = this.feBoundHigher - this.feBoundLower;
+        var fePos = this.lastFramesElapsed - this.feBoundLower;
+
+        return (fePos/feRange * 10) % 1;
     }
 
     setMousePos(x, y){
@@ -850,6 +875,8 @@ class Game {
     }
 
     loop(framesElapsed){
+        this.lastFramesElapsed = framesElapsed;
+
         while (this.nextCycleFuns.length > 0){
             this.nextCycleFuns[0]();
             this.nextCycleFuns.splice(0, 1);
@@ -1002,6 +1029,7 @@ class Game {
             this.studioMode = true;
         }
         this.feChange = 1;
+        console.log(this.randomByFE());
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
