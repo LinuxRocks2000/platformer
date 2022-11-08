@@ -126,6 +126,26 @@ class Player extends PhysicsObject{
         this.forceClassicJump = false;
     }
 
+    powerAttack(){
+        if (this.powerWeapon){
+            this.powerWeapon.trigger();
+        }
+    }
+
+    clearPowerWeapon(){
+        if (!this.powerWeapon){
+            return;
+        }
+        this.powerWeapon.destroy();
+        delete this.powerWeapon;
+    }
+
+    assignPowerWeapon(weapon){
+        this.clearPowerWeapon();
+        this.powerWeapon = weapon;
+        weapon.init(this);
+    }
+
     studio(){
         this.studioMode = true;
         this.healthbar.style.display = "none";
@@ -169,6 +189,9 @@ class Player extends PhysicsObject{
             //this.element.classList.add("harmImmune");
             if (this.health <= 0){
                 this.game.die = true;
+                if (this.harmFromFalling){
+                    delete this.harmFromFalling;
+                }
             }
             HarmAnimator.harmPlayer(amount, 100);
             this.game.jitter(amount);
@@ -244,29 +267,18 @@ class Player extends PhysicsObject{
             this.game.ctx.fillStyle = "lightgrey";
             this.game.ctx.fillRect(this.artPos.x + this.width/2 - this.shielding/2, this.artPos.y - 10, this.shielding, 5);
         }
-        /*if (this.collectAnimation.amount > 0){
-            this.game.ctx.globalAlpha = this.collectAnimation.yPos/this.collectAnimation.startPos;
-            this.collectAnimation.yPos -= 10 * framesElapsed;
-            this.game.ctx.fillStyle = "gold";
-            this.game.ctx.font = "bold 40px sans-serif";
-            this.game.ctx.textAlign = "center";
-            this.game.ctx.fillText(this.collectAnimation.amount + "", this.x, this.y - (window.innerHeight/2 - this.collectAnimation.yPos));
-            this.game.ctx.textAlign = "left";
-            this.game.ctx.globalAlpha = 1;
-            if (this.collectAnimation.yPos < 0){
-                this.collectAnimation.amount = 0;
-            }
+        this.game.ctx.fillStyle = "green";
+        this.game.ctx.textAlign = "left";
+        this.game.ctx.font = "16px monospace";
+        this.game.ctx.fillText("Weapon: " + (this.weapon ? this.weapon.name : "[none]"), 10, window.innerHeight - 90);
+        if (this.game.player.powerWeapon){
+            this.game.ctx.fillText("Power Attack: " + (this.powerWeapon ? this.powerWeapon.name : "[none]"), 10, window.innerHeight - 40);
         }
-        if (this.equippedAnimator.time > 0){
-            this.equippedAnimator.time -= framesElapsed/3;
-            this.game.ctx.globalAlpha = this.equippedAnimator.time + 10/40;
-            this.game.ctx.fillStyle = "gold";
-            this.game.ctx.font = "bold 20px sans-serif";
-            this.game.ctx.textAlign = "center";
-            this.game.ctx.fillText("Equipped " + this.equippedAnimator.name + "!", this.x, -(50 - this.equippedAnimator.time)/50 * window.innerHeight/2 + this.y);
-            this.game.ctx.textAlign = "left";
-            this.game.ctx.glbalAlpha = 1;
-        }*/
+        this.game.ctx.font = "italic 10px monospace";
+        this.game.ctx.fillText("<Space> or click to fire", 10, window.innerHeight - 70);
+        if (this.game.player.powerWeapon){
+            this.game.ctx.fillText("<P> to activate - single use", 10, window.innerHeight - 20);
+        }
         this.risingTextBoinks.forEach((item, i) => {
             item.loop(framesElapsed);
             if (item.TTL <= 0){
@@ -343,13 +355,17 @@ class Player extends PhysicsObject{
                 this.yv = 5;
             }
             this.jumpthroughing = true;
+            this.altFire = true;
+        }
+        else{
+            this.altFire = false;
         }
         if (this.harmImmune >= 0){
             this.harmImmune -= framesElapsed;
         }
         this.monkey -= framesElapsed;
         if (this.game.fallingKills && this.y > this.game.minimumExtent){
-            this.harm(25);
+            this.harm(this.harmFromFalling || 25);
             this.x = this.game.startX;
             this.y = this.game.startY;
         }
@@ -566,6 +582,9 @@ class Game {
         this.keyCount = 0;
         this.die = false;
         this.studioMode = false;
+        this.partying = false;
+        this.partyBursts = [];
+        this.timestop = false;
         this.mousePos = {
             x: 0,
             y: 0,
@@ -588,13 +607,15 @@ class Game {
         this.minimumExtent = -Infinity;
         this.fallingKills = true;
         this.canvas = document.getElementById("game");
+        this.ctx = this.canvas.getContext("2d", {alpha: false});
         var resize = () => {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
+            this.ctx.fillStyle = "white";
+            this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         };
         window.addEventListener("resize", resize);
         resize();
-        this.ctx = this.canvas.getContext("2d");
         this.isShadow = false;
         this.humanReadablePerf = 0;
         this.artOff = {
@@ -670,9 +691,13 @@ class Game {
             this.acidDay = true;
         }
 
-        this.acidDay = true; // Test
-
         this.lastFramesElapsed = 0;
+
+        this.backgroundBubbles = [];
+    }
+
+    drawBackground(){
+
     }
 
     onNextCycle(fun){
@@ -711,8 +736,8 @@ class Game {
     setMousePos(x, y){
         this.mousePos.x = x;
         this.mousePos.y = y;
-        this.viewPos_real.x = (this.mousePos.x - window.innerWidth/2)/4;
-        this.viewPos_real.y = (this.mousePos.y - window.innerHeight/2)/4;
+        this.viewPos_real.x = (this.mousePos.x - window.innerWidth/2)/4 * (this.isMapview ? 4 : 1);
+        this.viewPos_real.y = (this.mousePos.y - window.innerHeight/2)/4 * (this.isMapview ? 4 : 1);
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu", "none"]){
@@ -874,6 +899,72 @@ class Game {
         brick.signText = text;
     }
 
+    partyBurst(x, y, size = 400){
+        if (size < 20){
+            return;
+        }
+        this.partyBursts.push({
+            x: x,
+            y: y,
+            xv: Math.random() * 40 - 20,
+            yv: Math.random() * 40 - 20,
+            TTL: 40,
+            size: size,
+            color: "rgb(" + (200 + Math.random() * 55) + ", " + (55 + Math.random() * 200) + ", " + (Math.random() * 255) + ")"
+        });
+    }
+
+    party(framesElapsed){
+        this.partyBursts.forEach((item, i) => {
+            item.x += item.xv * framesElapsed;
+            item.y += item.yv * framesElapsed;
+            if (item.x > window.innerWidth || item.x < 0){
+                item.xv *= -1;
+                if (item.x > window.innerWidth){
+                    item.x = window.innerWidth;
+                }
+                else{
+                    item.x = 0;
+                }
+            }
+            if (item.y > window.innerHeight || item.y < 0){
+                item.yv *= -1;
+                if (item.y > window.innerHeight){
+                    item.y = window.innerHeight;
+                }
+                else{
+                    this.partyBursts.splice(i, 1);
+                }
+            }
+            item.yv += 0.05;
+            item.TTL -= framesElapsed;
+            if (item.TTL <= 0){
+                this.partyBursts.splice(i, 1);
+                for (var i = 0; i < 4; i ++){
+                    this.partyBurst(item.x, item.y, item.size/2);
+                }
+            }
+            this.ctx.fillStyle = item.color;
+            this.ctx.beginPath();
+            this.ctx.arc(item.x, item.y, item.size/2, 0, Math.PI * 2);
+            this.ctx.closePath();
+            this.ctx.fill();
+        });
+
+        if (Math.random() > 0.9){
+            if (Math.random() > 0.5){
+                this.partyBurst(window.innerWidth, window.innerHeight);
+            }
+            else{
+                this.partyBurst(0, window.innerHeight);
+            }
+        }
+
+        if (this.partyBurst.length > 50){
+            this.partyBurst.length = 50; // Cut off extra ones.
+        }
+    }
+
     loop(framesElapsed){
         this.lastFramesElapsed = framesElapsed;
 
@@ -886,10 +977,16 @@ class Game {
         if (this.isShadow){
             this.ctx.fillStyle = "rgb(100, 100, 100)";
         }
+        else if (BrickDrawer.composite){
+            this.ctx.fillStyle = BrickDrawer.composite;
+        }
         else{
             this.ctx.fillStyle = "white";
         }
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.partying){
+            this.party(framesElapsed);
+        }
         if (this.isMapview){
             this.ctx.scale(0.2, 0.2);
             this.ctx.translate(window.innerWidth * 2, window.innerHeight * 2);
@@ -913,24 +1010,31 @@ class Game {
             }
             else if (this.toggleP){
                 this.toggleP = false;
-                if (!this.studioIsP){
-                    this.studioIsP = true;
+                if (this.studioMode){
+                    if (!this.timestop){
+                        this.timestop = true;
+                        BrickDrawer.applyComposite("#ccc");
+                    }
+                    else{
+                        this.timestop = false;
+                        BrickDrawer.removeComposite();
+                    }
                 }
                 else{
-                    this.studioIsP = false;
+                    this.player.powerAttack();
                 }
             }
-            if (this.studioIsP){ // pause
-                framesElapsed = 0;
-            }
             this.tileset.forEach((item, i) => {
-                item.loop(framesElapsed);
+                item.loop(this.timestop ? 0 : framesElapsed);
             });
+            if (this.player.powerWeapon){
+                this.player.powerWeapon.loop(framesElapsed);
+            }
         }
         BrickDrawer.upPulse(framesElapsed);
         if (this.die){
             this.lossCount ++;
-            if (this.lossCount >= 8){
+            if (this.lossCount >= 5){
                 this.acidDay = true; // Acid mode if you lose a lot
             }
             this.end();
@@ -1029,7 +1133,6 @@ class Game {
             this.studioMode = true;
         }
         this.feChange = 1;
-        console.log(this.randomByFE());
         return 0; // 0 = nothing, 1 = loss, 2 = win.
     }
 
@@ -1080,7 +1183,8 @@ class Game {
             "bullet": [0, []],
             "splenectifyu": [0, []],
             "begone": [0, []],
-            "bouncy": [0, []]
+            "bouncy": [0, []],
+            "screen": [0, []]
         }
         var iter = (item, i) => {
             if (item != object && item.phaser == 0){ // Yes, this plagues me.
@@ -1392,6 +1496,7 @@ class GameManager{
         else{
             this.game.fallingKills = true;
         }
+        this.game.player.harmFromFalling = this.curLevelObj.damageOnFall;
         this.game.player.forceClassicJump = this.curLevelObj.forceClassicJump;
         this.game.player.setDifficulty(this.curLevelObj.difficulty);
         this.game.player.cantCollect = this.curLevelObj.cantCollect;
@@ -1467,7 +1572,9 @@ class GameManager{
                 window.setTimeout(() => {
                     this.youLoseEl.style.display = "none";
                 }, 500);
-                this.game.player.score -= this.game.player.collectedRecently;
+                if (!this.game.player.cantCollect){
+                    this.game.player.score -= this.game.player.collectedRecently;
+                }
             }
             else if (retVal == 2){
                 this.beatLevel();

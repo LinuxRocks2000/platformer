@@ -14,7 +14,7 @@ class PhysicsObject{
         this.frictionChangeY = 1;
         this.gravityChangeY = 1;
         this.isStatic = isStatic;
-        this.collisions = ["solid"]; // Solid is always a collision!
+        this.collisions = ["solid", "screen"]; // Solid is always a collision!
         this.specialCollisions = []; // No default special collisions.
         this.zeroOnHitX = true;
         this.zeroOnHitY = true;
@@ -55,6 +55,12 @@ class PhysicsObject{
     }
 
     loop(framesElapsed){
+        var fric = this.friction;
+        if (this.airFriction){
+            if (!this.touchingBottom){
+                this.friction = this.airFriction;
+            }
+        }
         if (!this.isStatic){
             var doRestrictInt = this.restrictInteger;
             this.restrictInteger = false; // Allow non-int operations
@@ -120,6 +126,7 @@ class PhysicsObject{
             this.restrictInteger = doRestrictInt;
         }
         this.yv += (this.gravity * framesElapsed * this.gravityChangeY);
+        this.friction = fric;
     }
 
     impartForce(xm, ym){

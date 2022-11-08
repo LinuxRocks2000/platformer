@@ -81,6 +81,9 @@ class PhaserEnemy extends Brick{
         this.elasticityX = 1;
         this.elasticityY = 1;
         this.shiftNextCycle = false;
+        this.health = 50;
+        this.maxHealth = 50;
+        this.isDamageable = true;
     }
 
     loop(framesElapsed){
@@ -236,7 +239,7 @@ class BatEnemy extends Brick{
         this.maxHealth = config.health || 30;
         this.isDamageable = true;
         this.swoop = 0;
-        this.sightRange = config.sightRange || 200;
+        this.sightRange = config.sightRange || 800;
     }
 
     onDie(){
@@ -679,8 +682,8 @@ class MaceEnemy extends Brick{
         this.gravity = 0;
         this.dragSpeed = config.dragSpeed || Math.PI / 20000;
         this.explode = false;
-        this.friction = 1;
-        this.frictionY = 1;
+        this.friction = (Math.random() * 0.3 + 0.7);
+        this.frictionY = this.friction;
         this.extent = 0;
         this.doesExtend = config.doesExtend || false; // Yes, I know it will just be undefined, but the explicit smoke-and-mirrors is easier for codeblinds and noops to understand.
         this.idleUntilSwing = false;
@@ -698,8 +701,10 @@ class MaceEnemy extends Brick{
         if (this.owner.dead && !this.explode){
             this.explode = true;
             this.TTL = 50;
+            this.friction = 1;
+            this.frictionY = 1;
         }
-        if (this.owner && !this.isBullet){ // Maces can't function without an owner, fortunately any block can be attached to them.
+        else if (this.owner && !this.isBullet){ // Maces can't function without an owner, fortunately any block can be attached to them.
             var distToPlayer = this.defaultExtent;
             if (!this.idleUntilSwing || this.swingPos < this.swingTill){
                 if (this.doesExtend && this.owner.canSeePlayer(false, 500)){
@@ -709,15 +714,15 @@ class MaceEnemy extends Brick{
                 }
             }
             if (this.extent < distToPlayer){
-              this.extent += 8 * framesElapsed;
+              this.extent += 2 * framesElapsed;
             }
             else{
-              this.extent -= 8 * framesElapsed;
+              this.extent -= 2 * framesElapsed;
             }
             var swingX = this.owner.x + this.owner.width/2 + Math.cos(this.swingPos) * this.extent;
             var swingY = this.owner.y + this.owner.height/2 + Math.sin(this.swingPos) * this.extent;
-            this.x += (swingX - this.x) / 12;
-            this.y += (swingY - this.y) / 12;
+            this.xv += (swingX - this.x) / 12;
+            this.yv += (swingY - this.y) / 12;
             if (!this.explode){
                 this.game.ctx.strokeStyle = "black";
                 this.game.ctx.lineWidth = 1;
@@ -796,6 +801,10 @@ class BruiserEnemy extends Brick{
         this.isDamageable = true;
         this.doDropHeal = config.dropHealth;
         this.TTL = Infinity;
+    }
+
+    onWatcherRegen(){
+        this.game.attachMaces(this, 6);
     }
 
     onDie(){
@@ -936,7 +945,12 @@ class TankEnemy extends NormalEnemy{
         this.volley = 0;
         this.volleyPhase = 0;
         this.collisions.push("tar");
-        this.shootBombs = config.bomberTank || false;
+        if (config.bomberTank){
+            this.shootBombs = true;
+        }
+        else{
+            this.shootBombs = false;
+        }
         this.immuneToBombs = true;
     }
 
@@ -1025,7 +1039,7 @@ class TankEnemy extends NormalEnemy{
         var thingX = Math.cos(this.turretAngle + randAngle);
         var thingY = Math.sin(this.turretAngle + randAngle);
         var speed = (this.shootBombs ? 40 : 20);
-        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava", "bullet", (this.shootBombs ? BulletEnemy : ExplodingBullet), {xv: thingX * speed, yv: thingY * speed, danger: 20});
+        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava", "bullet", (this.shootBombs ? ExplodingBullet : BulletEnemy), {xv: thingX * speed, yv: thingY * speed, danger: 20});
     }
 }
 
@@ -1039,6 +1053,7 @@ class ThwompTrapEnemy extends Brick{
         this.collisions.push("glass");
         this.stayUntil = 0;
         this.tolerance = config.tolerance || 150;
+        this.immuneToBombs = true;
     }
 
     loop(framesElapsed){
@@ -1086,6 +1101,13 @@ class WeirdBoogerEnemy extends Brick{
         this.specialCollisions.push("enemy");
         this.friction = 1;
         this.spawnPoint = [x, y];
+        this.health = 30;
+        this.maxHealth = 30;
+        this.isDamageable = true;
+    }
+
+    onDie(){
+        this.game.player.collect(20);
     }
 
     specialCollision(type){
@@ -1318,15 +1340,31 @@ class AngleBomberEnemy extends Brick{
         this.changeAnglePhase = 0;
         this.isStatic = true;
         this.reversed = config.reversed;
+        this.step = config.angleStep || 20;
+        this.changeAngleDelay = config.changeAngleDelay || 60;
+        this.bombTime = config.bombTime || 200;
+        this.bombSpeed = config.bombSpeed || 15;
+        this.isChainReaction = config.isChainReaction;
+        if (this.isChainReaction == undefined){
+            this.isChainReaction = true;
+        }
+        this.active = !config.waitTillPlayer;
+        this.sightRange = 1000;
     }
 
     loop(framesElapsed){
         super.loop(framesElapsed);
+        if (!this.active){
+            if (this.canSeePlayer()){
+                this.active = true;
+            }
+            return;
+        }
         this.changeAnglePhase += framesElapsed;
-        if (this.changeAnglePhase > 60){
+        if (this.changeAnglePhase > this.changeAngleDelay){
             this.changeAnglePhase = 0;
             this.gunAngles.forEach((item, i) => {
-                this.gunAngles[i] = findCoterminalDegrees(item + 20);
+                this.gunAngles[i] = findCoterminalDegrees(item + this.step);
                 if (this.gunIsActive(this.gunAngles[i])){
                     this.shoot(this.gunAngles[i]);
                 }
@@ -1337,13 +1375,16 @@ class AngleBomberEnemy extends Brick{
     shoot(angle){
         var xv = Math.cos(toRadians(angle));
         var yv = Math.sin(toRadians(angle));
-        var bomb = game._create(this.x + xv * this.width, this.y + yv * this.height, 20, 20, "tar", "none", Bomb, {nitroglycerin: true, TTL: 200});
+        var bomb = game._create(this.x + this.width/4 + xv * this.width, this.y + this.height/4 + yv * this.height, 20, 20, "tar", "none", Bomb, {nitroglycerin: true, TTL: this.bombTime});
+        if (!this.isChainReaction){
+            bomb.chainReactionExplosion = () => {};
+        }
         bomb.specialCollisions = ["player"];
         bomb.gravity = 0;
         bomb.elasticityX = 1;
         bomb.elasticityY = 1;
-        bomb.xv = xv * 15;
-        bomb.yv = yv * 15;
+        bomb.xv = xv * this.bombSpeed;
+        bomb.yv = yv * this.bombSpeed;
         bomb.friction = 1;
         bomb.explodeRadius = 200;
         bomb.explodeDamage = 10;

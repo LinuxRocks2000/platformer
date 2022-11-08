@@ -112,7 +112,10 @@ class DoWhateverWhenPlayerIsNear extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
         this.callback = config.callback;
-        this.isStatic = true;
+        this.isStatic = false;
+        if (config.sightRange != undefined){
+            this.sightRange = config.sightRange;
+        }
     }
 
     loop(framesElapsed){
@@ -153,8 +156,8 @@ class Explosion extends Brick{
                 var centerDistY = item.y + item.height/2 - (this.y + this.height/2);
                 var totalDist = Math.sqrt(centerDistX * centerDistX + centerDistY * centerDistY);
                 if (totalDist < this.width * 1.5){
-                    item.xv += this.knockbackModifier * centerDistX/totalDist * this.explodeDamage/10;
-                    item.yv += this.knockbackModifier * centerDistY/totalDist * this.explodeDamage/10;
+                    item.xv += this.knockbackModifier * centerDistX/totalDist * this.explodeDamage/10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
+                    item.yv += this.knockbackModifier * centerDistY/totalDist * this.explodeDamage/10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
                 }
             }
         };
@@ -190,8 +193,8 @@ class Bomb extends Brick{
         this.explodeRadius = config.explodeRadius || 200;
         this.isProximity = config.proximity;
         this.explodeOnCollision = config.nitroglycerin;
-        this.collisions.push("enemy");
         this.collisions.push("jumpthrough");
+        this.collisions.splice(this.collisions.indexOf("screen"), 1);
         this.specialCollisions = this.collisions;
         this.allowChainReaction = config.chainReaction || true;
         this.armTimeout = 0;
@@ -203,6 +206,9 @@ class Bomb extends Brick{
     }
 
     specialCollision(type, items){
+        if (this.armTimeout >= 0){
+            return;
+        }
         if (this.explodeOnCollision && this.explode == 0){
             this.blowUp();
         }
@@ -269,13 +275,14 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         this.TTL -= framesElapsed;
         if (this.TTL < 0 && wasActive){
             for (var x = 0; x < this.eject; x ++){
-                var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "tar", "solid", Bomb, {arm: 20, TTL: 20});
-                bomb.x += Math.random() * 20 - 10;
-                bomb.y += Math.random() * 20 - 10;
-                bomb.explodeDamage = 5;
-                bomb.explodeRadius = 50;
+                var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "tar", "solid", Bomb, {arm: 20, TTL: 60, nitroglycerine: true});
+                bomb.x += Math.random() * 50 - 25;
+                bomb.y += Math.random() * 50 - 25;
+                bomb.explodeDamage = 20;
+                bomb.explodeRadius = 200;
                 bomb.friction = 0.99;
                 bomb.gravity = 0.1;
+                bomb.explosionSensitivityModifier = 5;
             }
             this.explode();
         }
@@ -365,9 +372,7 @@ class Rocket extends Brick{
     }
 
     specialCollision(type){
-        if (type == "player"){
-            //this.game.player.yv = this.yv - 1;
-        }
+
     }
 
     loop(framesElapsed){
@@ -465,5 +470,82 @@ class Rocket extends Brick{
 
     hitTop(){
         this.explode();
+    }
+}
+
+
+class WeaponField extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.gravity = 0;
+        this.collisions = [];
+        this.specialCollisions = ["player"];
+        this.isStatic = false;
+        this.weapon = config.weapon || PrettyAverageSword;
+        this.hasBequeathed = false;
+        if (config.retrieve == undefined){
+            this.doRetrieve = true;
+        }
+        else{
+            this.doRetrieve = config.retrieve;
+        }
+        this.immuneToBombs = true;
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            if (this.game.player.weapon != this.weapon && !this.hasBequeathed){
+                this.game.player.giveWeapon(this.weapon);
+                this.hasBequeathed = true;
+            }
+        }
+    }
+
+    noSpecial(type){
+        if (type == "player"){
+            if (this.game.player.weapon == this.weapon && this.hasBequeathed && this.doRetrieve){
+                this.game.player.clearWeapon();
+                this.hasBequeathed = false;
+            }
+            if (!this.doRetrieve){
+                this.hasBequeathed = false;
+            }
+        }
+    }
+}
+
+
+class RegenWatcher extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.gravity = 0;
+        this.collisions = [];
+        this.specialCollisions = ["player"];
+        this.isStatic = false;
+        this.watching = [];
+        this.immuneToBombs = true;
+    }
+
+    watch(brick){
+        this.watching.push({
+            b: brick,
+            copy: {
+                ...brick
+            }
+        });
+    }
+
+    noSpecial(type){
+        if (type == "player"){
+            this.watching.forEach((item, i) => {
+                if (item.b.dead){
+                    Object.assign(item.b, item.copy);
+                    this.game.tileset.push(item.b);
+                    if (item.b.onWatcherRegen){
+                        item.b.onWatcherRegen();
+                    }
+                }
+            });
+        }
     }
 }

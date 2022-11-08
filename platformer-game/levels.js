@@ -2,7 +2,7 @@
 This is the levels file. You can add levels this way, just follow the patterns.
 
 
-Fun note: The Void Lands are phase -1. You can access them by appending #voidlands to the current URL and loading that page. If you set phases to -1, the level will be pushed into the Void Lands.
+Fun note: The Void Lands are phase -1. You can access them by appending #voidlands=true; to the current URL and loading that page. If you set phases to -1, the level will be pushed into the Void Lands.
 Most of the void-lands levels don't allow you to progress because they're in development or used for testing.
 They're a fun part of the game but serve no other purpose.
 
@@ -11,7 +11,7 @@ Useful note: Phases are 0-indexed, so 0 is phase 1, 1 is phase 2, etc. If it see
 */
 let levels = [ // If it's const, I can't dynamically add levels in Worker Levels.
     {
-        name: "Training",
+        name: "Training part 1: Platformer basics",
         skippable: true,
         cantCollect: true,
         difficulty: 0.1,
@@ -149,6 +149,181 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
         }
     },
+/*    {
+        name: "Training part 2: Weapons and Advanced Enemies",
+        skippable: true,
+        cantCollect: true,
+        difficulty: 1,
+        phase: -1, // VOID for now
+        damageOnFall: 75,
+        cap: [],
+        oncreate(game){
+            game.startX = 5000;
+            game.startY = 3300;
+            game.player.assignPowerWeapon(TimePausePower);
+            for (var x = 0; x < 10; x ++){
+                for (var y = 0; y < 10; y ++){
+                    if (y > Math.abs(x - 5) && y < 10 - Math.abs(x - 5)){
+                        if ((x + y) % 2 == 0){
+                            game.create(x * 19, y * 8, 15, 1);
+                            game.create(x * 19 - 3, y * 8 + 4, 1, 1);
+                            game.create(x * 19 + 17, y * 8 + 4, 1, 1);
+                            if (Math.random() > 0.8){
+                                game.create(x * 19 - 3, y * 8 + 3, 1, 1, "coin", "fiftycoin");
+                            }
+                            else{
+                                game.create(x * 19 - 3, y * 8 + 3, 1, 1, "coin", "tencoin");
+                            }
+                            if (Math.random() > 0.5){
+                                if (Math.random() > 0.8){
+                                    game.create(x * 19 + 17, y * 8 + 3, 1, 1, "coin", "fiftycoin");
+                                }
+                                else{
+                                    game.create(x * 19 + 17, y * 8 + 3, 1, 1, "coin", "tencoin");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            game.sign(102, 71, "Mouse Over Me", "Welcome to the second training level of Platformer 2! This is a simple introduction to weapons and some advanced enemies. On the platforms below, you are given weapons. Space or click will fire any of them, but some require coins - there are plenty of those on this level. The end is at the top. Good luck!<br><br><small>I've significantly reduced the difficulty, so most enemies can be killed with one shot. Remember that it will be much harder in regular gameplay!</small>");
+
+            game.create(88, 80, 9, 1, "glass", "solid");
+            game.create(89, 79, 1, 1, "acid", "none", WeaponField, {weapon: PrettyAverageSword, retrieve: false});
+            game.create(95, 79, 1, 1, "acid", "none", WeaponField, {weapon: BasicGun, retrieve: false});
+            game.create(108, 80, 9, 1, "glass", "solid");
+            game.create(109, 79, 1, 1, "acid", "none", WeaponField, {weapon: Hypersling, retrieve: false});
+            game.create(115, 79, 1, 1, "acid", "none", WeaponField, {weapon: Grenades, retrieve: false});
+
+            game.create(76, 63, 1, 1, "glass", "field");
+            game.create(90, 63, 1, 1, "glass", "field");
+            game.create(76, 48, 15, 15, "none", "none", RegenWatcher).watch(game.create(78, 63, 1, 1, "lava", "enemy", NormalEnemy));
+            game.sign(90, 62, "", "Normal Enemy. You'll notice you can't hit it with some weapons! You should always be aware of what weapons can harm what enemies.");
+
+            game.create(57, 41, 1, 15, "glass", "field");
+            game.create(71, 41, 1, 15, "glass", "field");
+            game.create(63, 40, 1, 2);
+            game.create(65, 40, 1, 2);
+            game.create(57, 41, 15, 15, "none", "none", RegenWatcher).watch(game.create(64, 41, 1, 1, "bullet", "enemy", BatEnemy));
+            game.sign(70, 55, "", "When you walk over the length of the building, a bat will drop. Bats are the simplest flying enemies, although they can be quite difficult to hit - remember that if it swoops up, you absolutely <i>must</i> keep moving.<br><br><br>Most bats drop green blocks. These are health powerups - walk through them to restore yourself after getting hit.");
+
+            game.create(39, 46, 1, 3);
+            game.create(39, 46, 2, 1);
+            game.create(38, 33, 15, 15, "none", "none", RegenWatcher).watch(game.create(40, 47, 1, 1, "tank", "enemy", TankEnemy));
+            game.create(51, 46, 1, 3);
+            game.create(50, 46, 2, 1);
+
+            game.create(20, 30, 1, 10, "glass", "field");
+            game.create(32, 30, 1, 10, "glass", "field");
+            game.create(18, 29, 17, 1, "glass", "field");
+            // These guys are bad enough without the dojo mode RegenWatcher.
+            game.create(23, 35, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
+            game.create(25, 35, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
+            game.create(27, 35, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
+            game.create(29, 35, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
+
+            game.create(178, 39, 1, 1, "acid", "none", WeaponField, {weapon: MachineGun, retrieve: false});
+
+            game.create(158, 47, 1, 1, "glass", "field");
+            game.create(152, 33, 15, 15, "none", "none", RegenWatcher).watch(game.create(159, 47, 1, 1, "seabrick", "enemy", DoWhateverWhenPlayerIsNear, {callback: () => {
+                game.create(157, 40, 1, 1, "jumpthrough", "enemy", PhaserEnemy);
+            }, sightRange: 400}));
+
+            game.create(135, 21, 11, 3, "water", "water");
+            game.create(134, 21, 1, 3, "seabrick", "solid");
+            game.create(146, 21, 1, 3, "seabrick", "solid");
+            game.create(133, 12, 15, 12, "none", "none", RegenWatcher).watch(game.create(141, 22, 1, 1, "fish", "enemy", FishEnemy));
+            game.create(134, 12, 1, 9, "glass", "field");
+            game.create(146, 12, 1, 9, "glass", "field");
+            game.create(132, 11, 17, 1, "glass", "field");
+
+            game.create(133, 39, 1, 1, "glass", "field");
+            game.create(133, 24, 15, 15, "none", "none", RegenWatcher).watch(game.create(135, 39, 1, 1, "lava", "enemy", BruiserEnemy));
+            game.create(147, 39, 1, 1, "glass", "field");
+
+            game.create(152, 18, 2, 2, "glass", "field");
+            game.create(165, 18, 2, 2, "glass", "field");
+            game.create(152, 31, 2, 2, "glass", "field");
+            game.create(165, 31, 2, 2, "glass", "field");
+
+            game.create(152, 19, 1, 13, "glass", "field");
+            game.create(152, 18, 15, 1, "glass", "field");
+            game.create(166, 19, 1, 13, "glass", "field");
+            game.create(159, 25, 1, 1, "none", "none", AngleBomberEnemy, {startAngle: 0, endAngle: 360, angleStep: 30, changeAngleDelay: 40, bombTime: 500, bombSpeed: 10, waitTillPlayer: true});
+
+            game.create(97, 40, 1, 1, "bouncy", "bouncy");
+            game.create(102, 40, 1, 1, "bouncy", "bouncy");
+            game.create(107, 40, 1, 1, "bouncy", "bouncy");
+            game.create(98, 32, 1, 8, "screen", "screen");
+            game.create(106, 32, 1, 8, "screen", "screen");
+            this.cap = [];
+            this.cap.push(game.create(99, 29, 7, 1));
+            this.cap.push(game.create(97, 30, 3, 1));
+            this.cap.push(game.create(105, 30, 3, 1));
+            this.cap.forEach((item, i) => {
+                item.restrictInteger = true;
+            });
+
+            // 95, 56
+            game.create(102, 55, 1, 1, "mine", "enemy", ProximityMineEnemy).sightRange = 100;
+            var w = game.create(102, 41, 1, 14, "glass", "solid", BreakableBrick);
+            for (var i = 1; i < 7; i ++){
+                game.create(102 + (i % 2 ? 0.5 : 0), 41 + i * 2, 0.5, 0.5, "tar", "none", ChainBomb).isStatic = true;;
+            }
+            var b = game.create(102, 41, 1, 1, "tar", "none", ChainBomb);
+            b.eject = 400;
+            b.isStatic = true;
+
+            // 114, 48
+            game.create(114, 33, 15, 3);
+            for (var i = 0; i < 4; i ++){
+                game.create(115 + i * 4, 36, 2, 2);
+                if (i < 3){
+                    game.create(117 + i * 4, 36, 2, 2, "lava", "splenectifyu", ThwompTrapEnemy);
+                }
+            }
+
+            // 133, 56
+            game.attachMaces(game.create(140, 55, 1, 1, "normal", "enemy", BreakableBrick), 12, {doesExtend: true});
+
+            game.create(102, 7, 1, 1, "end", "end");
+        },
+        onloop(game, framesElapsed){
+            if (!this.closeGarbage){
+                if (game.player.y < this.cap[0].y + this.cap[0].height + game.blockHeight * 2 && game.player.x + game.player.width > this.cap[1].x && game.player.x < this.cap[2].x + this.cap[2].width){
+                    this.openGarbage = true;
+                }
+            }
+            if (this.closeGarbage && this.cap[0].y <= 30 * game.blockHeight){
+                this.cap.forEach((item, i) => {
+                    item.y += 5;
+                });
+            }
+            else{
+                this.closeGarbage = false;
+            }
+            if (this.openGarbage){
+                if (this.cap[0].y >= 26 * game.blockHeight){
+                    this.cap.forEach((item, i) => {
+                        item.y -= 1;
+                    });
+                }
+                else{
+                    this.openGarbage = false;
+                    this.garbageTick = 50;
+                }
+            }
+            if (this.garbageTick >= 0){
+                this.garbageTick -= framesElapsed;
+                if (this.garbageTick <= 0){
+                    this.closeGarbage = true;
+                }
+            }
+        },
+        ondestroy(game){
+
+        }
+    },*/
     {
         name: "Scaffolding",
         skippable: false,

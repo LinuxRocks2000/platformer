@@ -7,15 +7,34 @@ class PlayerFriendlyBullet extends Brick{
         this.friction = 1;
         this.frictionY = 1;
         this.specialCollisions.push("enemy");
+        this.specialCollisions.push("solid"); // Breakable Bricks
         this.specialCollisions.push("bullet");
+        this.specialCollisions.push("none");
+        this.collisions.splice(this.collisions.indexOf("screen"), 1);
         this.TTL = config.TTL || 50;
+        this.damageAmount = config.damage || 15;
+    }
+
+    hit(item){
+        if (item.phaser == 0){
+            item.damage(this.damageAmount);
+            item.xv += this.xv/2;
+            item.yv += this.yv/2;
+            this.game.deleteBrick(this);
+        }
     }
 
     specialCollision(type, items){
         if (type == "enemy" || type == "bullet"){
             items.forEach((item, i) => {
-                item.damage(15);
-                this.game.deleteBrick(this);
+                this.hit(item);
+            });
+        }
+        if (type == "none"){
+            items.forEach((item, i) => {
+                if (item.constructor.name == "Bomb"){
+                    this.hit(item);
+                }
             });
         }
     }
@@ -56,6 +75,71 @@ class PrettyAverageSwordBrick extends Brick{
         items.forEach((item, i) => {
             item.damage(5);
         });
+    }
+}
+
+
+class HyperslingBrick extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.duration = 0;
+        this.gravity = 0.1;
+        this.friction = 0.96;
+        this.frictionY = this.friction;
+        this.collisions = [];
+        this.specialCollisions.push("enemy");
+        this.specialCollisions.push("bullet");
+        this.transparents.push("enemy");
+        this.transparents.push("bullet");
+        this.transparents.push("screen");
+        this.sightRange = Infinity;
+    }
+
+    loop(framesElapsed){
+        if (!this.canSeePlayer()){
+            this.game.ctx.globalAlpha = 0.3;
+        }
+        super.loop(framesElapsed);
+        this.game.ctx.globalAlpha = 1;
+        var reqX = this.game.player.x;
+        var reqY = this.game.player.y;
+        if (this.duration > 0){
+            this.duration -= framesElapsed/3;
+            reqX = this.game.mousePos.gameX;
+            reqY = this.game.mousePos.gameY;
+            this.game.ctx.strokeStyle = "black";
+            this.game.ctx.beginPath();
+            this.game.ctx.moveTo(this.game.mousePos.x, this.game.mousePos.y);
+            this.game.ctx.lineTo(this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
+            this.game.ctx.stroke();
+        }
+        this.yv += framesElapsed * (reqY - this.y)/60;
+        this.xv += framesElapsed * (reqX - this.x)/60;
+    }
+
+    deploy(){
+        if (this.duration <= 0){
+            if (this.game.player.score >= 2){
+                this.game.player.collect(-2);
+                this.duration = 70;
+            }
+            else{
+                this.game.jitter(40);
+            }
+        }
+    }
+
+    specialCollision(type, items){
+        if (this.canSeePlayer()){
+            items.forEach((item, i) => {
+                item.damage(5);
+                item.frictionChangeX *= 0.3;
+                item.frictionChangeY *= 0.3;
+            });
+            this.frictionChangeX = 0.3;
+            this.frictionChangeY = 0.3;
+        }
     }
 }
 
@@ -168,70 +252,6 @@ var BasicGun = {
 }
 
 
-class HyperslingBrick extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
-        super(game, x, y, width, height, style, type);
-        this.isStatic = false;
-        this.duration = 0;
-        this.gravity = 0;
-        this.friction = 0.9;
-        this.frictionY = 0.9;
-        this.collisions = [];
-        this.specialCollisions.push("enemy");
-        this.specialCollisions.push("bullet");
-        this.transparents.push("enemy");
-        this.transparents.push("bullet");
-        this.sightRange = Infinity;
-    }
-
-    loop(framesElapsed){
-        if (!this.canSeePlayer()){
-            this.game.ctx.globalAlpha = 0.3;
-        }
-        super.loop(framesElapsed);
-        this.game.ctx.globalAlpha = 1;
-        var reqX = this.game.player.x;
-        var reqY = this.game.player.y;
-        if (this.duration > 0){
-            this.duration -= framesElapsed/3;
-            reqX = this.game.mousePos.gameX;
-            reqY = this.game.mousePos.gameY;
-            this.game.ctx.strokeStyle = "black";
-            this.game.ctx.beginPath();
-            this.game.ctx.moveTo(this.game.mousePos.x, this.game.mousePos.y);
-            this.game.ctx.lineTo(this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
-            this.game.ctx.stroke();
-        }
-        this.yv += framesElapsed * (reqY - this.y)/50;
-        this.xv += framesElapsed * (reqX - this.x)/50;
-    }
-
-    deploy(){
-        if (this.duration <= 0){
-            if (this.game.player.score >= 2){
-                this.game.player.collect(-2);
-                this.duration = 70;
-            }
-            else{
-                this.game.jitter(40);
-            }
-        }
-    }
-
-    specialCollision(type, items){
-        if (this.canSeePlayer()){
-            items.forEach((item, i) => {
-                item.damage(5);
-                item.frictionChangeX *= 0.3;
-                item.frictionChangeY *= 0.3;
-            });
-            this.frictionChangeX = 0.3;
-            this.frictionChangeY = 0.3;
-        }
-    }
-}
-
-
 var Hypersling = {
     name: "Super Sling",
     init(player){
@@ -248,6 +268,7 @@ var Hypersling = {
         this.brick.game.deleteBrick(this.brick);
     }
 }
+
 
 var Bombs = {
     name: "Bombs",
@@ -276,6 +297,7 @@ var Bombs = {
     }
 };
 
+
 var NuclearBombs = {
     name: "Nukes",
     timeout: 0,
@@ -303,6 +325,7 @@ var NuclearBombs = {
     }
 }
 
+
 var ProximityBombs = {
     name: "Proximity Mines",
     timeout: 0,
@@ -329,6 +352,62 @@ var ProximityBombs = {
     }
 };
 
+
+var Grenades = {
+    name: "Grenades",
+    timeout: 0,
+    init(player){
+        this.game = player.game;
+    },
+    trigger(){
+        if (this.timeout <= 0){
+            if (this.game.player.score < 10){
+                this.game.jitter(30);
+                return;
+            }
+            var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 5, this.game.player.y + this.game.player.height/2 - 5, 20, 20, "tar", "none", Bomb, {TTL: 200});
+            bomb.explodeRadius = 100;
+            this.timeout = 35;
+            bomb.gravity = 0.5;
+            bomb.friction = 0.9;
+            bomb.airFriction = 1;
+            var xDist = this.game.mousePos.gameX - bomb.x;
+            var yDist = this.game.mousePos.gameY - bomb.y;
+            var totalDist = Math.sqrt(xDist * xDist + yDist * yDist);
+            bomb.xv = xDist/totalDist * (this.game.player.altFire ? 30 : 20);
+            bomb.yv = yDist/totalDist * (this.game.player.altFire ? 30 : 20);
+            this.game.player.collect(-10);
+        }
+    },
+    loop(framesElapsed){
+        this.distX = this.game.player.x + this.game.player.width/2 - this.game.mousePos.gameX;
+        this.distY = this.game.player.y + this.game.player.height/2 - this.game.mousePos.gameY;
+        this.hypotenuse = Math.sqrt(this.distY * this.distY + this.distX * this.distX);
+        this.timeout -= framesElapsed;
+        ctx = this.game.ctx;
+        ctx.save();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 2;
+        ctx.translate(this.game.player.x + this.game.player.game.artOff.x + this.game.player.width/2, this.game.player.y + this.game.player.game.artOff.y + this.game.player.height/2);
+        ctx.rotate((Math.acos(this.distY/this.hypotenuse) - Math.PI/2 + (this.distX > 0 ? Math.PI : 0)) * (this.distX > 0 ? -1 : 1));
+        ctx.beginPath();
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(0, 5);
+        ctx.lineTo(26, 2);
+        ctx.lineTo(26, -2);
+        ctx.lineTo(0, -5);
+        ctx.lineTo(-5, 0);
+        ctx.stroke();
+        ctx.fillStyle = "purple";
+        ctx.fill();
+        ctx.restore();
+    },
+    destroy(){
+
+    }
+}
+
+
 var RPGs = {
     name: "Rocket-Propelled Grenades",
     timeout: 0,
@@ -336,14 +415,14 @@ var RPGs = {
         this.game = player.game;
     },
     trigger(){
-        if (this.game.player.score < 10){
-            this.game.jitter(30);
-            return;
-        }
         if (this.timeout <= 0){
+            if (this.game.player.score < 10){
+                this.game.jitter(30);
+                return;
+            }
             var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 5, this.game.player.y + this.game.player.height/2 - 5, 10, 10, "tar", "none", Bomb, {TTL: 100, nitroglycerin: true});
             bomb.explodeRadius = 100;
-            this.timeout = 25;
+            this.timeout = 35;
             bomb.gravity = 0.1;
             bomb.friction = 1;
             var xDist = this.game.mousePos.gameX - bomb.x;
@@ -366,15 +445,121 @@ var RPGs = {
         ctx.translate(this.game.player.x + this.game.player.game.artOff.x + this.game.player.width/2, this.game.player.y + this.game.player.game.artOff.y + this.game.player.height/2);
         ctx.rotate((Math.acos(this.distY/this.hypotenuse) - Math.PI/2 + (this.distX > 0 ? Math.PI : 0)) * (this.distX > 0 ? -1 : 1));
         ctx.beginPath();
-        ctx.arc(0, 0, 10, Math.PI * 0.2, Math.PI * 1.8);
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(0, 5);
         ctx.lineTo(26, 0);
-        ctx.lineTo(10, 5);
+        ctx.lineTo(0, -5);
+        ctx.lineTo(0, 0);
         ctx.stroke();
-        ctx.fillStyle = "red";
+        ctx.fillStyle = "purple";
         ctx.fill();
         ctx.restore();
     },
     destroy(){
 
     }
-}
+};
+
+
+var MachineGun = {
+    name: "Machine Gun",
+    timeout: 0,
+    draintime: 0,
+    init(player){
+        this.game = player.game;
+    },
+    trigger(){
+        if (this.timeout >= 0){
+            this.game.jitter(2);
+            return;
+        }
+        if (this.game.player.score < 2){
+            this.game.jitter(15);
+            return;
+        }
+        /*if (this.draintime >= 15){
+            this.draintime = 0;
+            this.game.player.collect(-10);
+        }*/
+        this.game.player.collect(-2);
+        this.timeout = 3;
+        this.shoot();
+    },
+    loop(framesElapsed){
+        this.distX = this.game.player.x + this.game.player.width/2 - this.game.mousePos.gameX;
+        this.distY = this.game.player.y + this.game.player.height/2 - this.game.mousePos.gameY;
+        if (this.timeout > 0){
+            this.distX += Math.random() * 200 - 100;
+            this.distY += Math.random() * 200 - 100;
+        }
+        this.hypotenuse = Math.sqrt(this.distY * this.distY + this.distX * this.distX);
+        this.timeout -= framesElapsed;
+        this.draintime += framesElapsed;
+        ctx = this.game.ctx;
+        ctx.save();
+        ctx.strokeStyle = "blue";
+        ctx.lineWidth = 5;
+        ctx.translate(this.game.player.x + this.game.player.game.artOff.x + this.game.player.width/2, this.game.player.y + this.game.player.game.artOff.y + this.game.player.height/2);
+        ctx.rotate((Math.acos(this.distY/this.hypotenuse) - Math.PI/2 + (this.distX > 0 ? Math.PI : 0)) * (this.distX > 0 ? -1 : 1));
+        ctx.beginPath();
+        ctx.moveTo(-5, 0);
+        ctx.lineTo(0, 5);
+        ctx.lineTo(26, 2);
+        ctx.lineTo(26, -2);
+        ctx.lineTo(0, -5);
+        ctx.lineTo(-5, 0);
+        ctx.stroke();
+        ctx.restore();
+    },
+    destroy(){
+
+    },
+    shoot(){
+        var xm = this.distX/this.hypotenuse * -1;
+        var ym = this.distY/this.hypotenuse * -1;
+        this.game._create(this.game.player.x + this.game.player.width/2 - 5, this.game.player.y + this.game.player.height/2 - 5, 6, 6, "ourbullet", "none", PlayerFriendlyBullet, {xv: xm * 20, yv: ym * 20, damage: 10});
+    }
+};
+
+
+var TimePausePower = {
+    name: "Time Field",
+    timeout: 50,
+    active: false,
+    init(player){
+        this.player = player;
+    },
+    trigger(){
+        if (this.active){
+            this.active = false;
+            BrickDrawer.removeComposite();
+            this.player.game.timestop = false;
+            return;
+        }
+        this.active = true;
+        BrickDrawer.applyComposite("#ccc");
+        this.player.game.timestop = true;
+    },
+    loop(framesElapsed){
+        if (!this.active){
+            return;
+        }
+        this.timeout -= framesElapsed / 10;
+        var ctx = this.player.game.ctx;
+        ctx.fillStyle = "grey";
+        ctx.fillRect(window.innerWidth - 100, 0, this.timeout * 2, 10);
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(window.innerWidth - 100, 0, 100, 10);
+        if (this.timeout < 0){
+            this.player.clearPowerWeapon();
+            this.player.game.timestop = false;
+            BrickDrawer.removeComposite();
+            this.active = false;
+            this.timeout = 50;
+        }
+    },
+    destroy(){
+
+    }
+};

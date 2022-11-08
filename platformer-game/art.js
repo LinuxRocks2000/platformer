@@ -69,10 +69,42 @@ const BrickDrawer = {
     percentPulse: 0,
     renderCount: 0,
     colorPulse: 0,
+    preRenders: {},
     drawBrick(ctx, x, y, width, height, style, type, game){
+        ctx.lineWidth = 0;
+        this.renderCount ++;
+        if (style == "none"){
+            return;
+        }
+        if (x + width < 0 || x > window.innerWidth || y + height < 0 || y > window.innerHeight){
+            return;
+        }
         if (style == "normal"){
             if (game.acidDay){
                 style = "acid";
+            }
+        }
+        var prerender = "";
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000){ // Anything that changes a lot or has animations.
+            prerender = width + "x" + height + style + " " + type;
+            if (this.preRenders[prerender]){
+                ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
+                return;
+            }
+            else{
+                var canvas = document.createElement("canvas");
+                document.body.appendChild(canvas);
+                canvas.style.display = "none";
+                canvas.width = width; // Leave some space for stroke.
+                canvas.height = height;
+                vctx = canvas.getContext("2d");
+                vctx.makeRoundRect = ctx.makeRoundRect;
+                ctx = vctx;
+                this.preRenders[prerender] = {
+                    canvas: canvas
+                };
+                x = 0; // Don't want to draw off the prerender canvas, that'd be dum
+                y = 0;
             }
         }
         ctx.fillStyle = "transparent"; // Default
@@ -242,9 +274,9 @@ const BrickDrawer = {
                     var bump = 10 - this.percentPulse/10;
                     ctx.beginPath();
                     for (var i = 0; i < 3 + (bump < 5 ? 1 : 0); i ++){
-                        ctx.moveTo(x + width/2 - 10, y + 5 + bump + 10 * i);
+                        ctx.moveTo(x + width * 2/10, y + 5 + bump + 10 * i);
                         ctx.lineTo(x + width/2, y + bump + 10 * i);
-                        ctx.lineTo(x + width/2 + 10, y + 5 + bump + 10 * i);
+                        ctx.lineTo(x + width * 8/10, y + 5 + bump + 10 * i);
                     }
                     ctx.stroke();
                 }
@@ -267,14 +299,53 @@ const BrickDrawer = {
                 ctx.fillStyle = "rgb(" + r + ", " + g + ", " + b + ")";
                 isRect = true;
                 break;
+            case "screen":
+                var spacing = 20;
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "black";
+                ctx.beginPath();
+                var square = Math.max(width, height);
+                for (var i = 0; i < (square * 2)/spacing; i ++){
+                    ctx.moveTo(0, i * spacing);
+                    ctx.lineTo(i * spacing, 0);
+                }
+                for (var i = 0; i < (square * 2)/spacing; i ++){
+                    ctx.moveTo(0, square - i * spacing);
+                    ctx.lineTo(i * spacing, square);
+                }
+                ctx.stroke();
+                ctx.closePath();
+                break;
         }
-        ctx.save();
+        x = Math.floor(x);
+        y = Math.floor(y);
+        width = Math.floor(width);
+        height = Math.floor(height);
         if (isTransparent){
             ctx.globalAlpha = 0.5;
         }
         if (type == "enemy"){
             ctx.strokeStyle = "orange";
             ctx.lineWidth = 2;
+        }
+        if (type == "enemy" || isStroke){
+            if (this.preRenders[prerender]){
+                if (this.preRenders[prerender].stroke == undefined){
+                    var color = ctx.fillStyle;
+                    var stroke = ctx.strokeStyle;
+                    var lineWidth = ctx.lineWidth;
+
+                    this.preRenders[prerender].canvas.width += lineWidth;
+                    this.preRenders[prerender].canvas.height += lineWidth;
+
+                    ctx.fillStyle = color;
+                    ctx.strokeStyle = stroke;
+                    ctx.lineWidth = lineWidth;
+                }
+                this.preRenders[prerender].stroke = lineWidth;
+                x += lineWidth/2;
+                y += lineWidth/2;
+            }
         }
         if (type == "tencoin" || type == "fiftycoin" || type == "heal"){
             ctx.globalAlpha = this.coinPulse/255;
@@ -341,8 +412,33 @@ const BrickDrawer = {
         if (customArtCommand){
             customArtCommand();
         }
-        ctx.restore()
-        this.renderCount ++;
+        if (this.composite){
+            ctx.globalCompositeOperation = "saturation"; // Copy-pasted from Landgreen's code. https://github.com/landgreen/n-gon/.
+            ctx.fillStyle = this.composite;
+            ctx.fillRect(x, y, width, height);
+            ctx.globalCompositeOperation = "source-over";
+        }
+    },
+    applyComposite(color){
+        this.composite = color;
+        Object.values(this.preRenders).forEach((prerender, i) => {
+            var canvas = prerender.canvas;
+            var ctx = canvas.getContext("2d");
+            ctx.globalCompositeOperation = "saturation"; // Copy-pasted from Landgreen's code. https://github.com/landgreen/n-gon/.
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalCompositeOperation = "source-over";
+        });
+    },
+    invalidatePrerenders(){
+        Object.values(this.preRenders).forEach((prer, i) => {
+            prer.canvas.parentNode.removeChild(prer.canvas);
+        });
+        this.preRenders = {};
+    },
+    removeComposite(){
+        this.invalidatePrerenders();
+        delete this.composite;
     },
     drawText(ctx, x, y, width, height, text, fontData = {}){
         var fontSize = fontData.fontSize || 10;
