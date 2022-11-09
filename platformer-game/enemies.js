@@ -880,6 +880,8 @@ class PathfinderEnemy extends Brick{
         this.maxHealth = 40;
         this.isDamageable = true;
         this.active = false;
+        this.elasticityX = 0.9;
+        this.elasticityY = 0.9;
     }
 
     specialCollision(type){
