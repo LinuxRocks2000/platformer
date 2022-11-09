@@ -149,7 +149,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
         }
     },
-/*    {
+    {
         name: "Training part 2: Weapons and Advanced Enemies",
         skippable: true,
         cantCollect: true,
@@ -323,7 +323,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         ondestroy(game){
 
         }
-    },*/
+    },
     {
         name: "Scaffolding",
         skippable: false,
