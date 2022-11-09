@@ -114,3 +114,13 @@ function seedRand(seed){
     var z = Math.sin(seed) * 10000;
     return (z - Math.floor(z));
 }
+
+function clamp(low, value, high){
+    if (value < low){
+        value = low;
+    }
+    if (value > high){
+        value = high;
+    }
+    return value;
+}

@@ -287,6 +287,65 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.attachMaces(game.create(140, 55, 1, 1, "normal", "enemy", BreakableBrick), 12, {doesExtend: true});
 
             game.create(102, 7, 1, 1, "end", "end");
+
+            // 57, 24
+            game.create(57, 22, 1, 2);
+            game.create(71, 22, 1, 2);
+            var end = (npc) => {
+                npc.say("Scut! The Ghosts are attacking! Run! Find my friend, Anton, he can answer your questions!");
+                for (var i = 0; i < 4; i ++){
+                    game.create((game.player.x + Math.random() * 1000 - 500)/50, (game.player.y - 1000 - Math.random() * 500)/50, 1, 1, "jumpthrough", "enemy", PhaserEnemy);
+                }
+                npc.dieIn(50);
+            };
+            game.create(64, 22, 1, 2, "harmless_npc", "none", LoreNPC, {name: "The strange Survivor", speech: [
+                {
+                    text: "Hello, fellow Survivor!",
+                    delay: 100
+                },
+                {
+                    text: "I am Trin. Trin Niyiti.",
+                    delay: 100
+                },
+                {
+                    call: (me) => {
+                        me.name = "Trin";
+                        me.glideToPlayer();
+                        return "I see you have found ways to avoid Mutation. A cure, perhaps?";
+                    },
+                    delay: 200
+                },
+                {
+                    text: "No, clearly not. A pity. Your methods are commendable, nonetheless.",
+                    delay: 200
+                },
+                {
+                    text: "It's a terrible price to pay, altering your own body to remain free of Mutation.",
+                    delay: 300
+                },
+                {
+                    text: "Anyways. I can see you have some questions. What should I answer first?",
+                    prompt: [
+                        {
+                            text: "How did I get here?",
+                            fun: end
+                        },
+                        {
+                            text: "How did the Mutation happen?",
+                            fun: end
+                        },
+                        {
+                            text: "How did you get here?",
+                            fun: end
+                        }
+                    ],
+                    delay: 0
+                }
+            ]});
+
+            // 76, 16
+            game.create(76, 15, 1, 1, "glass", "field");
+            game.create(90, 15, 1, 1, "glass", "field");
         },
         onloop(game, framesElapsed){
             if (!this.closeGarbage){

@@ -85,7 +85,7 @@ const BrickDrawer = {
             }
         }
         var prerender = "";
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000){ // Anything that changes a lot or has animations.
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
@@ -164,6 +164,10 @@ const BrickDrawer = {
             case "bullet":
                 ctx.fillStyle = "black";
                 isCircle = true;
+                break;
+            case "harmless_npc":
+                ctx.fillStyle = "grey";
+                isRect = true;
                 break;
             case "pretty-average-sword":
                 ctx.fillStyle = "black";

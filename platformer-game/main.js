@@ -54,18 +54,18 @@ class Player extends PhysicsObject{
                 }
             }
         });
+        this.mouseDown = false;
         this.game.canvas.addEventListener("mousedown", (event) => {
             this.game.tileset.forEach((item, i) => {
                 item.mouseDown();
             });
-            if (this.weapon){
-                this.weapon.trigger();
-            }
+            this.mouseDown = true;
         });
         this.game.canvas.addEventListener("mouseup", (event) => {
             this.game.tileset.forEach((item, i) => {
                 item.mouseUp();
             });
+            this.mouseDown = false;
         });
         this.specialCollisions.push("killu", "splenectifyu"); // Register killu as a special collision type
         this.specialCollisions.push("tencoin") // Add ten coins to special collisions
@@ -315,7 +315,7 @@ class Player extends PhysicsObject{
     loop(framesElapsed){
         framesElapsed *= this.timerate;
         super.loop(framesElapsed);
-        if (this.weapon && this.keysHeld[" "]){
+        if (this.weapon && (this.keysHeld[" "] || this.mouseDown)){
             this.weapon.trigger();
         }
         if (this.studioMode || this.cheatMode){
@@ -694,6 +694,9 @@ class Game {
         this.lastFramesElapsed = 0;
 
         this.backgroundBubbles = [];
+
+        this.consoleEl = document.getElementById("console");
+        this.consoleShowPeriod = 0;
     }
 
     drawBackground(){
@@ -965,8 +968,21 @@ class Game {
         }
     }
 
+    consoleMessage(message, period = 600){
+        this.consoleEl.style.display = "";
+        this.consoleEl.innerHTML += message + "<br>";
+        this.consoleShowPeriod = period;
+        this.consoleEl.scrollTo(0, this.consoleEl.scrollHeight);
+    }
+
     loop(framesElapsed){
         this.lastFramesElapsed = framesElapsed;
+        if (this.consoleShowPeriod > 0){
+            this.consoleShowPeriod -= framesElapsed;
+            if (this.consoleShowPeriod <= 0){
+                this.consoleEl.style.display = "none";
+            }
+        }
 
         while (this.nextCycleFuns.length > 0){
             this.nextCycleFuns[0]();
@@ -1215,6 +1231,8 @@ class Game {
         this.playing = false;
         document.getElementById("menu").style.display = "";
         this.minimumExtent = -Infinity;
+        this.consoleEl.style.display = "";
+        this.consoleEl.innerHTML = "";
     }
 
     deleteBrick(brick){
