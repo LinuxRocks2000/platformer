@@ -245,7 +245,24 @@ class Player extends PhysicsObject{
                 LR2KSkin.drawFallingLegs(this.game.ctx);
                 LR2KSkin.drawFallingArms(this.game.ctx);
             }
-            //LR2KSkin.drawLeg(this.game.ctx);
+            this.game.ctx.fillStyle = "black";
+            this.game.ctx.font = "bold 16px sans-serif";
+            this.game.ctx.textAlign = "center";
+            this.game.ctx.fillText(this.score + "", this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y - 16);
+        }
+        else if (this.game.skin == "pixel"){
+            if (this.xv > 0){
+                this.pixelDirection = true;
+            }
+            else if (this.xv < 0){
+                this.pixelDirection = false;
+            }
+            if (this.pixelDirection){
+                this.game.ctx.drawImage(document.getElementById("player_pixel_Luminal"), this.game.artOff.x + this.x, this.game.artOff.y + this.y);
+            }
+            else{
+                this.game.ctx.drawImage(document.getElementById("player_pixel_Luminal_flipped"), this.game.artOff.x + this.x, this.game.artOff.y + this.y);
+            }
             this.game.ctx.fillStyle = "black";
             this.game.ctx.font = "bold 16px sans-serif";
             this.game.ctx.textAlign = "center";
@@ -1231,7 +1248,7 @@ class Game {
         this.playing = false;
         document.getElementById("menu").style.display = "";
         this.minimumExtent = -Infinity;
-        this.consoleEl.style.display = "";
+        this.consoleEl.style.display = "none";
         this.consoleEl.innerHTML = "";
     }
 

@@ -117,9 +117,7 @@ class LoreNPC extends NPC{
     }
 
     onPlayerLeave(){
-        if (this.speechPos < this.speech.length){ // if it ain't finished
-            this.speechPos = 0;
-        }
+        
     }
 
     playerNearbyLoop(framesElapsed){

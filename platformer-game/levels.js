@@ -292,7 +292,8 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(57, 22, 1, 2);
             game.create(71, 22, 1, 2);
             var end = (npc) => {
-                npc.say("Scut! The Ghosts are attacking! Run! Find my friend, Anton, he can answer your questions!");
+                npc.say("Scut! The Ghosts are attacking! Run! Find Anton!");
+                game.quest();
                 for (var i = 0; i < 4; i ++){
                     game.create((game.player.x + Math.random() * 1000 - 500)/50, (game.player.y - 1000 - Math.random() * 500)/50, 1, 1, "jumpthrough", "enemy", PhaserEnemy);
                 }
@@ -346,6 +347,15 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             // 76, 16
             game.create(76, 15, 1, 1, "glass", "field");
             game.create(90, 15, 1, 1, "glass", "field");
+            game.create(77, 15, 2, 1, "lava", "killu");
+            game.create(81, 13, 1, 3, "lava", "killu");
+            game.create(84, 14, 2, 2, "lava", "killu");
+            game.create(88, 15, 2, 1, "lava", "killu");
+            game.create(83, 8, 1, 2, "lava", "splenectifyu");
+            game.create(83, 0, 1, 7, "lava", "splenectifyu");
+            game.create(77, 0, 2, 10, "lava", "splenectifyu");
+            game.create(83, 10, 1, 6, "glass", "none");
+            game.create(83, 7, 1, 1, "shooter", "enemy", ShooterEnemy);
         },
         onloop(game, framesElapsed){
             if (!this.closeGarbage){
