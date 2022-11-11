@@ -70,7 +70,13 @@ const BrickDrawer = {
     renderCount: 0,
     colorPulse: 0,
     preRenders: {},
+    pixelPulse: 0,
     drawBrick(ctx, x, y, width, height, style, type, game){
+        if (game.skin == "pixel"){
+            if (style == "lava"){
+                style = "shroomy";
+            }
+        }
         ctx.lineWidth = 0;
         this.renderCount ++;
         if (style == "none"){
@@ -85,7 +91,7 @@ const BrickDrawer = {
             }
         }
         var prerender = "";
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000){ // Anything that changes a lot or has animations.
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
@@ -320,6 +326,9 @@ const BrickDrawer = {
                 ctx.stroke();
                 ctx.closePath();
                 break;
+            case "shroomy":
+                ctx.drawImage(document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6)), x, y);
+                break;
         }
         x = Math.floor(x);
         y = Math.floor(y);
@@ -493,6 +502,7 @@ const BrickDrawer = {
         if (this.colorPulse > 255 * 255 * 255){
             this.colorPulse = 0;
         }
+        this.pixelPulse += fe;
     }
 };
 
