@@ -1,6 +1,11 @@
 class NormalEnemy extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
+        if (game.skin == "pixel"){ // It hurts to put this here, in some of the oldest and cleanest code of the game. Drat, I've no choice.
+            if (this.style == "lava"){
+                this.style = "shroomy";
+            }
+        }
         this.xv = 5;
         this.friction = 1;
         this.isStatic = false;

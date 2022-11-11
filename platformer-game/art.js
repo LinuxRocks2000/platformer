@@ -71,12 +71,7 @@ const BrickDrawer = {
     colorPulse: 0,
     preRenders: {},
     pixelPulse: 0,
-    drawBrick(ctx, x, y, width, height, style, type, game){
-        if (game.skin == "pixel"){
-            if (style == "lava"){
-                style = "shroomy";
-            }
-        }
+    drawBrick(ctx, x, y, width, height, style, type, game, thing){
         ctx.lineWidth = 0;
         this.renderCount ++;
         if (style == "none"){
@@ -91,7 +86,8 @@ const BrickDrawer = {
             }
         }
         var prerender = "";
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000){ // Anything that changes a lot or has animations.
+        var doRedrawAtEnd = false;
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
@@ -111,6 +107,7 @@ const BrickDrawer = {
                 };
                 x = 0; // Don't want to draw off the prerender canvas, that'd be dum
                 y = 0;
+                doRedrawAtEnd = true;
             }
         }
         ctx.fillStyle = "transparent"; // Default
@@ -327,7 +324,11 @@ const BrickDrawer = {
                 ctx.closePath();
                 break;
             case "shroomy":
-                ctx.drawImage(document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6)), x, y);
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        ctx.drawImage(document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6)), _x * 50 + x, _y * 50 + y);
+                    }
+                }
                 break;
         }
         x = Math.floor(x);

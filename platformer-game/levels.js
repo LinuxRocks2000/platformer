@@ -722,11 +722,13 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     this.openWall.height -= framesElapsed;
                     this.openWall.y += framesElapsed;
                 }
+                this.openWall.dontPrerender = true;
             }
             else{
                 game.ctx.fillStyle = "green";
                 var width = this.remainingTime/this.maxTime * 0.8 * window.innerWidth;
                 game.ctx.fillRect(window.innerWidth/2 - width/2, window.innerHeight * 0.15, width, 10);
+                this.openWall.dontPrerender = false;
             }
         },
         ondestroy(game){

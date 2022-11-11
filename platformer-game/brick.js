@@ -105,7 +105,8 @@ class Brick extends PhysicsObject{
                                                  this.height,
                                                  this.style,
                                                  this.type,
-                                                 this.game);
+                                                 this.game,
+                                                 this);
             if (this.style == "sign"){
                 if (this.mouseOver && !this.game.studioMode){
                     if (!this.signActive){
