@@ -441,6 +441,7 @@ class SpringerEnemy extends Brick{
         this.shotsRemaining = config.shots || 3;
         this.phase = 100;
         this.sightRange = 800;
+        this.timeout = config.timeout || 100;
     }
 
     loop(framesElapsed){
@@ -449,7 +450,7 @@ class SpringerEnemy extends Brick{
             this.phase -= framesElapsed;
             if (this.phase < 0){
                 this.shoot();
-                this.phase = 100;
+                this.phase = this.timeout;
             }
         }
     }
