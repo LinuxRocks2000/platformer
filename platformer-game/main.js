@@ -714,6 +714,7 @@ class Game {
 
         this.consoleEl = document.getElementById("console");
         this.consoleShowPeriod = 0;
+        this.quest = "trin";
     }
 
     drawBackground(){
@@ -761,13 +762,13 @@ class Game {
     }
 
     isLineObstructed(s, e, transparent = ["water", "glass", "enemy", "player", "fiftycoin", "tencoin", "heal", "jumpthrough", "killu", "none"]){
-        var ret = true;
+        var ret = false;
+        var line = [s[0], s[1], e[0], e[1]];
         this.tileset.forEach((item, i) => {
             if (transparent.indexOf(item.type) == -1){
                 var rect = [item.x, item.y, item.x + item.width, item.y + item.height];
-                var line = [s[0], s[1], e[0], e[1]];
                 if (!isRectOffLine(rect, line) && !isLineOffRect(rect, line)){
-                    ret = false;
+                    ret = true;
                 }
             }
         });
@@ -1292,6 +1293,7 @@ class GameManager{
         this.beaten = [];
 
         var hashData = this.getHashdata();
+        this.magicSkin = hashData.skin;
         if (hashData.voidlands == "true"){
             this.curPhase = -1;
             this.isVoidlands = true;
@@ -1521,6 +1523,9 @@ class GameManager{
     }
 
     play(){
+        if (!this.magicSkin){
+            this.game.skin = document.querySelector("#skinselect > select").value;
+        }
         if (this.curLevelObj){
             this.curLevelObj.ondestroy(this.game);
         }
@@ -1637,6 +1642,7 @@ class GameManager{
             this.storage.savedGames[this.saveSlot].levelsBeaten = this.beaten;
             this.storage.savedGames[this.saveSlot].curPhase = this.curPhase;
             this.storage.savedGames[this.saveSlot].curScore = this.game.player.score;
+            this.storage.savedGames[this.saveSlot].curQuest = this.game.quest;
         }
     }
 
@@ -1673,12 +1679,14 @@ class GameManager{
             name: name,
             levelsBeaten: [],
             curPhase: 0,
-            curScore: 0
+            curScore: 0,
+            curQuest: ""
         };
         if (this.saveSlot == -1){
             slot.levelsBeaten = this.beaten;
             slot.curPhase = this.curPhase;
             slot.curScore = this.game.player.score;
+            slot.curQuest = this.game.quest;
         }
         this.storage.savedGames.push(slot);
         this.saveToStorage();
@@ -1690,6 +1698,7 @@ class GameManager{
             this.beaten = this.storage.savedGames[num].levelsBeaten;
             this.curPhase = this.storage.savedGames[num].curPhase;
             this.game.player.score = this.storage.savedGames[num].curScore;
+            this.game.quest = this.storage.savedGames[num].curQuest;
             this.saveSlot = num;
             this.showMenu();
         }

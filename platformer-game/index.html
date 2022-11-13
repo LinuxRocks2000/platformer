@@ -34,7 +34,7 @@
             <h1>Platformer edition 2</h1>
             <a href="../platformer-old">Play old platformer</a>
             <a href="./about.html">About Platformer (probably not updated for phase 2 yet)</a>
-            <a href="https://discord.gg/QG9ePsVBKT">Discord?</a>
+            <a href="https://discord.gg/QG9ePsVBKT">Official Platformer Discord server</a>
             <div id="saveslot" onclick="gm.manageSaveslots();">Save slot: [none]</div>
             <div id="levelname">
                 <select id="levelselect">
@@ -50,6 +50,14 @@
             <button onclick = "document.body.requestFullscreen();">Full Screen</button>
             <div id="highscore-wrapper">
                 <button id="highscore" onclick="gm.showHighscores();">Highscore table</button>
+            </div>
+            <div id="skinselect">
+                Skin:
+                <select>
+                    <option value = "pixel">Pixel - WIP</option>
+                    <option value = "">Classic</option>
+                    <option value = "lr2k">LinuxRocks2000</option>
+                </select>
             </div>
         </div>
         <div id="saveslotman" style="display: none;" class="coverwall">

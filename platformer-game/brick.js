@@ -43,6 +43,9 @@ class Brick extends PhysicsObject{
         this.studioMoving = false;
         this.studioMotionOffx = 0;
         this.studioMotionOffy = 0;
+
+        this.oldWidth = 0;
+        this.oldHeight = 0;
     }
 
     beginResize(){
@@ -205,6 +208,12 @@ class Brick extends PhysicsObject{
 
     loop(framesElapsed){
         this.playerSight -= framesElapsed;
+        if (this.oldWidth != this.width || this.oldHeight != this.height){
+            this.dontPrerender = true;
+        }
+        else{
+            this.dontPrerender = false;
+        }
         if (!this.dead){
             if (this.harmImmune > 0){
                 this.game.ctx.globalAlpha = 0.5;
@@ -260,6 +269,8 @@ class Brick extends PhysicsObject{
                 this.height = this.game.blockHeight;
             }
         }
+        this.oldWidth = this.width;
+        this.oldHeight = this.height;
     }
 
     interlock(){

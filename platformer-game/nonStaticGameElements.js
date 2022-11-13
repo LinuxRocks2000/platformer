@@ -195,7 +195,7 @@ class Bomb extends Brick{
         this.explodeOnCollision = config.nitroglycerin;
         this.collisions.push("jumpthrough");
         this.collisions.splice(this.collisions.indexOf("screen"), 1);
-        this.specialCollisions = this.collisions;
+        this.specialCollisions = ["solid", "enemy"];
         this.allowChainReaction = config.chainReaction || true;
         this.armTimeout = 0;
         if (config.arm){
@@ -209,7 +209,7 @@ class Bomb extends Brick{
         if (this.armTimeout >= 0){
             return;
         }
-        if (this.explodeOnCollision && this.explode == 0){
+        if (this.explodeOnCollision){
             this.blowUp();
         }
     }
@@ -229,7 +229,7 @@ class Bomb extends Brick{
         super.loop(framesElapsed);
         this.unsetBombArt();
         this.game.ctx.globalAlpha = 1;
-        if (this.armTimeout > 0){
+        if (this.armTimeout >= 0){
             this.armTimeout -= framesElapsed;
         }
         else{
@@ -275,7 +275,7 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         this.TTL -= framesElapsed;
         if (this.TTL < 0 && wasActive){
             for (var x = 0; x < this.eject; x ++){
-                var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "tar", "solid", Bomb, {arm: 20, TTL: 60, nitroglycerine: true});
+                var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "tar", "solid", Bomb, {arm: 60, TTL: 100, nitroglycerine: true});
                 bomb.x += Math.random() * 50 - 25;
                 bomb.y += Math.random() * 50 - 25;
                 bomb.explodeDamage = 20;
@@ -547,5 +547,110 @@ class RegenWatcher extends Brick{
                 }
             });
         }
+    }
+}
+
+
+class FriendlyShooter extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = true;
+        this.phase = 0;
+        this.angle = 0;
+        this.angleV = 0;
+        this.sightRange = config.sightRange || Infinity;
+        if (config.shootAbove == undefined){
+            this.shootAbove = true;
+        }
+        else{
+            this.shootAbove = config.shootAbove;
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        var goalAngle = 0;
+        var angleFric = 0.9;
+        /*if (this.canSeePlayer()){
+            this.phase += framesElapsed;
+            var distX = this.x + this.width/2 - (this.game.player.x + this.game.player.width/2);
+            var distY = this.y + this.height/2 - (this.game.player.y + this.game.player.height/2);
+            var hypotenuse = Math.sqrt(distY * distY + distX * distX);
+            goalAngle = Math.acos(distX/hypotenuse) * 180/Math.PI + 90;
+            if (distY < 0){
+                goalAngle -= 180;
+                goalAngle *= -1;
+            }
+            if (this.phase > 10){
+                this.phase = 0;
+                this.shoot();
+            }
+            angleFric = 0.95;
+        }*/
+        var closestDist = Infinity;
+        var closest = undefined;
+        var distX = 0;
+        var distY = 0;
+        var hypotenuse = 0;
+        this.game.tileset.forEach((item, i) => {
+            if (item.type == "enemy"){
+                if (!game.isLineObstructed([this.x, this.y], [item.x, item.y])){
+                    var _distX = this.x + this.width/2 - (item.x + item.width/2);
+                    var _distY = this.y + this.height/2 - (item.y + item.height/2);
+                    var _hypotenuse = Math.sqrt(_distY * _distY + _distX * _distX);
+                    if (_hypotenuse < closestDist){
+                        closestDist = _hypotenuse;
+                        closest = item;
+                        distX = _distX;
+                        distY = _distY;
+                        hypotenuse = _hypotenuse;
+                    }
+                }
+            }
+        });
+        if (closest){
+            this.phase += framesElapsed;
+            goalAngle = Math.acos(distX/hypotenuse) * 180/Math.PI + 90;
+            if (distY < 0){
+                goalAngle -= 180;
+                goalAngle *= -1;
+            }
+            if (this.phase > 3){
+                this.phase = 0;
+                this.shoot();
+            }
+            angleFric = 0.95;
+        }
+        var isMoreThan = goalAngle > this.angle;
+        var isLessThan = goalAngle < this.angle;
+        if (isMoreThan){
+            this.angleV += 2 * Math.random();
+        }
+        else if (isLessThan){
+            this.angleV -= 2 * Math.random();
+        }
+        this.angle += this.angleV * framesElapsed;
+        this.angleV *= angleFric;
+        var ctx = this.game.ctx;
+        ctx.save();
+        ctx.translate(this.x + this.game.artOff.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
+        ctx.rotate(this.angle * Math.PI/180);
+        ctx.fillStyle = "green";
+        ctx.beginPath();
+        ctx.translate(0, 20);
+        ctx.moveTo(-5, -5);
+        ctx.lineTo(0, 0);
+        ctx.lineTo(5, -5);
+        ctx.lineTo(0, 20);
+        ctx.lineTo(-5, -5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+    }
+
+    shoot(){
+        var thingX = Math.cos((this.angle + 90) * Math.PI/180);
+        var thingY = Math.sin((this.angle + 90) * Math.PI/180);
+        this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "ourbullet", "none", PlayerFriendlyBullet, {xv: thingX * 30, yv: thingY * 30, damage: 30});
     }
 }

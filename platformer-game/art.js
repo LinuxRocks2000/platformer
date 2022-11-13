@@ -330,6 +330,10 @@ const BrickDrawer = {
                     }
                 }
                 break;
+            case "friendlyshooter":
+                ctx.fillStyle = "yellow";
+                isCircle = true;
+                break;
         }
         x = Math.floor(x);
         y = Math.floor(y);

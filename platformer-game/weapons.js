@@ -421,6 +421,7 @@ var RPGs = {
                 return;
             }
             var bomb = this.game._create(this.game.player.x + this.game.player.width/2 - 5, this.game.player.y + this.game.player.height/2 - 5, 10, 10, "tar", "none", Bomb, {TTL: 100, nitroglycerin: true});
+            bomb.specialCollisions.push("solid");
             bomb.explodeRadius = 100;
             this.timeout = 35;
             bomb.gravity = 0.1;

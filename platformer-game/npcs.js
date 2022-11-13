@@ -10,7 +10,6 @@ class NPC extends Brick { // Base class, covers interactions and stuff
         this.playerIn = false;
         this.introduced = false;
         this.glideTo = undefined;
-        this.friction = 0.8;
         this.dieTime = Infinity;
     }
 
@@ -43,7 +42,12 @@ class NPC extends Brick { // Base class, covers interactions and stuff
             this.playerAwayLoop(framesElapsed);
         }
         if (this.glideTo){
-            this.xv += (this.glideTo.x - this.x)/100;
+            if (this.glideTo.x > this.x){
+                this.xv += 5 * framesElapsed;
+            }
+            else{
+                this.xv -= 5 * framesElapsed;
+            }
             if ((this.x > this.glideTo.x && this.touchingLeft) || (this.x < this.glideTo.x && this.touchingRight) || (Math.abs(this.x - this.glideTo.x) <= 20)){
                 this.glideTo = undefined;
             }
@@ -66,10 +70,14 @@ class NPC extends Brick { // Base class, covers interactions and stuff
 
     }
 
-    say(thing){
+    _say(name, thing){
         this.game.consoleMessage(`
-            <span class="console_personName">` + this.name + `</span>: <span class="console_personSpeech">` + thing + `</span>
+            <span class="console_personName">` + name + `</span>: <span class="console_personSpeech">` + thing + `</span>
             `);
+    }
+
+    say(thing){
+        this._say(this.name, thing);
     }
 
     introduce(thing){
@@ -82,6 +90,10 @@ class NPC extends Brick { // Base class, covers interactions and stuff
         this.glideTo = this.game.player;
     }
 
+    glideToBlock(brick){
+        this.glideTo = brick;
+    }
+
     prompt(text, prompts){
         var id = "conv_prompt_" + Date.now() + "" + Math.round(Math.random() * 200);
         this.say(text + "<div class='conversation_prompt' id='" + id + "'></div>");
@@ -90,6 +102,8 @@ class NPC extends Brick { // Base class, covers interactions and stuff
             var button = document.createElement("button");
             button.classList.add("conversation_promptButton");
             button.onclick = () => {
+                this._say("You", button.innerHTML);
+                convEl.style.display = "none";
                 item.fun(this);
             };
             button.innerHTML = item.text;
@@ -117,11 +131,14 @@ class LoreNPC extends NPC{
     }
 
     onPlayerLeave(){
-        
+
     }
 
     playerNearbyLoop(framesElapsed){
         this.speechTimeout --;
+        if (this.glideTo){
+            this.speechTimeout = 0;
+        }
         if (this.speechTimeout >= 0){
             return;
         }

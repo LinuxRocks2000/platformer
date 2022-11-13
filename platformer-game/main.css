@@ -390,3 +390,10 @@ a{
 .conversation_promptButton{
 
 }
+
+#skinselect{
+    position: absolute;
+    left: 0px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
