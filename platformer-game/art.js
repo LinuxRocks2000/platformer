@@ -102,6 +102,16 @@ const BrickDrawer = {
             else if (style == "ice"){
                 style = "ice_pixel";
             }
+            else if (style == "lava"){
+                style = "spoange";
+            }
+            else if (style == "averagingenemy"){
+                style = "hive";
+            }
+        }
+        if (style[style.length - 1] == "_"){ // _ enforces classic theme
+            style = style.substring(0, style.length - 1);
+            console.log(style);
         }
         if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
@@ -393,6 +403,15 @@ const BrickDrawer = {
                         ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
                 }
+                break;
+            case "hive":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_hive");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                type = ""; // Don't want it to try Enemyrendering
                 break;
         }
         x = Math.floor(x);

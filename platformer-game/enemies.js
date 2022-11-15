@@ -1,11 +1,6 @@
 class NormalEnemy extends Brick{
     constructor(game, x, y, width, height, style, type, config){
         super(game, x, y, width, height, style, type);
-        if (game.skin == "pixel"){ // It hurts to put this here, in some of the oldest and cleanest code of the game. Drat, I've no choice.
-            if (this.style == "lava"){
-                this.style = "spoange";
-            }
-        }
         this.xv = 5;
         this.friction = 1;
         this.isStatic = false;
@@ -1047,7 +1042,7 @@ class TankEnemy extends NormalEnemy{
         var thingX = Math.cos(this.turretAngle + randAngle);
         var thingY = Math.sin(this.turretAngle + randAngle);
         var speed = (this.shootBombs ? 40 : 20);
-        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava", "bullet", (this.shootBombs ? ExplodingBullet : BulletEnemy), {xv: thingX * speed, yv: thingY * speed, danger: 20});
+        this.game._create(this.x + this.width/2 - 5, this.y - 17 - 5, 10, 10, "lava_", "bullet", (this.shootBombs ? ExplodingBullet : BulletEnemy), {xv: thingX * speed, yv: thingY * speed, danger: 20});
     }
 }
 

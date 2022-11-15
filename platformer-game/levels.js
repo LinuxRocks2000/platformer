@@ -318,7 +318,6 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     game.quest = "anton";
                 }
                 npc.say("Scut! The Ghosts are attacking! Run! Find Anton!");
-                game.quest();
                 for (var i = 0; i < 4; i ++){
                     game.create((game.player.x + Math.random() * 1000 - 500)/50, (game.player.y - 1000 - Math.random() * 500)/50, 1, 1, "jumpthrough", "enemy", PhaserEnemy);
                 }

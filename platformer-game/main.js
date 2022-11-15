@@ -791,7 +791,7 @@ class Game {
         this._create(brick.x + brick.width/2 - size,
                      brick.y + brick.height/2 - size,
                      size * 2, size * 2,
-                     "lava", "none",
+                     "lava_", "none",
                      Explosion,
                      {damage: power,
                      knockbackModifier: knockbackModifier});
