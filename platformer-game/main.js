@@ -718,11 +718,6 @@ class Game {
         this.quest = "trin";
     }
 
-    drawBackground(){
-        this.ctx.fillStyle = "green";
-        this.ctx.fillRect(0, 0, 100, 100);
-    }
-
     onNextCycle(fun){
         this.nextCycleFuns.push(fun);
     }
@@ -1017,7 +1012,12 @@ class Game {
             this.ctx.fillStyle = BrickDrawer.composite;
         }
         else{
-            this.ctx.fillStyle = "brown";
+            if (this.skin == "pixel"){
+                this.ctx.fillStyle = "brown";
+            }
+            else{
+                this.ctx.fillStyle = "white";
+            }
         }
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.partying){
