@@ -1016,7 +1016,7 @@ class Game {
             this.ctx.fillStyle = BrickDrawer.composite;
         }
         else{
-            this.ctx.fillStyle = "white";
+            this.ctx.fillStyle = "brown";
         }
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.partying){

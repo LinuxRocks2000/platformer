@@ -88,8 +88,13 @@ const BrickDrawer = {
         var prerender = "";
         var doRedrawAtEnd = false;
         if (game.skin == "pixel"){
-            if ((width == game.blockWidth || height == game.blockHeight) && style == "normal"){
-                style = "scaffold";
+            if (style == "normal"){
+                if (width == game.blockWidth || height == game.blockHeight){
+                    style = "scaffold";
+                }
+                else{
+                    style = "dirt";
+                }
             }
         }
         if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
@@ -348,6 +353,17 @@ const BrickDrawer = {
                 for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
                     for (var _y = 0; _y < height/50; _y ++){
                         var art = document.getElementById("pixel_scaffold");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "dirt":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_dirt");
+                        if (_y == 0){
+                            art = document.getElementById("pixel_dirt_grassy");
+                        }
                         ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
                 }

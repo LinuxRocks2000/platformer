@@ -654,3 +654,27 @@ class FriendlyShooter extends Brick{
         this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "ourbullet", "none", PlayerFriendlyBullet, {xv: thingX * 30, yv: thingY * 30, damage: 30});
     }
 }
+
+
+class HideWall extends Brick{
+    constructor(game, x, y, width, height, style, type){
+        super(game, x, y, width, height, style, type);
+        this.isStatic = false;
+        this.specialCollisions.push("player");
+        this._style = style;
+        this.collisions = [];
+        this.gravity = 0;
+    }
+
+    specialCollision(type, items){
+        if (type == "player"){
+            this.style = "none";
+        }
+    }
+
+    noSpecial(type){
+        if (type == "player"){
+            this.style = this._style;
+        }
+    }
+}
