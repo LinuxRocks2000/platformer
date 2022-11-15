@@ -87,7 +87,12 @@ const BrickDrawer = {
         }
         var prerender = "";
         var doRedrawAtEnd = false;
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
+        if (game.skin == "pixel"){
+            if ((width == game.blockWidth || height == game.blockHeight) && style == "normal"){
+                style = "scaffold";
+            }
+        }
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
@@ -326,8 +331,23 @@ const BrickDrawer = {
             case "shroomy":
                 for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
                     for (var _y = 0; _y < height/50; _y ++){
-                        //var art = document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6));
+                        var art = document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6));
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "spoange":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
                         var art = document.getElementById("pixel_spoange");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "scaffold":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_scaffold");
                         ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
                 }
