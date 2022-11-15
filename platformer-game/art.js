@@ -326,7 +326,9 @@ const BrickDrawer = {
             case "shroomy":
                 for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
                     for (var _y = 0; _y < height/50; _y ++){
-                        ctx.drawImage(document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6)), _x * 50 + x, _y * 50 + y);
+                        //var art = document.getElementById("pixel_mushrooms_" + Math.round(this.pixelPulse/6 % 6));
+                        var art = document.getElementById("pixel_spoange");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
                 }
                 break;
