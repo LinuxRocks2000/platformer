@@ -96,6 +96,12 @@ const BrickDrawer = {
                     style = "dirt";
                 }
             }
+            else if (style == "jumpthrough"){
+                style = "jumpthrough_pixel";
+            }
+            else if (style == "ice"){
+                style = "ice_pixel";
+            }
         }
         if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
@@ -371,6 +377,22 @@ const BrickDrawer = {
             case "friendlyshooter":
                 ctx.fillStyle = "yellow";
                 isCircle = true;
+                break;
+            case "jumpthrough_pixel":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_jumpthrough");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "ice_pixel":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_ice");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
                 break;
         }
         x = Math.floor(x);

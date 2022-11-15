@@ -719,7 +719,8 @@ class Game {
     }
 
     drawBackground(){
-
+        this.ctx.fillStyle = "green";
+        this.ctx.fillRect(0, 0, 100, 100);
     }
 
     onNextCycle(fun){
@@ -930,7 +931,7 @@ class Game {
             y: y,
             xv: Math.random() * 40 - 20,
             yv: Math.random() * 40 - 20,
-            TTL: 40,
+            TTL: size/4,
             size: size,
             color: "rgb(" + (200 + Math.random() * 55) + ", " + (55 + Math.random() * 200) + ", " + (Math.random() * 255) + ")"
         });
