@@ -1014,7 +1014,8 @@ class Game {
         }
         else{
             if (this.skin == "pixel"){
-                this.ctx.fillStyle = "#FFA260";
+                //this.ctx.fillStyle = "#FFA260";
+                this.ctx.fillStyle = "#273560";
             }
             else if (this.skin == "test"){
                 this.ctx.fillStyle = "#273560";
