@@ -716,6 +716,7 @@ class Game {
         this.consoleEl = document.getElementById("console");
         this.consoleShowPeriod = 0;
         this.quest = "trin";
+        this.acidBubbles = [];
     }
 
     onNextCycle(fun){
@@ -876,8 +877,8 @@ class Game {
         var b = new bricktype(this, x, y, width, height, style, type, config); // Put it in a variable so we can return it later
         this.tileset.push(b); // Add it to the tileset
         b.id = this.tileset.length;
-        if (y + height > this.minimumExtent){
-            this.minimumExtent = y + height;
+        if (y + height + 200 > this.minimumExtent){
+            this.minimumExtent = y + height + 200;
         }
         return b; // Return it, so you can call this function and then do operations immediately.
     }
@@ -1013,13 +1014,22 @@ class Game {
         }
         else{
             if (this.skin == "pixel"){
-                this.ctx.fillStyle = "brown";
+                this.ctx.fillStyle = "#FFA260";
+            }
+            else if (this.skin == "test"){
+                this.ctx.fillStyle = "#273560";
             }
             else{
                 this.ctx.fillStyle = "white";
             }
         }
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        if (this.skin == "pixel"){
+            if (this.fallingKills){
+                this.ctx.fillStyle = "#8ffe09";
+                this.ctx.fillRect(0, this.artOff.y + this.minimumExtent, window.innerWidth, window.innerHeight);
+            }
+        }
         if (this.partying){
             this.party(framesElapsed);
         }
