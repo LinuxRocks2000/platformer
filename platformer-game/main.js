@@ -625,11 +625,32 @@ class Game {
         this.fallingKills = true;
         this.canvas = document.getElementById("game");
         this.ctx = this.canvas.getContext("2d", {alpha: false});
+        this.backgroundCanvas = document.getElementById("background");
+        this.backgroundCTX = this.backgroundCanvas.getContext("2d");
         var resize = () => {
             this.canvas.width = window.innerWidth;
             this.canvas.height = window.innerHeight;
+            this.backgroundCanvas.width = window.innerWidth;
+            this.backgroundCanvas.height = window.innerHeight;
             this.ctx.fillStyle = "white";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+            for (var y = 0; y < window.innerHeight; y += window.innerHeight/20){
+                // 194, 178, 128
+                var perc = 1 - y/window.innerHeight;
+                var r = 255;
+                var g = 178 * perc;
+                var b = 128 * perc;
+                this.backgroundCTX.fillStyle = "rgb(" + r + ", " + g + ", " + b + ")";
+                this.backgroundCTX.fillRect(0, y, window.innerWidth, window.innerHeight);
+            }
+            this.clouds = [];
+            var numClouds = Math.random() * 10 + 10;
+            this.backgroundCTX.fillStyle = "white";
+            for (var x = 0; x < numClouds; x ++){
+                var cX = Math.random() * window.innerWidth;
+                var cY = Math.random() * window.innerHeight/2;
+                this.clouds.push([cX, cY, 5 * Math.random() + 1]);
+            }
         };
         window.addEventListener("resize", resize);
         resize();
@@ -705,7 +726,7 @@ class Game {
 
         this.lossCount = 0;
 
-        if (Math.random() > 0.8){
+        if (Math.random() > 0.95){
             this.acidDay = true;
         }
 
@@ -1014,8 +1035,8 @@ class Game {
         }
         else{
             if (this.skin == "pixel"){
-                //this.ctx.fillStyle = "#FFA260";
-                this.ctx.fillStyle = "#273560";
+                //this.ctx.fillStyle = this.bgGradient;
+                //this.ctx.fillStyle = "#273560";
             }
             else if (this.skin == "test"){
                 this.ctx.fillStyle = "#273560";
@@ -1026,6 +1047,23 @@ class Game {
         }
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.skin == "pixel"){
+            this.ctx.drawImage(this.backgroundCanvas, 0, 0);
+            this.clouds.forEach((item, i) => {
+                item[0] += item[2];
+                var cX = item[0];
+                var cY = item[1];
+                if (cX > window.innerWidth){
+                    this.clouds.splice(i, 1);
+                    this.clouds.push([-200 - 500 * Math.random(), window.innerHeight * Math.random()/2, 5 * Math.random() + 1]);
+                }
+                //this.backgroundCTX.beginPath();
+                //this.backgroundCTX.arc(cX, cY, 50, 0, Math.PI * 2);
+                //this.backgroundCTX.arc(cX + 25, cY + 12, 50, 0, Math.PI * 2);
+                //this.backgroundCTX.arc(cX - 25, cY + 12, 50, 0, Math.PI * 2);
+                //this.backgroundCTX.closePath();
+                //this.backgroundCTX.fill();
+                BrickDrawer.drawBrick(this.ctx, cX, cY, 200, 200, "cloud", "none", this);
+            });
             if (this.fallingKills){
                 this.ctx.fillStyle = "#8ffe09";
                 this.ctx.fillRect(0, this.artOff.y + this.minimumExtent, window.innerWidth, window.innerHeight);

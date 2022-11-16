@@ -113,7 +113,7 @@ const BrickDrawer = {
             style = style.substring(0, style.length - 1);
             console.log(style);
         }
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && !thing.dontPrerender){ // Anything that changes a lot or has animations.
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
@@ -412,6 +412,13 @@ const BrickDrawer = {
                     }
                 }
                 type = ""; // Don't want it to try Enemyrendering
+                break;
+            case "cloud":
+                ctx.fillStyle = "white";
+                ctx.fillRect(x + 40, y, 50, 50);
+                ctx.fillRect(x + 40, y + 25, 50, 50);
+                ctx.fillRect(x + 80, y + 12, 50, 50);
+                ctx.fillRect(x, y + 12, 50, 50);
                 break;
         }
         x = Math.floor(x);
