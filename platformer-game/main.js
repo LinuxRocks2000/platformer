@@ -644,12 +644,12 @@ class Game {
                 this.backgroundCTX.fillRect(0, y, window.innerWidth, window.innerHeight);
             }
             this.clouds = [];
-            var numClouds = Math.random() * 10 + 10;
+            var numClouds = Math.random() * 5 + 5;
             this.backgroundCTX.fillStyle = "white";
             for (var x = 0; x < numClouds; x ++){
                 var cX = Math.random() * window.innerWidth;
                 var cY = Math.random() * window.innerHeight/2;
-                this.clouds.push([cX, cY, 5 * Math.random() + 1]);
+                this.clouds.push([cX, cY, 3 * Math.random() + 0.5]);
             }
         };
         window.addEventListener("resize", resize);
@@ -1054,7 +1054,7 @@ class Game {
                 var cY = item[1];
                 if (cX > window.innerWidth){
                     this.clouds.splice(i, 1);
-                    this.clouds.push([-200 - 500 * Math.random(), window.innerHeight * Math.random()/2, 5 * Math.random() + 1]);
+                    this.clouds.push([-200 - 500 * Math.random(), window.innerHeight * Math.random()/2, 1 * Math.random() + 0.5]);
                 }
                 //this.backgroundCTX.beginPath();
                 //this.backgroundCTX.arc(cX, cY, 50, 0, Math.PI * 2);
