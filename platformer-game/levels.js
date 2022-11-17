@@ -27,8 +27,6 @@ They also teleport, occasionally.
     trin: find Trin Niyiti, get killed by Ghosts, he tells you to find Anton. (this switches the quest level to anton)
     anton: find Anton Sigdorsky, get the Maury the Hermit quest. (this switches the quest level to maury)
     maury: hitherto un-set-up.
-
-    At the moment, quests are in beta and don't save between games.
 */
 
 let levels = [ // If it's const, I can't dynamically add levels in Worker Levels.
@@ -1801,63 +1799,63 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(21, 0, 10, 1);
 
             // Rectangles
-            game.createRect(-20, -10, 7, 7);
-            game.createRect(-24, -14, 15, 15)
-            this.phazah = game.create(-15, -5, 1, 1, "lava", "enemy", PhaserEnemy);
+            game.createRect(-20, -10, 7, 7, "normal_");
+            game.createRect(-24, -14, 15, 15, "normal_")
+            this.phazah = game.create(-15, -5, 1, 1, "lava_", "enemy", PhaserEnemy);
 
             // Some coin scatters
-            game.create(1, -1, 1, 1, "coin", "tencoin");
-            game.create(2, -1, 1, 1, "coin", "tencoin");
+            game.create(1, -1, 1, 1, "coin_", "tencoin");
+            game.create(2, -1, 1, 1, "coin_", "tencoin");
 
             // A Begone!
-            game.create(22, -1, 1, 1, "begone", "begone");
+            game.create(22, -1, 1, 1, "begone_", "begone");
 
             // Healpit
             game.create(26, 4, 10, 1);
-            game.create(26, 3, 1, 1, "heal", "heal");
+            game.create(26, 3, 1, 1, "heal_", "heal");
 
             // Accursed Steps
-            game.create(38, -3, 5, 1);
-            game.create(46, -6, 5, 1);
-            game.create(54, -9, 5, 1);
-            game.create(56, -17, 1, 1, "shooter", "enemy", ShooterEnemy, {sightRange: 1000});
+            game.create(38, -3, 5, 1, "normal_");
+            game.create(46, -6, 5, 1, "normal_");
+            game.create(54, -9, 5, 1, "normal_");
+            game.create(56, -17, 1, 1, "shooter_", "enemy", ShooterEnemy, {sightRange: 1000});
 
             // Awful Climb
-            game.create(64, -17, 1, 5);
-            game.create(63, -13, 1, 1);
+            game.create(64, -17, 1, 5, "normal_");
+            game.create(63, -13, 1, 1, "normal_");
 
-            game.create(68, -20, 1, 5);
-            game.create(67, -16, 1, 1);
+            game.create(68, -20, 1, 5, "normal_");
+            game.create(67, -16, 1, 1, "normal_");
 
-            game.create(72, -23, 1, 5);
-            game.create(71, -19, 1, 1);
+            game.create(72, -23, 1, 5, "normal_");
+            game.create(71, -19, 1, 1, "normal_");
 
             // Rickety
-            game.create(80, -21, 10, 1, "normal", "solid", RicketyPlatform);
+            game.create(80, -21, 10, 1, "normal_", "solid", RicketyPlatform);
 
             // The dangerous ride
-            game.create(95, -19, 1, 1);
-            game.create(97, -19, 2, 1, "normal", "solid", SideMovingPlatform);
-            game.create(125, -19, 5, 1, "normal", "solid");
+            game.create(95, -19, 1, 1, "normal_");
+            game.create(97, -19, 2, 1, "normal_", "solid", SideMovingPlatform);
+            game.create(125, -19, 5, 1, "normal_", "solid");
 
             // The dangerous elevator
             game.create(132, -19, 1, 1, "none", "stopblock");
             game.create(132, 0, 1, 1, "none", "stopblock");
-            game.create(132, -15, 1, 1, "normal", "solid", RaisingPlatform, {speed: 7});
+            game.create(132, -15, 1, 1, "normal_", "solid", RaisingPlatform, {speed: 7});
 
             // Evil platform
             game.create(136, -8, 1, 6, "none", "field");
             var b = game.create(141, -9, 1, 1, "bullet", "enemy", BatEnemy);
             game.attachMaces(b, 6)
-            game.create(137, -7, 10, 2, "normal", "solid", RicketyPlatform, {killAlso: [b]});
+            game.create(137, -7, 10, 2, "normal_", "solid", RicketyPlatform, {killAlso: [b]});
             game.create(147, -8, 1, 6, "none", "field");
 
             // Safety at last
-            game.create(155, -10, 50, 1);
-            game.create(155, -11, 1, 1, "heal", "heal");
+            game.create(155, -10, 50, 1, "normal_");
+            game.create(155, -11, 1, 1, "heal_", "heal");
 
             // Or not.
-            game.create(165, -15, 1, 1, "bullet", "enemy", BatGunnerEnemy, {onDie: () => {
+            game.create(165, -15, 1, 1, "bullet_", "enemy", BatGunnerEnemy, {onDie: () => {
                 game.create(200, -11, 1, 1, "end", "end");
             }});
         },
