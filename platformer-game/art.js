@@ -415,10 +415,59 @@ const BrickDrawer = {
                 break;
             case "cloud":
                 ctx.fillStyle = "white";
-                ctx.fillRect(x + 40, y, 50, 50);
-                ctx.fillRect(x + 40, y + 25, 50, 50);
-                ctx.fillRect(x + 80, y + 12, 50, 50);
-                ctx.fillRect(x, y + 12, 50, 50);
+                //ctx.fillRect(x + 40, y, 50, 50);
+                //ctx.fillRect(x + 40, y + 25, 50, 50);
+                //ctx.fillRect(x + 80, y + 12, 50, 50);
+                //ctx.fillRect(x, y + 12, 50, 50);
+                //this.backgroundCTX.beginPath();
+                //this.backgroundCTX.arc(cX, cY, 50, 0, Math.PI * 2);
+                //this.backgroundCTX.arc(cX + 25, cY + 12, 50, 0, Math.PI * 2);
+                //this.backgroundCTX.arc(cX - 25, cY + 12, 50, 0, Math.PI * 2);
+                //this.backgroundCTX.closePath();
+                //this.backgroundCTX.fill();
+                ctx.translate(0, 25);
+                ctx.fillRect(x + 20, y     , 40, 10);
+                ctx.fillRect(x + 14, y + 5 , 52, 10);
+                ctx.fillRect(x + 10, y + 10, 60, 10);
+                ctx.fillRect(x + 8 , y + 15, 65, 10);
+                ctx.fillRect(x + 5 , y + 20, 70, 10);
+                ctx.fillRect(x + 8 , y + 25, 65, 10);
+                ctx.fillRect(x + 10, y + 30, 60, 10);
+                ctx.fillRect(x + 14, y + 35, 52, 10);
+                ctx.fillRect(x + 20, y + 40, 40, 10);
+
+                ctx.translate(50, -25);
+                ctx.fillRect(x + 20, y     , 40, 10);
+                ctx.fillRect(x + 14, y + 5 , 52, 10);
+                ctx.fillRect(x + 10, y + 10, 60, 10);
+                ctx.fillRect(x + 8 , y + 15, 65, 10);
+                ctx.fillRect(x + 5 , y + 20, 70, 10);
+                ctx.fillRect(x + 8 , y + 25, 65, 10);
+                ctx.fillRect(x + 10, y + 30, 60, 10);
+                ctx.fillRect(x + 14, y + 35, 52, 10);
+                ctx.fillRect(x + 20, y + 40, 40, 10);
+
+                ctx.translate(0, 50);
+                ctx.fillRect(x + 20, y     , 40, 10);
+                ctx.fillRect(x + 14, y + 5 , 52, 10);
+                ctx.fillRect(x + 10, y + 10, 60, 10);
+                ctx.fillRect(x + 8 , y + 15, 65, 10);
+                ctx.fillRect(x + 5 , y + 20, 70, 10);
+                ctx.fillRect(x + 8 , y + 25, 65, 10);
+                ctx.fillRect(x + 10, y + 30, 60, 10);
+                ctx.fillRect(x + 14, y + 35, 52, 10);
+                ctx.fillRect(x + 20, y + 40, 40, 10);
+
+                ctx.translate(50, -25);
+                ctx.fillRect(x + 20, y     , 40, 10);
+                ctx.fillRect(x + 14, y + 5 , 52, 10);
+                ctx.fillRect(x + 10, y + 10, 60, 10);
+                ctx.fillRect(x + 8 , y + 15, 65, 10);
+                ctx.fillRect(x + 5 , y + 20, 70, 10);
+                ctx.fillRect(x + 8 , y + 25, 65, 10);
+                ctx.fillRect(x + 10, y + 30, 60, 10);
+                ctx.fillRect(x + 14, y + 35, 52, 10);
+                ctx.fillRect(x + 20, y + 40, 40, 10);
                 break;
         }
         x = Math.floor(x);

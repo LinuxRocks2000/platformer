@@ -1064,27 +1064,17 @@ class Game {
                     this.clouds.splice(i, 1);
                     this.clouds.push([-200 - 500 * Math.random(), window.innerHeight * Math.random()/4 * 3, 1 * Math.random() + 0.5]);
                 }
-                //this.backgroundCTX.beginPath();
-                //this.backgroundCTX.arc(cX, cY, 50, 0, Math.PI * 2);
-                //this.backgroundCTX.arc(cX + 25, cY + 12, 50, 0, Math.PI * 2);
-                //this.backgroundCTX.arc(cX - 25, cY + 12, 50, 0, Math.PI * 2);
-                //this.backgroundCTX.closePath();
-                //this.backgroundCTX.fill();
                 BrickDrawer.drawBrick(this.ctx, cX, cY, 200, 200, "cloud", "none", this);
             });
             if (this.fallingKills && this.artOff.y + this.minimumExtent < window.innerHeight){
-                if (this.skin == "pixel"){
-                    var art = document.getElementById("pixel_acidPit" + ((Math.round(BrickDrawer.pixelPulse/2) % 18) + 1));
-                    for (var i = 0; i < Math.round(window.innerWidth/100) + 2; i ++){
-                        this.ctx.drawImage(art, i * 100 + this.artOff.x%100, this.artOff.y + this.minimumExtent);
-                    }
-                    this.ctx.fillStyle = "#233663";
-                    this.ctx.fillRect(0, this.artOff.y + this.minimumExtent + 300, window.innerWidth, window.innerHeight);
+                var art = document.getElementById("pixel_acidPit" + ((Math.round(BrickDrawer.pixelPulse/2) % 18) + 1));
+                for (var i = -1; i < Math.round(window.innerWidth/100) + 2; i ++){
+                    this.ctx.drawImage(art, i * 100 + this.artOff.x%100, this.artOff.y + this.minimumExtent);
                 }
-                else{
-                    this.ctx.fillStyle = "#8ffe09";
-                    this.ctx.fillRect(0, this.artOff.y + this.minimumExtent, window.innerWidth, window.innerHeight);
-                }
+                this.ctx.fillStyle = "#233663";
+                this.ctx.fillRect(0, this.artOff.y + this.minimumExtent + 300, window.innerWidth, window.innerHeight);
+                //this.ctx.fillStyle = "#8ffe09";
+                //this.ctx.fillRect(0, this.artOff.y + this.minimumExtent, window.innerWidth, window.innerHeight);
             }
         }
         if (this.partying){
