@@ -1072,7 +1072,7 @@ class Game {
                 //this.backgroundCTX.fill();
                 BrickDrawer.drawBrick(this.ctx, cX, cY, 200, 200, "cloud", "none", this);
             });
-            if (this.fallingKills){
+            if (this.fallingKills && this.artOff.y + this.minimumExtent < window.innerHeight){
                 if (this.skin == "pixel"){
                     var art = document.getElementById("pixel_acidPit" + ((Math.round(BrickDrawer.pixelPulse/2) % 18) + 1));
                     for (var i = 0; i < Math.round(window.innerWidth/100) + 2; i ++){
