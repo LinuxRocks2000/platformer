@@ -74,6 +74,10 @@ const BrickDrawer = {
     drawBrick(ctx, x, y, width, height, style, type, game, thing){
         ctx.lineWidth = 0;
         this.renderCount ++;
+        if (style.startsWith("pixel_fish")){
+            //x -= 50;
+            //width = 150;
+        }
         if (style == "none"){
             return;
         }
@@ -108,10 +112,6 @@ const BrickDrawer = {
             else if (style == "averagingenemy"){
                 style = "hive";
             }
-        }
-        if (style.startsWith("pixel_fish")){
-            x -= 50;
-            width = 150;
         }
         if (style[style.length - 1] == "_"){ // _ enforces classic theme
             style = style.substring(0, style.length - 1);

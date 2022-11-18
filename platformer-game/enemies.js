@@ -352,6 +352,8 @@ class FishEnemy extends Brick{
         this.doDropHealth = config.dropHealth || false;
         if (this.game.skin == "pixel"){
             this.style = "pixel_fishinactive";
+            this.width = 150;
+            this.x -= 50;
         }
     }
 
