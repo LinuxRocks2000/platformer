@@ -350,6 +350,9 @@ class FishEnemy extends Brick{
         this.sightRange = config.sightRange || 400; // 8 block activation field
         this.frozen = true;
         this.doDropHealth = config.dropHealth || false;
+        if (this.game.skin == "pixel"){
+            this.style = "pixel_fishinactive";
+        }
     }
 
     onDie(){
@@ -372,6 +375,12 @@ class FishEnemy extends Brick{
             else{
                 return;
             }
+        }
+        if (this.xv < 0){
+            this.style = "pixel_fishFlipped";
+        }
+        else if (this.xv > 0){
+            this.style = "pixel_fish";
         }
         if (this.stage == 0){
             this.goal = this.x + Math.random() * this.range;

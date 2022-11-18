@@ -109,11 +109,15 @@ const BrickDrawer = {
                 style = "hive";
             }
         }
+        if (style.startsWith("pixel_fish")){
+            x -= 50;
+            width = 150;
+        }
         if (style[style.length - 1] == "_"){ // _ enforces classic theme
             style = style.substring(0, style.length - 1);
             console.log(style);
         }
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
@@ -468,6 +472,24 @@ const BrickDrawer = {
                 ctx.fillRect(x + 10, y + 30, 60, 10);
                 ctx.fillRect(x + 14, y + 35, 52, 10);
                 ctx.fillRect(x + 20, y + 40, 40, 10);
+                break;
+            case "pixel_fishinactive":
+                var art = document.getElementById("pixel_fishinactive");
+                ctx.drawImage(art, x, y);
+                type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
+                // It looks dumb anyways.
+                break;
+            case "pixel_fish":
+                var art = document.getElementById("pixel_fish" + (Math.round(this.pixelPulse) % 4));
+                ctx.drawImage(art, x, y);
+                type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
+                // It looks dumb anyways.
+                break;
+            case "pixel_fishFlipped":
+                var art = document.getElementById("pixel_fishFlipped" + (Math.round(this.pixelPulse/2) % 4));
+                ctx.drawImage(art, x, y);
+                type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
+                // It looks dumb anyways.
                 break;
         }
         x = Math.floor(x);
