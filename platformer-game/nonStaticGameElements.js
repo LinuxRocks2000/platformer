@@ -155,7 +155,7 @@ class Explosion extends Brick{
                 var centerDistX = item.x + item.width/2 - (this.x + this.width/2);
                 var centerDistY = item.y + item.height/2 - (this.y + this.height/2);
                 var totalDist = Math.sqrt(centerDistX * centerDistX + centerDistY * centerDistY);
-                if (totalDist < this.width * 1.5){
+                if (totalDist < this.width * 0.75){
                     item.xv += this.knockbackModifier * centerDistX/totalDist * this.explodeDamage/10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
                     item.yv += this.knockbackModifier * centerDistY/totalDist * this.explodeDamage/10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
                 }
@@ -263,10 +263,11 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         this.explodeRadius = config.explodeRadius;
         this.explodeDamage = config.explodeDamage;
         this.eject = 0; // Number of little bombs to spawn after exploding
-        this.chainTimeout = 1;
+        this.chainTimeout = config.chainTimeout || 1;
         this.explodeOnFastCollision = config.nitroglycerin;
         this.specialCollisions = this.collisions;
         this.mass = this.width * this.height/3;
+        this.knockbackModifier = config.knockbackModifier || 0.1;
     }
 
     loop(framesElapsed){
@@ -289,7 +290,7 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
     }
 
     explode(){
-        this.game.detonate(this, (this.explodeRadius ? this.explodeRadius * 2 : this.mass), this.explodeDamage || this.mass/10, 0.1);
+        this.game.detonate(this, (this.explodeRadius ? this.explodeRadius * 2 : this.mass), this.explodeDamage || this.mass/10, this.knockbackModifier);
     }
 
     specialCollision(){

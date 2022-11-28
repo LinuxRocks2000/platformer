@@ -82,7 +82,9 @@ const BrickDrawer = {
             return;
         }
         if (x + width < 0 || x > window.innerWidth || y + height < 0 || y > window.innerHeight){
-            return;
+            if (!game.isMapview){
+                return;
+            }
         }
         if (style == "normal"){
             if (game.acidDay){
@@ -115,7 +117,6 @@ const BrickDrawer = {
         }
         if (style[style.length - 1] == "_"){ // _ enforces classic theme
             style = style.substring(0, style.length - 1);
-            console.log(style);
         }
         if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
             prerender = width + "x" + height + style + " " + type;
@@ -597,13 +598,15 @@ const BrickDrawer = {
     applyComposite(color){
         this.composite = color;
         Object.values(this.preRenders).forEach((prerender, i) => {
-            var canvas = prerender.canvas;
-            var ctx = canvas.getContext("2d");
-            ctx.globalCompositeOperation = "saturation"; // Copy-pasted from Landgreen's code. https://github.com/landgreen/n-gon/.
-            ctx.fillStyle = color;
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.globalCompositeOperation = "source-over";
+            this.applyCompositeTo(color, prerender.canvas);
         });
+    },
+    applyCompositeTo(color, canvas){
+        var ctx = canvas.getContext("2d");
+        ctx.globalCompositeOperation = "saturation"; // Copy-pasted from Landgreen's code. https://github.com/landgreen/n-gon/.
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.globalCompositeOperation = "source-over";
     },
     invalidatePrerenders(){
         Object.values(this.preRenders).forEach((prer, i) => {

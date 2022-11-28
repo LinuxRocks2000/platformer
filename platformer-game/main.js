@@ -654,6 +654,7 @@ class Game {
         };
         window.addEventListener("resize", resize);
         resize();
+        this.resize = resize;
         this.isShadow = false;
         this.humanReadablePerf = 0;
         this.artOff = {
@@ -1040,8 +1041,16 @@ class Game {
         }
         else if (BrickDrawer.composite){
             this.ctx.fillStyle = BrickDrawer.composite;
+            if (!this.compositedBackground){
+                BrickDrawer.applyCompositeTo(BrickDrawer.composite, this.backgroundCanvas);
+                this.compositedBackground = true;
+            }
         }
         else{
+            if (this.compositedBackground){
+                this.resize();
+                this.compositedBackground = false;
+            }
             if (this.skin == "pixel"){
                 //this.ctx.fillStyle = this.bgGradient;
                 //this.ctx.fillStyle = "#273560";
@@ -1804,7 +1813,6 @@ class GameManager{
 }
 
 var game = new Game(50, 50);
-
 var gm = new GameManager(game, levels, 55);
 
 gm.start();
