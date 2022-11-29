@@ -1838,3 +1838,11 @@ function mainloop(){
     window.requestAnimationFrame(mainloop);
 }
 window.requestAnimationFrame(mainloop);
+
+miniConsole.methodTable["studio"] = () => {
+    game.studio();
+};
+
+miniConsole.methodTable["endGame"] = () => {
+    game.die = true;
+};

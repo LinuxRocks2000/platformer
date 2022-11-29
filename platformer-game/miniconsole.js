@@ -6,6 +6,7 @@ let miniConsole = {
     lock: "",
     showed: false,
     _line: "",
+    methodTable: {},
     get line(){
         return this._line;
     },
@@ -58,6 +59,7 @@ let miniConsole = {
                 this.consoleEl.style.height = args[2] + "px";
             }
             else if (args[0] == "move"){
+                this.kliked = false;
                 var inter = setInterval(() => {
                     this.consoleEl.style.left = this.mX - parseFloat(this.consoleEl.style.width)/2 + "px";
                     this.consoleEl.style.top = this.mY - parseFloat(this.consoleEl.style.height)/2 + "px";
@@ -68,7 +70,12 @@ let miniConsole = {
                 }, 20);
             }
             else{
-                this.pushLine("Unrecognized command.");
+                if (this.methodTable[args[0]]){
+                    this.methodTable[args[0]](args);
+                }
+                else{
+                    this.pushLine("Unrecognized command.");
+                }
             }
         }
         else{
