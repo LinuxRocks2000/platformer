@@ -103,7 +103,6 @@ let miniConsole = {
         }
     },
     init(){
-        this.show();
         document.body.addEventListener("keydown", (event) => {
             this.keypress(event);
         });
