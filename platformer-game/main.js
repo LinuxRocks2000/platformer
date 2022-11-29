@@ -1067,16 +1067,18 @@ class Game {
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.skin == "pixel"){
             this.ctx.drawImage(this.backgroundCanvas, 0, 0);
-            this.clouds.forEach((item, i) => {
-                item[0] += item[2];
-                var cX = item[0];
-                var cY = item[1];
-                if (cX > window.innerWidth){
-                    this.clouds.splice(i, 1);
-                    this.clouds.push([-200 - 500 * Math.random(), window.innerHeight * Math.random()/4 * 3, 1 * Math.random() + 0.5]);
-                }
-                BrickDrawer.drawBrick(this.ctx, cX, cY, 200, 200, "cloud", "none", this);
-            });
+            if (this.drawClouds){
+                this.clouds.forEach((item, i) => {
+                    item[0] += item[2];
+                    var cX = item[0];
+                    var cY = item[1];
+                    if (cX > window.innerWidth){
+                        this.clouds.splice(i, 1);
+                        this.clouds.push([-200 - 500 * Math.random(), window.innerHeight * Math.random()/4 * 3, 1 * Math.random() + 0.5]);
+                    }
+                    BrickDrawer.drawBrick(this.ctx, cX, cY, 200, 200, "cloud", "none", this);
+                });
+            }
             if (this.fallingKills && this.artOff.y + this.minimumExtent < window.innerHeight){
                 var art = document.getElementById("pixel_acidPit" + ((Math.round(BrickDrawer.pixelPulse/2) % 18) + 1));
                 for (var i = -1; i < Math.round(window.innerWidth/100) + 2; i ++){
@@ -1606,6 +1608,7 @@ class GameManager{
         else{
             this.game.fallingKills = true;
         }
+        this.game.drawClouds = this.curLevelObj.clouds;
         this.game.player.harmFromFalling = this.curLevelObj.damageOnFall;
         this.game.player.forceClassicJump = this.curLevelObj.forceClassicJump;
         this.game.player.setDifficulty(this.curLevelObj.difficulty);
