@@ -57,6 +57,16 @@ let miniConsole = {
                 this.consoleEl.style.width = args[1] + "px";
                 this.consoleEl.style.height = args[2] + "px";
             }
+            else if (args[0] == "move"){
+                var inter = setInterval(() => {
+                    this.consoleEl.style.left = this.mX - parseFloat(this.consoleEl.style.width)/2 + "px";
+                    this.consoleEl.style.top = this.mY - parseFloat(this.consoleEl.style.height)/2 + "px";
+                    if (this.kliked){
+                        clearInterval(inter);
+                        this.kliked = false;
+                    }
+                }, 20);
+            }
             else{
                 this.pushLine("Unrecognized command.");
             }
@@ -103,8 +113,19 @@ let miniConsole = {
         }
     },
     init(){
+        this.show();
+        this.hide();
         document.body.addEventListener("keydown", (event) => {
             this.keypress(event);
+        });
+
+        document.body.addEventListener("mousemove", (event) => {
+            this.mX = event.clientX;
+            this.mY = event.clientY;
+        });
+
+        document.body.addEventListener("click", (event) => {
+            this.kliked = true;
         });
 
         this.pushLine("By Tyler Clarke");
