@@ -903,19 +903,21 @@ class Game {
         this.viewJitter += amount;
     }
 
-    _create(x, y, width, height, style, type, bricktype = Brick, config = {}){
+    _create(x, y, width, height, style, type, bricktype = Brick, config = {}, extendMap = true){
         var b = new bricktype(this, x, y, width, height, style, type, config); // Put it in a variable so we can return it later
         this.tileset.push(b); // Add it to the tileset
         b.id = this.tileset.length;
-        if (y + height + 200 > this.minimumExtent){
-            this.minimumExtent = y + height + 200;
+        if (extendMap){
+            if (y + height + 200 > this.minimumExtent){
+                this.minimumExtent = y + height + 200;
+            }
         }
         return b; // Return it, so you can call this function and then do operations immediately.
     }
 
-    create(x, y, width, height, style = "normal", type = "solid", bricktype = Brick, config = {}){
+    create(x, y, width, height, style = "normal", type = "solid", bricktype = Brick, config = {}, extendMap = true){
         if (width * height > 0){
-            return this._create(x * this.blockWidth, y * this.blockHeight, width * this.blockWidth, height * this.blockHeight, style, type, bricktype, config);
+            return this._create(x * this.blockWidth, y * this.blockHeight, width * this.blockWidth, height * this.blockHeight, style, type, bricktype, config, extendMap);
         }
     }
 
