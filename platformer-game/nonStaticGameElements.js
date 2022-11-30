@@ -642,7 +642,7 @@ class FriendlyShooter extends Brick{
         if (this.game.skin == "pixel"){
             ctx.rotate(Math.PI * 1/2);
             ctx.translate(-this.width/2, -this.height/2);
-            ctx.drawImage(document.getElementById("pixel_hostileTurret"), 0, 0);
+            ctx.drawImage(document.getElementById("pixel_friendlyTurret"), 0, 0);
         }
         else{
             ctx.fillStyle = "green";
