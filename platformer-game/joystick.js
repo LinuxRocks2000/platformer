@@ -237,7 +237,7 @@ class PJoystick{
         var height = window.innerHeight/6;
         var width = window.innerWidth/4;
         this.bottom = new PJoystickButton(game, 10, window.innerHeight - height - 10, width, height);
-        this.weapon = new PJoystickButton(game, 10, window.innerHeight - height * 2 - 20, width, height);
+        //this.weapon = new PJoystickButton(game, 10, window.innerHeight - height * 2 - 20, width, height);
         this.top = new PJoystickButton(game, 10, window.innerHeight - height * 3 - 30, width, height);
         this.right = new PJoystickButton(game, window.innerWidth - width - 10, window.innerHeight - height - 10, width, height);
         this.left = new PJoystickButton(game, window.innerWidth - width * 2 - 20, window.innerHeight - height - 10, width, height);
@@ -247,14 +247,17 @@ class PJoystick{
             this.top.touchDone();
             this.left.touchDone();
             this.right.touchDone();
-            this.weapon.touchDone();
+            //this.weapon.touchDone();
+            game.mousePos.x = evt.touches[0].clientX;
+            game.mousePos.y = evt.touches[0].clientY;
             Array.from(evt.touches).forEach((item, i) => {
                 this.bottom.touchAt(item.clientX, item.clientY);
                 this.top.touchAt(item.clientX, item.clientY);
                 this.left.touchAt(item.clientX, item.clientY);
                 this.right.touchAt(item.clientX, item.clientY);
-                this.weapon.touchAt(item.clientX, item.clientY);
+                //this.weapon.touchAt(item.clientX, item.clientY);
             });
+            game.player.mouseDown = true;
         });
         game.canvas.addEventListener("touchstart", (evt) => {
             evt.preventDefault();
@@ -265,7 +268,10 @@ class PJoystick{
             this.top.touchDone();
             this.left.touchDone();
             this.right.touchDone();
-            this.weapon.touchDone();
+            game.player.mouseDown = false;
+            game.mousePos.x = evt.touches[0].clientX;
+            game.mousePos.y = evt.touches[0].clientY;
+            //this.weapon.touchDone();
         });
     }
 
@@ -273,9 +279,9 @@ class PJoystick{
         return this.bottom.down;
     }
 
-    get isWeapon(){
+    /*get isWeapon(){
         return this.weapon.down;
-    }
+    }*/
 
     get isTop(){
         return this.top.down;
@@ -295,7 +301,6 @@ class PJoystick{
             this.top.loop();
             this.left.loop();
             this.right.loop();
-            this.weapon.loop();
         }
     }
 }
