@@ -539,6 +539,9 @@ class ShooterEnemy extends Brick{
         else{
             this.shootAbove = config.shootAbove;
         }
+        if (game.skin == "pixel"){
+            this.style = "none";
+        }
     }
 
     loop(framesElapsed){
@@ -575,16 +578,23 @@ class ShooterEnemy extends Brick{
         ctx.save();
         ctx.translate(this.x + this.game.artOff.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
         ctx.rotate(this.angle * Math.PI/180);
-        ctx.fillStyle = "grey";
-        ctx.beginPath();
-        ctx.translate(0, 20);
-        ctx.moveTo(-5, -5);
-        ctx.lineTo(0, 0);
-        ctx.lineTo(5, -5);
-        ctx.lineTo(0, 20);
-        ctx.lineTo(-5, -5);
-        ctx.closePath();
-        ctx.fill();
+        if (this.game.skin == "pixel"){
+            ctx.rotate(Math.PI * 1/2);
+            ctx.translate(-this.width/2, -this.height/2);
+            ctx.drawImage(document.getElementById("pixel_hostileTurret"), 0, 0);
+        }
+        else{
+            ctx.fillStyle = "grey";
+            ctx.beginPath();
+            ctx.translate(0, 20);
+            ctx.moveTo(-5, -5);
+            ctx.lineTo(0, 0);
+            ctx.lineTo(5, -5);
+            ctx.lineTo(0, 20);
+            ctx.lineTo(-5, -5);
+            ctx.closePath();
+            ctx.fill();
+        }
         ctx.restore();
     }
 
