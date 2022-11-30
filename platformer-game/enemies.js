@@ -617,6 +617,14 @@ class CannonEnemy extends Brick{
 
     loop(framesElapsed){
         super.loop(framesElapsed);
+        if (this.game.skin == "pixel"){
+            if (this.game.player.x < this.x){
+                this.style = "pixel_cannonFlipped";
+            }
+            else{
+                this.style = "pixel_cannon";
+            }
+        }
         if (this.canSeePlayer()){
             this.phase += framesElapsed;
             if (this.phase > this.fireRate){
@@ -627,7 +635,7 @@ class CannonEnemy extends Brick{
     }
 
     shoot(){
-        this.game._create(this.x - this.game.blockWidth/2 + this.width/2 + ((this.game.player.x < this.x ? -1 : 1) * this.game.blockWidth), this.y, this.game.blockWidth, this.game.blockHeight, "bullet", "bullet", BulletEnemy, {
+        this.game._create(this.x - this.game.blockWidth/2 + this.width/2 + ((this.game.player.x < this.x ? -1 : 1) * this.game.blockWidth), this.y, this.game.blockWidth, this.game.blockHeight, (this.game.skin == "pixel" ? "pixel_cannonBall" : "bullet"), "bullet", BulletEnemy, {
             xv: ((this.game.player.x < this.x ? -1 : 1) * 15),
             yv: 0,
             damage: 50

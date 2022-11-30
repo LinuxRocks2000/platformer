@@ -120,6 +120,20 @@ class LoreNPC extends NPC{
         this.speech = config.speech;
         this.speechTimeout = 0;
         this.speechPos = 0;
+        this.art = undefined;
+        this.artFlipped = undefined;
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        if (this.game.skin == "pixel" && this.art && this.artFlipped){
+            this.style = "none";
+            var art = this.art;
+            if (this.xv < 0){
+                art = this.artFlipped;
+            }
+            this.game.ctx.drawImage(art, this.x + this.game.artOff.x, this.y + this.game.artOff.y);
+        }
     }
 
     onPlayerEnterFirstTime(){

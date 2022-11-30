@@ -665,6 +665,10 @@ class Game {
         this.ctx.imageSmoothingEnabled = false;
         this.studioBlocks = [
             this.create(0, 0, 1, 1),
+            this.create(0, 0, 1, 1, "dirt_grass"),
+            this.create(0, 0, 1, 1, "dirt_heavy"),
+            this.create(0, 0, 1, 1, "dirt_medium"),
+            this.create(0, 0, 1, 1, "dirt_empty"),
             this.create(0, 0, 1, 1, "lava", "killu"),
             this.create(0, 0, 1, 1, "jumpthrough", "jumpthrough"),
             this.create(0, 0, 1, 1, "coin", "fiftycoin"),

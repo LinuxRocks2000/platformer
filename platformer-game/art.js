@@ -389,6 +389,54 @@ const BrickDrawer = {
                     }
                 }
                 break;
+            case "dirt_heavy":
+                var art = document.getElementById("pixel_fancydirt_heavy");
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        /*var art = document.getElementById("pixel_dirt");
+                        if (_y == 0){
+                            art = document.getElementById("pixel_dirt_grassy");
+                        }*/
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "dirt_grass":
+                var art = document.getElementById("pixel_fancydirt_heavyGrass");
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        /*var art = document.getElementById("pixel_dirt");
+                        if (_y == 0){
+                            art = document.getElementById("pixel_dirt_grassy");
+                        }*/
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "dirt_empty":
+                var art = document.getElementById("pixel_fancydirt_empty");
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        /*var art = document.getElementById("pixel_dirt");
+                        if (_y == 0){
+                            art = document.getElementById("pixel_dirt_grassy");
+                        }*/
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
+            case "dirt_medium":
+                var art = document.getElementById("pixel_fancydirt_medium");
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        /*var art = document.getElementById("pixel_dirt");
+                        if (_y == 0){
+                            art = document.getElementById("pixel_dirt_grassy");
+                        }*/
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
             case "friendlyshooter":
                 ctx.fillStyle = "yellow";
                 isCircle = true;
@@ -488,6 +536,24 @@ const BrickDrawer = {
                 break;
             case "pixel_fishFlipped":
                 var art = document.getElementById("pixel_fishFlipped" + (Math.round(this.pixelPulse/2) % 4));
+                ctx.drawImage(art, x, y);
+                type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
+                // It looks dumb anyways.
+                break;
+            case "pixel_cannon":
+                var art = document.getElementById("pixel_cannon");
+                ctx.drawImage(art, x, y);
+                type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
+                // It looks dumb anyways.
+                break;
+            case "pixel_cannonFlipped":
+                var art = document.getElementById("pixel_cannonFlipped");
+                ctx.drawImage(art, x, y);
+                type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
+                // It looks dumb anyways.
+                break;
+            case "pixel_cannonBall":
+                var art = document.getElementById("pixel_cannonBall");
                 ctx.drawImage(art, x, y);
                 type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
                 // It looks dumb anyways.

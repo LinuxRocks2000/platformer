@@ -323,7 +323,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 }
                 npc.dieIn(50);
             };
-            game.create(64, 22, 1, 2, "harmless_npc", "none", LoreNPC, {name: "The strange Survivor", speech: [
+            var npc = game.create(64, 22, 1, 2, "harmless_npc", "none", LoreNPC, {name: "The strange Survivor", speech: [
                 {
                     text: "Hello, fellow Survivor!",
                     delay: 100
@@ -367,6 +367,8 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     delay: 0
                 }
             ]});
+            npc.art = document.getElementById("pixel_trin");
+            npc.artFlipped = document.getElementById("pixel_trinFlipped");
 
             // 76, 16
             game.create(76, 15, 1, 1, "glass", "field");
