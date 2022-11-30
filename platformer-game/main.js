@@ -332,7 +332,7 @@ class Player extends PhysicsObject{
     loop(framesElapsed){
         framesElapsed *= this.timerate;
         super.loop(framesElapsed);
-        if (this.weapon && (this.keysHeld[" "] || this.mouseDown)){
+        if (this.weapon && (this.keysHeld[" "] || this.mouseDown || this.joystick.isWeapon)){
             this.weapon.trigger();
         }
         if (this.studioMode || this.cheatMode){
@@ -424,7 +424,6 @@ class Player extends PhysicsObject{
             // FE-irrelevance also makes it worse?? Discarded.
             // Hypothesis: Drift.
         }
-        this.joystick.loop();
     }
 
     collect(amount){
@@ -1187,6 +1186,7 @@ class Game {
         else{
             this.ctx.fillStyle = "red";
         }
+        this.player.joystick.loop();
         this.ctx.fillRect(window.innerWidth - 110, window.innerHeight - 20, 100 * framesElapsed/2.5, 10);
         this.ctx.beginPath();
         this.ctx.moveTo(window.innerWidth - 110 + (100/2.5), window.innerHeight - 20);

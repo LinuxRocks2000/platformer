@@ -141,7 +141,7 @@ class PJoystick{
 
 // New PJoystick: Hopefully cleaner and easier, no graphics.
 
-class PJoystick{
+/*class PJoystick{
     constructor(game){
         this.game = game;
         this.startX = window.innerWidth/2;
@@ -200,5 +200,102 @@ class PJoystick{
 
     loop(){
 
+    }
+}*/
+
+// Jakson's idea PJoystick
+
+class PJoystickButton{
+    constructor(game, x, y, width, height){
+        this.game = game;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.down = false;
+    }
+
+    loop(){
+        this.game.ctx.fillStyle = this.down ? "darkgreen" : "green";
+        this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    touchAt(x, y){
+        if (x > this.x && x < this.x + this.width && y > this.y && y < this.y + this.height){
+            this.down = true;
+        }
+    }
+
+    touchDone(){
+        this.down = false;
+    }
+}
+
+class PJoystick{
+    constructor(game){
+        this.game = game;
+        var height = window.innerHeight/6;
+        var width = window.innerWidth/4;
+        this.bottom = new PJoystickButton(game, 10, window.innerHeight - height - 10, width, height);
+        this.weapon = new PJoystickButton(game, 10, window.innerHeight - height * 2 - 20, width, height);
+        this.top = new PJoystickButton(game, 10, window.innerHeight - height * 3 - 30, width, height);
+        this.right = new PJoystickButton(game, window.innerWidth - width - 10, window.innerHeight - height - 10, width, height);
+        this.left = new PJoystickButton(game, window.innerWidth - width * 2 - 20, window.innerHeight - height - 10, width, height);
+        game.canvas.addEventListener("touchmove", (evt) => {
+            evt.preventDefault();
+            this.bottom.touchDone();
+            this.top.touchDone();
+            this.left.touchDone();
+            this.right.touchDone();
+            this.weapon.touchDone();
+            Array.from(evt.touches).forEach((item, i) => {
+                this.bottom.touchAt(item.clientX, item.clientY);
+                this.top.touchAt(item.clientX, item.clientY);
+                this.left.touchAt(item.clientX, item.clientY);
+                this.right.touchAt(item.clientX, item.clientY);
+                this.weapon.touchAt(item.clientX, item.clientY);
+            });
+        });
+        game.canvas.addEventListener("touchstart", (evt) => {
+            evt.preventDefault();
+        });
+        game.canvas.addEventListener("touchend", (evt) => {
+            evt.preventDefault();
+            this.bottom.touchDone();
+            this.top.touchDone();
+            this.left.touchDone();
+            this.right.touchDone();
+            this.weapon.touchDone();
+        });
+    }
+
+    get isBottom(){
+        return this.bottom.down;
+    }
+
+    get isWeapon(){
+        return this.weapon.down;
+    }
+
+    get isTop(){
+        return this.top.down;
+    }
+
+    get isLeft(){
+        return this.left.down;
+    }
+
+    get isRight(){
+        return this.right.down;
+    }
+
+    loop(){
+        if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0)){ // THANKS, STACKOVERFLOW
+            this.bottom.loop();
+            this.top.loop();
+            this.left.loop();
+            this.right.loop();
+            this.weapon.loop();
+        }
     }
 }
