@@ -71,8 +71,30 @@ let miniConsole = {
                 this.hide();
             }
             else if (args[0] == "resize"){
+                if (args[1] == "max"){
+                    args[1] = window.innerWidth;
+                }
+                if (args[2] == "max"){
+                    args[2] = window.innerHeight;
+                }
                 this.consoleEl.style.width = args[1] + "px";
                 this.consoleEl.style.height = args[2] + "px";
+            }
+            else if (args[0] == "help"){
+                this.log("Welcome to Miniconsole! This is a tiny little self-contained Javascript program that allows JS console support on any webapp.");
+                this.log("Every app that uses miniconsole can implement their own functions - here's a table of the base ones:");
+                this.log(" - [exit]: Exit Miniconsole")
+                this.log(" - [resize]: Resize the Miniconsole \"window\"");
+                this.log(" - [clear]: Clear the Miniconsole");
+                this.log(" - [move]: Move the Miniconsole (it follows your mouse until you click)");
+                this.log();
+                this.log("To run any Javascript, just type it in and click Enter - as long as it doesn't match the pattern of a Miniconsole special command, it won't cause any problems.");
+                this.log();
+                this.debug("Warning: Miniconsole is not sandboxed and is not necessarily secure. Use discretion: while copy/pasting commands from the internet probably won't damage your actual computer, you could have all the data on the Miniconsole-enabled website stolen.");
+                this.log("Made by Tyler Clarke, circa 2022 a.d.");
+            }
+            else if (args[0] == "clear"){
+                document.getElementById("miniconsole-js-generated-text").innerHTML = "";
             }
             else if (args[0] == "move"){
                 this.kliked = false;
@@ -173,7 +195,7 @@ let miniConsole = {
 
         this.pushLine("By Tyler Clarke");
         this.pushLine();
-        this.pushLine("Type commands and click enter to run them. Type [exit] and click enter to close miniconsole. Type [move] to make the console follow the mouse until a click. Type [resize w h] to resize the console to w by h.")
+        this.pushLine("Type commands and click enter to run them. Type [exit] and click enter to close miniconsole. Type [move] to make the console follow the mouse until a click. Type [resize w h] to resize the console to w by h. Run [help] for more.")
     },
     prompt(func){
         this.promptMode = func;
