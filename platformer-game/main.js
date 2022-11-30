@@ -1865,3 +1865,18 @@ miniConsole.methodTable["pause"] = () => {
 miniConsole.methodTable["unpause"] = () => {
     gm.resume();
 };
+
+miniConsole.methodTable["factoryReset"] = () => {
+    miniConsole.error("Are you sure you want to factory reset Platformer? This will delete all of your saved games and other cached data. Y/N");
+    miniConsole.prompt((response) => {
+        if (response.startsWith("Y") || response.startsWith("y")){
+            miniConsole.log("Clearing localStorage");
+            localStorage.clear();
+            miniConsole.log("Reloading");
+            location.reload();
+        }
+        else{
+            miniConsole.log("Abort.");
+        }
+    });
+};

@@ -61,7 +61,11 @@ let miniConsole = {
     },
     submit(){
         this.pushLine(": " + this.line);
-        if (this.line.startsWith("[") && this.line.endsWith("]")){
+        if (this.promptMode){
+            this.promptMode(this.line);
+            this.promptMode = undefined;
+        }
+        else if (this.line.startsWith("[") && this.line.endsWith("]")){
             var args = this.line.substring(1, this.line.length - 1).split(" ");
             if (args[0] == "exit"){
                 this.hide();
@@ -170,6 +174,9 @@ let miniConsole = {
         this.pushLine("By Tyler Clarke");
         this.pushLine();
         this.pushLine("Type commands and click enter to run them. Type [exit] and click enter to close miniconsole. Type [move] to make the console follow the mouse until a click. Type [resize w h] to resize the console to w by h.")
+    },
+    prompt(func){
+        this.promptMode = func;
     }
 };
 
