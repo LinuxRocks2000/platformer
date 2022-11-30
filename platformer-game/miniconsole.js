@@ -1,4 +1,7 @@
-// Mini keyboard-activated console for Chromebook users
+// Mini keyboard-activated console for Javascript
+// Unobtrusive, comes with it's own CSS, appends to the html Body element. Configurable - change the password to whatever you want.
+// Add new [method]s with miniConsole.methodTable[name] = your_function
+// Made by Tyler Clarke circa 2022 A.D - use it however you want, but I'd be very disappointed if you avoided accrediting it ;)
 
 let miniConsole = {
     consoleEl: undefined,
