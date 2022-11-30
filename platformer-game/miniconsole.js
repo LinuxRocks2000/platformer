@@ -47,6 +47,15 @@ let miniConsole = {
             this.consoleEl.style.display = "none";
         }
     },
+    log(text){
+        this.pushLine(text);
+    },
+    error(text){
+        this.pushLine("<span style='color: red;'>" + text + "</span>");
+    },
+    debug(text){
+        this.pushLine("<span style='color: orange;'>" + text + "</span>");
+    },
     submit(){
         this.pushLine(": " + this.line);
         if (this.line.startsWith("[") && this.line.endsWith("]")){
@@ -79,17 +88,37 @@ let miniConsole = {
             }
         }
         else{
-            try{
+            var _log = console.log;
+            var _err = console.error;
+            var _deb = console.debug;
+            console.log = (data) => {
+                _log(data);
+                this.log(data);
+            };
+            console.error = (data) => {
+                _err(data);
+                this.error(data);
+            };
+            console.debug = (data) => {
+                _deb(data);
+                this.debug(data);
+            };
+            try {
                 var ret = eval(this.line);
                 if (ret){
                     this.pushLine(ret);
                 }
             }
-            catch{
-                this.pushLine("JavaScript error!");
+            catch(err){
+                console.error(err.stack);
+                console.error(err.name);
+                console.error(err.message);
             }
+            console.log = _log;
+            console.error = _err;
+            console.debug = _deb;
         }
-        this.line = "";
+        this.line = ""; // In case of an error
     },
     keypress(event){
         if (this.showed){

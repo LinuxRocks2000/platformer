@@ -1436,6 +1436,14 @@ class GameManager{
         }
     }
 
+    pause(){
+        this.paused = true;
+    }
+
+    resume(){
+        this.paused = false;
+    }
+
     getHashdata(){
         var processingPhase = 0;
         var results = {};
@@ -1675,6 +1683,9 @@ class GameManager{
 
     loop(){
         if (!this.menu){
+            if (this.paused){
+                return;
+            }
             var distTime = window.performance.now() - this.lastFrameTime;
             this.lastFrameTime = window.performance.now();
             var framesElapsed = distTime/this.frameDuration;
@@ -1845,4 +1856,12 @@ miniConsole.methodTable["studio"] = () => {
 
 miniConsole.methodTable["endGame"] = () => {
     game.die = true;
+};
+
+miniConsole.methodTable["pause"] = () => {
+    gm.pause();
+};
+
+miniConsole.methodTable["unpause"] = () => {
+    gm.resume();
 };
