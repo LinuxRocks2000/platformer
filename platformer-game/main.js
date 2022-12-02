@@ -670,6 +670,7 @@ class Game {
             this.create(0, 0, 1, 1, "dirt_medium"),
             this.create(0, 0, 1, 1, "dirt_empty"),
             this.create(0, 0, 1, 1, "rock"),
+            this.create(0, 0, 1, 1, "background1"),
             this.create(0, 0, 1, 1, "lava", "killu"),
             this.create(0, 0, 1, 1, "jumpthrough", "jumpthrough"),
             this.create(0, 0, 1, 1, "coin", "fiftycoin"),
