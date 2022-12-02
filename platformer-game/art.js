@@ -72,6 +72,8 @@ const BrickDrawer = {
     preRenders: {},
     pixelPulse: 0,
     drawBrick(ctx, x, y, width, height, style, type, game, thing){
+        var _oldX = x;
+        var _oldY = y;
         ctx.lineWidth = 0;
         this.renderCount ++;
         if (style.startsWith("pixel_fish")){
@@ -379,11 +381,83 @@ const BrickDrawer = {
                 }
                 break;
             case "dirt":
-                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                /*for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
                     for (var _y = 0; _y < height/50; _y ++){
                         var art = document.getElementById("pixel_dirt");
                         if (_y == 0){
                             art = document.getElementById("pixel_dirt_grassy");
+                        }
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }*/
+                var nearbies = [thing];
+                game.tileset.forEach((item, i) => {
+                    if (item.style == "normal"){
+                        if (item.x <= thing.x + width &&
+                            item.x + item.width >= thing.x &&
+                            item.y <= thing.y + height &&
+                            item.y + item.height >= thing.y)
+                        {
+                            nearbies.push(item);
+                        }
+                    }
+                });
+                //console.log(nearbies);
+                const getSquareIn = (x, y) => {
+                    var ret = false;
+                    nearbies.forEach((item, i) => {
+                        if (x >= item.x && y >= item.y && x <= item.x + item.width - 50 && y <= item.y + item.height - 50){
+                            ret = true;
+                        }
+                    });
+                    return ret;
+                };
+                const getSquareCount = (x, y) => {
+                    var ret = 0;
+                    ([
+                        [x - 50, y - 50],
+                        [x     , y - 50],
+                        [x + 50, y - 50],
+                        [x + 50, y],
+                        [x + 50, y + 50],
+                        [x     , y + 50],
+                        [x - 50, y + 50],
+                        [x - 50, y],
+                    ]).forEach((item, i) => {
+                        if (getSquareIn(item[0], item[1])){
+                            ret ++;
+                        }
+                    });
+                    return ret;
+                };
+                const getSquaredCount = (x, y) => {
+                    var ret = 0;
+                    ([
+                        [x - 50, y - 50],
+                        [x     , y - 50],
+                        [x + 50, y - 50],
+                        [x + 50, y],
+                        [x + 50, y + 50],
+                        [x     , y + 50],
+                        [x - 50, y + 50],
+                        [x - 50, y],
+                    ]).forEach((item, i) => {
+                        if (getSquareCount(item[0], item[1]) == 8){
+                            ret ++;
+                        }
+                    });
+                    return ret;
+                };
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_fancydirt_heavy");
+                        var count = getSquareCount(thing.x + _x * 50, thing.y + _y * 50);
+                        var countSquared = getSquaredCount(thing.x + _x * 50, thing.y + _y * 50);
+                        if (count == 8){
+                            art = document.getElementById("pixel_fancydirt_medium");
+                        }
+                        if (countSquared > 7){
+                            art = document.getElementById("pixel_fancydirt_empty");
                         }
                         ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
