@@ -31,6 +31,12 @@ class Player extends PhysicsObject{
                 if (event.key == "e"){
                     this.game.studioExport();
                 }
+                if (event.key == "Home" || event.key == "b"){
+                    this.game.studioBringToBack();
+                }
+                if (event.key == "End" || event.key == "f"){
+                    this.game.studioBringToFront();
+                }
                 if (event.key == "r"){
                     this.x = this.game.startX;
                     this.y = this.game.startY;
@@ -876,6 +882,24 @@ class Game {
         this.tileset.forEach((item, i) => {
             if (item.studioSelected){
                 this.deleteBrick(item);
+            }
+        });
+    }
+
+    studioBringToBack(){
+        this.tileset.forEach((item, i) => {
+            if (item.studioSelected){
+                this.tileset.splice(i, 1);
+                this.tileset.splice(0, 0, item);
+            }
+        });
+    }
+
+    studioBringToFront(){
+        this.tileset.forEach((item, i) => {
+            if (item.studioSelected){
+                this.tileset.splice(i, 1);
+                this.tileset.push(item);
             }
         });
     }
