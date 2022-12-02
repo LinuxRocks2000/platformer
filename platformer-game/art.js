@@ -111,6 +111,7 @@ const BrickDrawer = {
                 style = "ice_pixel";
             }
             else if (style == "lava"){
+                if (width <= game.blockWidth * 2 || height <= game.blockWidth * 2)
                 style = "spoange";
             }
             else if (style == "averagingenemy"){
@@ -412,8 +413,8 @@ const BrickDrawer = {
                     });
                     return ret;
                 };
-                const getSquareCount = (x, y) => {
-                    var ret = 0;
+                const getSquare = (x, y) => {
+                    var ret = [];
                     ([
                         [x - 50, y - 50],
                         [x     , y - 50],
@@ -424,7 +425,14 @@ const BrickDrawer = {
                         [x - 50, y + 50],
                         [x - 50, y],
                     ]).forEach((item, i) => {
-                        if (getSquareIn(item[0], item[1])){
+                        ret.push(getSquareIn(item[0], item[1]));
+                    });
+                    return ret;
+                };
+                const getSquareCount = (x, y) => {
+                    var ret = 0;
+                    getSquare(x, y).forEach((item, i) => {
+                        if (item){
                             ret ++;
                         }
                     });
@@ -652,6 +660,15 @@ const BrickDrawer = {
                 ctx.drawImage(art, x, y);
                 type = ""; // I don't know why, but the orange halo around enemies breaks rendering textures
                 // It looks dumb anyways.
+                break;
+            case "pixel_lava":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_lava");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                type = ""; // Don't want it to try Enemyrendering
                 break;
         }
         x = Math.floor(x);

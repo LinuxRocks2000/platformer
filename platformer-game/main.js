@@ -37,6 +37,13 @@ class Player extends PhysicsObject{
                 if (event.key == "End" || event.key == "f"){
                     this.game.studioBringToFront();
                 }
+                if (event.key == "g"){
+                    Object.keys(BrickDrawer.preRenders).forEach((item, i) => {
+                        var c = BrickDrawer.preRenders[item].canvas;
+                        c.parentNode.removeChild(c);
+                    });
+                    BrickDrawer.preRenders = {}; // Toss and GC all the assets.
+                }
                 if (event.key == "r"){
                     this.x = this.game.startX;
                     this.y = this.game.startY;
@@ -675,6 +682,7 @@ class Game {
             this.create(0, 0, 1, 1, "dirt_heavy"),
             this.create(0, 0, 1, 1, "dirt_medium"),
             this.create(0, 0, 1, 1, "dirt_empty"),
+            this.create(0, 0, 1, 1, "pixel_lava", "splenectifyu"),
             this.create(0, 0, 1, 1, "rock", "none"),
             this.create(0, 0, 1, 1, "background1", "none"),
             this.create(0, 0, 1, 1, "lava", "killu"),
@@ -739,7 +747,7 @@ class Game {
         this.lossCount = 0;
 
         if (Math.random() > 0.95){
-            this.acidDay = true;
+            //this.acidDay = true;
         }
 
         this.lastFramesElapsed = 0;
@@ -1170,7 +1178,7 @@ class Game {
         if (this.die){
             this.lossCount ++;
             if (this.lossCount >= 5){
-                this.acidDay = true; // Acid mode if you lose a lot
+                //this.acidDay = true; // Acid mode if you lose a lot
             }
             this.end();
             return 1;
