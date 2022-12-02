@@ -459,6 +459,9 @@ const BrickDrawer = {
                         if (countSquared > 7){
                             art = document.getElementById("pixel_fancydirt_empty");
                         }
+                        if (_y == 0 && count <= 6){
+                            art = document.getElementById("pixel_fancydirt_heavyGrass");
+                        }
                         ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
                 }
