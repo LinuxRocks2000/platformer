@@ -466,6 +466,15 @@ const BrickDrawer = {
                 }
                 type = ""; // Don't want it to try Enemyrendering
                 break;
+            case "rock":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_rock");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                type = ""; // Don't want it to try Enemyrendering
+                break;
             case "cloud":
                 ctx.fillStyle = "white";
                 //ctx.fillRect(x + 40, y, 50, 50);
