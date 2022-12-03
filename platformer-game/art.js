@@ -71,7 +71,23 @@ const BrickDrawer = {
     colorPulse: 0,
     preRenders: {},
     pixelPulse: 0,
+    uniqueRID: 0,
     drawBrick(ctx, x, y, width, height, style, type, game, thing){
+        var nearbies = [];
+        if (thing){
+            nearbies = [thing];
+            game.tileset.forEach((item, i) => {
+                if (item.style == "normal"){
+                    if (item.x <= thing.x + width &&
+                        item.x + item.width >= thing.x &&
+                        item.y <= thing.y + height &&
+                        item.y + item.height >= thing.y)
+                    {
+                        nearbies.push(item);
+                    }
+                }
+            });
+        }
         var _oldX = x;
         var _oldY = y;
         ctx.lineWidth = 0;
@@ -122,7 +138,13 @@ const BrickDrawer = {
             style = style.substring(0, style.length - 1);
         }
         if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
-            prerender = width + "x" + height + style + " " + type;
+            if (style == "dirt"){
+                if (nearbies.length > 1 && !thing._artUniqueResourceID){
+                    thing._artUniqueResourceID = this.uniqueRID;
+                    this.uniqueRID ++;
+                }
+            }
+            prerender = width + "x" + height + style + " " + type + (thing ? (thing._artUniqueResourceID ? thing._artUniqueResourceID : "") : "");
             if (this.preRenders[prerender]){
                 ctx.drawImage(this.preRenders[prerender].canvas, x/* - this.preRenders[prerender].stroke/2*/, y/* - this.preRenders[prerender].stroke/2*/);
                 return;
@@ -391,18 +413,6 @@ const BrickDrawer = {
                         ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
                     }
                 }*/
-                var nearbies = [thing];
-                game.tileset.forEach((item, i) => {
-                    if (item.style == "normal"){
-                        if (item.x <= thing.x + width &&
-                            item.x + item.width >= thing.x &&
-                            item.y <= thing.y + height &&
-                            item.y + item.height >= thing.y)
-                        {
-                            nearbies.push(item);
-                        }
-                    }
-                });
                 //console.log(nearbies);
                 const getSquareIn = (x, y) => {
                     var ret = false;
@@ -846,6 +856,13 @@ const BrickDrawer = {
             this.colorPulse = 0;
         }
         this.pixelPulse += fe;
+    },
+    clearCache(){
+        Object.keys(this.preRenders).forEach((item, i) => {
+            var c = this.preRenders[item].canvas;
+            c.parentNode.removeChild(c);
+        });
+        this.preRenders = {}; // Toss and GC all the assets.
     }
 };
 

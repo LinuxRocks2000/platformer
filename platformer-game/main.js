@@ -38,11 +38,7 @@ class Player extends PhysicsObject{
                     this.game.studioBringToFront();
                 }
                 if (event.key == "g"){
-                    Object.keys(BrickDrawer.preRenders).forEach((item, i) => {
-                        var c = BrickDrawer.preRenders[item].canvas;
-                        c.parentNode.removeChild(c);
-                    });
-                    BrickDrawer.preRenders = {}; // Toss and GC all the assets.
+                    BrickDrawer.clearCache();
                 }
                 if (event.key == "r"){
                     this.x = this.game.startX;
@@ -1644,6 +1640,7 @@ class GameManager{
         if (!this.magicSkin){
             this.game.skin = document.querySelector("#skinselect > select").value;
         }
+        BrickDrawer.clearCache();
         if (this.curLevelObj){
             this.curLevelObj.ondestroy(this.game);
         }
