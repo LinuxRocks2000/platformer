@@ -77,6 +77,8 @@
                 <button id="skipbutton" onclick="gm.skip()">
                     Skip
                 </button>
+                <br>
+                by <span id="author">Me</span>
             </div>
             <div id="playbutton">
                 <button onclick="gm.play()">Play</button>
@@ -92,6 +94,9 @@
                     <option value = "">Classic</option>
                     <option value = "lr2k">LinuxRocks2000</option>
                 </select>
+            </div>
+            <div id="communityOn">
+                Include community levels: <input id="communityOnInput" type="checkbox"></input>
             </div>
         </div>
         <div id="saveslotman" style="display: none;" class="coverwall">
@@ -124,6 +129,7 @@
         <script type="text/javascript" src="npcs.js"></script>
         <script type="text/javascript" src="weapons.js"></script>
         <script type="text/javascript" src="levels.js"></script>
+        <script type="text/javascript" src="communityLevels.js"></script>
         <script type="text/javascript" src="joystick.js"></script>
         <script type="text/javascript" src="main.js"></script>
         <script type="text/javascript" src="workerLevels.js"></script>

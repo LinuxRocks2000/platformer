@@ -2998,5 +2998,50 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         ondestroy(game){
 
         }
+    },
+    {
+        name: "fishtank",
+        author: "Ereed2010",
+        community: true,
+        phase: 0,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game){
+            game.startX = -0;
+            game.startY = -0;
+            game.player.giveWeapon(Hypersling);
+            game.create(-1, -0, 30, 3 );
+            game.create(29, 2, 30, 5, "normal", "solid", RicketyPlatform);
+            game.create(59, 1, 2, 2)
+            game.create(60, 2, 30, 5, "normal", "solid", RicketyPlatform);
+            game.create(89, 20, 1, 1, "end", "end");
+            game.create(15, -3, 1, 1, "coin", "fiftycoin");
+            game.create(70, 1, 2, 2, "lava", "enemy", NormalEnemy);
+            game.create(52, 1, 3, 1, "lava", "enemy", NormalEnemy);
+            game.create(61, 2, 30, 20, "water", "water");
+            game.create(61, 1, 30, 1, "glass", "field", Brick);
+            game.create(59, 3, 2, 19);
+            game.create(60, 21, 31, 1, "glass", "field", Brick);
+            game.create(90, 3, 1, 18, "glass", "field", Brick);
+            game.create(80, 17, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(70, 17, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(75, 17, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(71, 18, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(85, 19, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(91, 3, 30, 1, "glass", "field", Brick);
+            game.create(91, 2, 30, 1, "water", "water");
+            game.create(97, 1, 1, 1, "Fish", "enemy", FishEnemy);
+            game.create(100, 1, 1, 1, "Fish", "enemy", FishEnemy);
+            game.create(68, 7, 1, 1, "Fish", "enemy", FishEnemy);
+            game.create(51, 7, 1, 1, "Fish", "enemy", FishEnemy);
+            game.create(78, 7, 1, 1, "Fish", "enemy", FishEnemy);
+            game.create(121, 1, 2, 3);
+            game.create(122, 0, 1, 1, "coin", "fiftycoin");
+        },
+        onloop(game, framesElapsed){
+        },
+        ondestroy(game){
+
+        }
     }
 ];

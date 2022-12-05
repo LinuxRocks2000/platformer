@@ -1485,6 +1485,10 @@ class GameManager{
         if (localStorage.isHell == "yes"){
             this.isHell = true;
         }
+
+        document.getElementById("communityOnInput").addEventListener('change', () => {
+            this.showLevels();
+        });
     }
 
     pause(){
@@ -1553,6 +1557,9 @@ class GameManager{
         this.levels.forEach((item, i) => {
             console.log(item);
             console.log(this.beaten.indexOf(item.name));
+            if (item.community && !document.getElementById("communityOnInput").checked){
+                return;
+            }
             if (item.phase == this.curPhase && this.beaten.indexOf(item.name) == -1){
                 options += `<option id="` + item.name + `">` + item.name + `</option>`;
             }
@@ -1595,6 +1602,7 @@ class GameManager{
         else{
             document.getElementById("skipbutton").style.display = "none";
         }
+        document.getElementById("author").innerHTML = lev.author || "<span style='color: red;'>Pusheen</span>";
     }
 
     showSaveslot(){

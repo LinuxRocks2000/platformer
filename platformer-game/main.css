@@ -397,3 +397,15 @@ a{
     top: 50%;
     transform: translate(0, -50%);
 }
+
+#author{
+    color: blue;
+}
+
+
+#communityOn{
+    position: absolute;
+    right: 0px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
