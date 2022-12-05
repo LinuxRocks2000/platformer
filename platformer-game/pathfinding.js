@@ -63,7 +63,7 @@ class Pathfinder{
         if (pathLen >= this.shortestPath){ // It can't possibly be an optimal path if it's longer than another path that connected both nodes
             return;
         }
-        if (this.game.isLineObstructed(this.startPos, this.endPos, this.excludedTypes)){ // Misleading name; this runs if there ISN'T an obstruction. I know, I know.
+        if (!this.game.isLineObstructed(this.startPos, this.endPos, this.excludedTypes)){ // Misleading name; this runs if there ISN'T an obstruction. I know, I know.
             //this.possiblePaths.push([this.startPos, this.endPos]); // Don't recurse if the path doesn't need to be solved.
             this.path = [this.startPos, this.endPos];
         }
@@ -71,7 +71,7 @@ class Pathfinder{
             var toDispatch = [];
             var skipPaths = false;
             this.allNodes.forEach((node, nI) => {
-                if (this.game.isLineObstructed(curPath[curPath.length - 1], node, this.excludedTypes)){
+                if (!this.game.isLineObstructed(curPath[curPath.length - 1], node, this.excludedTypes)){
                     if (curPath.indexOf(node) == -1 && this.pointsVisited.indexOf(node) == -1){
                         var toPath = [];
                         curPath.forEach((n, i) => {
