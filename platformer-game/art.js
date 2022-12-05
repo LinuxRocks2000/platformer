@@ -138,7 +138,7 @@ const BrickDrawer = {
         if (style[style.length - 1] == "_"){ // _ enforces classic theme
             style = style.substring(0, style.length - 1);
         }
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped", "pixel_kelp", "water"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped", "pixel_kelp", "water"].indexOf(style) == -1 && !this.isRadiating && width < 30000 && height < 30000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
             if (style == "dirt"){
                 if (nearbies.length > 1 && !thing._artUniqueResourceID){
                     thing._artUniqueResourceID = this.uniqueRID;
