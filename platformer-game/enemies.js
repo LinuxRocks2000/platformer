@@ -355,6 +355,7 @@ class FishEnemy extends Brick{
             this.width = 150;
             this.x -= 50;
         }
+        this.damage = config.damage || 30;
     }
 
     onDie(){
@@ -402,6 +403,7 @@ class FishEnemy extends Brick{
         }
         if (!this.inWater){
             this.yv += framesElapsed;
+            this.frictionChangeX = 0.6;
         }
     }
 
@@ -410,7 +412,7 @@ class FishEnemy extends Brick{
             this.inWater = true;
         }
         else if (type == "player"){
-            this.game.player.harm(30);
+            this.game.player.harm(this.damage);
             this.stage = 1;
             this.goal = this.x + Math.random() * this.range;
             if (this.x < this.game.player.x){

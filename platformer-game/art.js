@@ -90,6 +90,7 @@ const BrickDrawer = {
         }
         var _oldX = x;
         var _oldY = y;
+        var _oldCTX = ctx;
         ctx.lineWidth = 0;
         this.renderCount ++;
         if (style.startsWith("pixel_fish")){
@@ -137,7 +138,7 @@ const BrickDrawer = {
         if (style[style.length - 1] == "_"){ // _ enforces classic theme
             style = style.substring(0, style.length - 1);
         }
-        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
+        if (["bouncy", "acid", "coin", "pretty-average-sword", "tank", "heal", "end", "shroomy", "spoange", "pixel_fish", "pixel_fishFlipped", "pixel_kelp", "water"].indexOf(style) == -1 && !this.isRadiating && width < 20000 && height < 20000 && (!thing || !thing.dontPrerender)){ // Anything that changes a lot or has animations.
             if (style == "dirt"){
                 if (nearbies.length > 1 && !thing._artUniqueResourceID){
                     thing._artUniqueResourceID = this.uniqueRID;
@@ -241,8 +242,37 @@ const BrickDrawer = {
                 isCircle = true;
                 break;
             case "water":
-                ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
-                isRect = true;
+                if (game.skin == "pixel"){
+                    ctx.fillStyle = "#73efe8";
+                    ctx.globalAlpha = 0.4392;
+                    ctx.fillRect(x, y + 15, width, height - 15);
+                    ctx.globalAlpha = 1;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x + width, y);
+                    ctx.lineTo(x + width, y + height);
+                    ctx.lineTo(x, y + height);
+                    ctx.lineTo(x, y);
+                    ctx.closePath();
+                    ctx.clip();
+                    for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                        if (_x % 2 == 0){
+                            var art = document.getElementById("pixel_water" + Math.round(this.pixelPulse/5 % 19));
+                            ctx.drawImage(art, _x * 50 + x, y);
+                        }
+                        ctx.fillStyle = "#73efe8";
+                        ctx.globalAlpha = 0.4392;
+                        ctx.fillRect(_x * 100 + x + Math.round(this.pixelPulse/5 % 19) * 5 - 75, y + 10, 15, 5);
+                        ctx.globalAlpha = 1;
+                    }
+                    ctx.restore();
+                    type = ""; // Don't want it to try Enemyrendering
+                }
+                else{
+                    ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
+                    isRect = true;
+                }
                 break;
             case "fish":
                 ctx.fillStyle = "rgb(0, 0, 255)";
@@ -680,6 +710,15 @@ const BrickDrawer = {
                 }
                 type = ""; // Don't want it to try Enemyrendering
                 break;
+            case "pixel_kelp":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_kelp" + Math.round(this.pixelPulse/10 % 19));
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                type = ""; // Don't want it to try Enemyrendering
+                break;
         }
         x = Math.floor(x);
         y = Math.floor(y);
@@ -781,6 +820,40 @@ const BrickDrawer = {
             ctx.fillStyle = this.composite;
             ctx.fillRect(x, y, width, height);
             ctx.globalCompositeOperation = "source-over";
+        }
+        if (style == "water" && game.skin == "pixel"){
+            if (_oldX < 0){
+                width += _oldX;
+                _oldX = 0;
+            }
+            if (_oldY < 0){
+                height += _oldY;
+                _oldY = 0;
+            }
+            if (_oldX + width > window.innerWidth){
+                width = window.innerWidth - _oldX;
+            }
+            if (_oldY + height > window.innerHeight){
+                height = window.innerHeight - _oldY;
+            }
+            if (Math.round(width) == 0 || Math.round(height) == 0){
+                return;
+            }
+            var data = ctx.getImageData(_oldX, _oldY, Math.round(width), Math.round(height));
+            var buf = new Uint32Array(data.data.buffer);
+            var i = 0;
+            for(var y = 0; y < height; y ++){
+                var sine = Math.round(Math.sin((y + this.pixelPulse)/20) * 5) + 5;
+                for (var x = 0; x < width; x ++){
+                    i ++;
+                    var _i = i;
+                    if (i + sine >= buf.length){
+                        _i = buf.length - 1 - sine;
+                    }
+                    buf[i] = buf[_i + sine];
+                }
+            }
+            ctx.putImageData(data, _oldX, _oldY);
         }
     },
     applyComposite(color){

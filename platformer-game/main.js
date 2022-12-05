@@ -678,6 +678,7 @@ class Game {
             this.create(0, 0, 1, 1, "dirt_heavy"),
             this.create(0, 0, 1, 1, "dirt_medium"),
             this.create(0, 0, 1, 1, "dirt_empty"),
+            this.create(0, 0, 1, 1, "pixel_kelp", "none"),
             this.create(0, 0, 1, 1, "pixel_lava", "splenectifyu"),
             this.create(0, 0, 1, 1, "rock", "none"),
             this.create(0, 0, 1, 1, "background1", "none"),
@@ -760,6 +761,22 @@ class Game {
             img.src = "res/Acid_pit/Sprite-00" + (x < 10 ? '0' : '') + x + ".png";
             img.style.display = "none";
             img.id = "pixel_acidPit" + x;
+            document.body.appendChild(img);
+        }
+
+        for (var x = 0; x < 20; x ++){
+            var img = document.createElement("img");
+            img.src = "res/Seaweed/0" + (x < 10 ? '0' : '') + x + ".png";
+            img.style.display = "none";
+            img.id = "pixel_kelp" + x;
+            document.body.appendChild(img);
+        }
+
+        for (var x = 0; x < 20; x ++){
+            var img = document.createElement("img");
+            img.src = "res/Water/water-" + x + ".png";
+            img.style.display = "none";
+            img.id = "pixel_water" + x;
             document.body.appendChild(img);
         }
     }
