@@ -1602,7 +1602,9 @@ class GameManager{
         else{
             document.getElementById("skipbutton").style.display = "none";
         }
-        document.getElementById("author").innerHTML = lev.author || "<span style='color: red;'>Pusheen</span>";
+        if (lev){
+            document.getElementById("author").innerHTML = lev.author || "<span style='color: red;'>Pusheen</span>";
+        }
     }
 
     showSaveslot(){
@@ -1690,6 +1692,9 @@ class GameManager{
     hasBeatenAll(){
         var ret = true;
         this.levels.forEach((item, i) => {
+            if (item.community && !document.getElementById("communityOnInput").checked){
+                return;
+            }
             if (item.phase == this.curPhase && this.beaten.indexOf(item.name) == -1){ // It's not in the beaten array and is in the current phase.
                 ret = false;
             }
