@@ -3043,5 +3043,49 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         ondestroy(game){
 
         }
-    }
+    },
+    {
+        name:"train",
+        phase: 1,
+        skippable: false,
+        difficulty: 1,
+        community: true,
+        author: "Ereed2010",
+        oncreate(game){
+            game.startX = 0
+            game.startY = 0
+            game.create(-1, 1, 3, 2);
+            game.create(60, 1, 3, 2);
+            game.create(57, 1, 2, 2, "normal", "solid", SideMovingPlatform);
+            game.create(20, -1, 2, 2, "lava", "killu", Brick);
+            game.create(20, -3, 1, 1, "key", "key");
+            game.create(45, 10, 12, 1);
+            game.create(45, 9, 1, 1, "key", "key");
+            game.create(56, 9, 1, 1, "bouncy", "bouncy");
+            game.create(120, 0, 2, 2, "lava", "killu");
+            game.create(121, 1, 31, 1);
+            game.create(121, 0, 1, 2);
+            game.create(63, 1, 2, 2, "normal", "solid", SideMovingPlatform);
+            game.create(152, -2, 1, 1, "end", "end");
+            game.create(122, 0, 30, 1, "water", "water");
+            game.create(152, -1, 1, 3);
+            game.create(130, 0, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(89, -3, 2, 1, "jumpthrough", "jumpthrough", Brick);
+            game.create(91, -7, 1, 1, "jumpthrough", "jumpthrough", Brick);
+            game.create(93, -10, 26, 1, "jumpthrough", "jumpthrough", Brick);
+            game.create(90, -14, 5, 1, "jumpthrough", "jumpthrough", Brick);
+            game.create(90, -33, 1, 20, "normal", "solid", RicketyPlatform);
+            game.create(90, -50, 6, 1).isStatic = false;
+            game.create(90, -39, 1, 1, "water", "water").isStatic = false;
+            game.create(0, -4, 1, 1, "coin", "fiftycoin");
+            game.create(91, -17, 1, 1);
+            game.create(95, -21, 1, 8);
+            game.create(93, -51, 1, 1, "key", "key").isStatic = false;
+       },
+       onloop(game, framesElapsed){
+       },
+       ondestroy(game){
+
+       }
+   }
 ];
