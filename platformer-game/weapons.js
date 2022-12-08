@@ -136,6 +136,8 @@ class HyperslingBrick extends Brick{
                 item.damage(5);
                 item.frictionChangeX *= 0.3;
                 item.frictionChangeY *= 0.3;
+                item.yv += this.yv;
+                item.xv += this.xv;
             });
             this.frictionChangeX = 0.3;
             this.frictionChangeY = 0.3;
