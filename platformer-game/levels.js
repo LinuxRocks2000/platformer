@@ -2209,7 +2209,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             }
         },
         ondestroy(){
-
+            this.waterRise = false;
+            this.fishing = false;
+            this.questFishes = [];
+            this.caughtFishes = [];
         }
     },
     { // This is an evil level: the "easy route" (over and down) is almost unbeatable because of the fish, while the "hard route" (inverse) is playable.
