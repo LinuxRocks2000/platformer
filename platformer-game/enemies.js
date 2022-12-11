@@ -356,10 +356,13 @@ class FishEnemy extends Brick{
             this.x -= 50;
         }
         this.damageAmount = config.damage || 30;
+        this.dontCollect = config.dontCollect;
     }
 
     onDie(){
-        this.game.player.collect(5);
+        if (!this.dontCollect){
+            this.game.player.collect(5);
+        }
         if (this.doDropHealth){
             this.game._create(this.x, this.y, this.width, this.height, "heal", "heal");
         }

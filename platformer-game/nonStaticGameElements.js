@@ -689,3 +689,26 @@ class HideWall extends Brick{
         }
     }
 }
+
+
+class Current extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.collisions = [];
+        this.gravity = 0;
+        this.cXv = config.xv || 0;
+        this.cYv = config.yv || -1;
+        this.currentFunction = config.currentFunction;
+        this.specialCollisions = ["player"];
+    }
+
+    specialCollision(type){
+        if (type == "player"){
+            if (this.currentFunction){
+                this.currentFunction(this);
+            }
+            this.game.player.xv += this.cXv;
+            this.game.player.yv += this.cYv;
+        }
+    }
+}

@@ -163,7 +163,6 @@ class LoreNPC extends NPC{
             var s = this.speech[this.speechPos].call(this);
             if (s){
                 this.say(s);
-                console.log(this.speechTimeout);
             }
         }
         else{
