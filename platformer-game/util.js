@@ -137,4 +137,34 @@ function isAlphaNumeric(str) { // THANKS, STACKOVERFLOW
     }
   }
   return true;
-};
+}
+
+function encodeB256(number){
+    var ret = "";
+    var negative = false;
+    if (number < 0){
+        negative = true;
+        number *= -1;
+    }
+    while (number){
+        ret = String.fromCharCode(number % 256) + ret;
+        number = number >> 8;//Math.floor(number/256);
+    }
+    while (ret.length < 4){ // It should always be 32 bits. might extend later.
+        ret = String.fromCharCode(0) + ret;
+    }
+    if (negative){
+        ret = '-' + ret;
+    }
+    return ret;
+}
+
+function decodeB256(b256){
+    var ret = 0;
+    while (b256.length){
+        ret *= 256;
+        ret += b256.charCodeAt(0);
+        b256 = b256.substring(1);
+    }
+    return ret;
+}

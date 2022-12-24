@@ -55,6 +55,10 @@ class PhysicsObject{
     }
 
     loop(framesElapsed){
+        if (this.game.followerMode){
+            return; // Disable physics engine in follower mode
+            // this should be sufficient for now but performance in the future can be improved by preventing math for things like pathfinding
+        }
         var fric = this.friction;
         if (this.airFriction){
             if (!this.touchingBottom){

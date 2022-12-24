@@ -39,25 +39,25 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 0,
         stage: 0,
         fallingIsSafe: true,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0;
             game.startY = 0;
             this.stage = 0;
             game.create(-2, 3, 12, 1, "normal");
             game.sign(-1, 2, "Mouse Over Me", "Welcome to Platformer 2nd Edition! What you have put your mouse over is a sign. Signs always contain helpful information, and you should always put your mouse over them.<br />You can move in Platformer with the arrow keys. Up to jump, left to go left, right to go right. This level is a simple tutorial which introduces you to all the game elements. To go to the next phase of the tutorial, go right off this platform and fall.");
         },
-        onloop(game, framesElapsed){
-            if (game.player.health < 10){
+        onloop(game, framesElapsed) {
+            if (game.player.health < 10) {
                 game.player.health = 100;
                 game.player.harm(99);
                 game.player.health = 100;
             }
-            if (this.stage == 0){
-                if (game.player.y > 800){
+            if (this.stage == 0) {
+                if (game.player.y > 800) {
                     game.deleteAllBricks();
                     game.player.y = -500;
                     game.player.x = 0;
-                    this.stage ++;
+                    this.stage++;
 
                     game.create(-4, 5, 14, 1);
                     game.create(4, 4, 1, 1, "lava", "killu");
@@ -65,15 +65,15 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     game.sign(-1, 4, "", "That's lava! If you touch it, you take harm, losing health. If you lose all of your health, you die! Jump over it by holding the 'up' and 'right' keys once you're in position to dodge it, then fall to continue to the next stage. You won't be able to progress until you can beat this stage without taking any harm - you can reset with maximum health by falling off the platform.");
                 }
             }
-            else if (this.stage == 1){
-                if (game.player.y > 800){
+            else if (this.stage == 1) {
+                if (game.player.y > 800) {
                     game.deleteAllBricks();
-                    if (game.player.health < 100){
+                    if (game.player.health < 100) {
                         game.player.health = 100;
                         this.stage = 0;
                     }
-                    else{
-                        this.stage ++;
+                    else {
+                        this.stage++;
                         game.player.y = -500;
                         game.player.x = 0;
                         game.create(-4, 5, 16, 1);
@@ -81,7 +81,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                         lava.isStatic = false;
                         lava.specialCollisions.push("player");
                         lava.specialCollision = (type) => {
-                            if (type == "player"){
+                            if (type == "player") {
                                 game.player.phaseShift(); // Make him fall through. I love making levels weird!
                                 this.stage = 0;
                             }
@@ -91,25 +91,25 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     }
                 }
             }
-            else if (this.stage == 2){
-                if (game.player.y > 800){
-                    if (game.player.score == 0){
+            else if (this.stage == 2) {
+                if (game.player.y > 800) {
+                    if (game.player.score == 0) {
                         this.stage = 1;
                         game.player.phaseShift();
                     }
-                    else{
+                    else {
                         game.player.y = -500;
                         game.player.x = 0;
                         game.deleteAllBricks();
                         game.create(-4, 5, 16, 1);
                         game.create(9, 4, 1, 1, "coin", "fiftycoin");
                         game.sign(-1, 4, "", "As you can see, some coins carry more weight than others! You don't have to collect it, I won't force you.");
-                        this.stage ++;
+                        this.stage++;
                     }
                 }
             }
-            else if (this.stage == 3){
-                if (game.player.y > 800){
+            else if (this.stage == 3) {
+                if (game.player.y > 800) {
                     game.player.y = -500;
                     game.player.x = -50;
                     game.deleteAllBricks();
@@ -119,26 +119,26 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     game.create(11, 3, 1, 1, "coin", "tencoin");
                     game.create(10, 4, 1, 1, "lava", "enemy", NormalEnemy);
                     game.sign(-2, 4, "", "That's a basic enemy! It bounces off platforms and damages you when you touch it. Unlike normal lava, it only damages you once and you will become immune to harm for a short time afterwards - this immunity period is evidenced by your player turning transparent, and you cannot take harm while in it. Naturally, this entire platform is a trap, and if you touch the enemy it will activate, and if you don't grab the coin you'll be looped back here.");
-                    this.stage ++;
+                    this.stage++;
                 }
             }
-            else if (this.stage == 4){
-                if (game.player.y > 800){
-                    if (game.player.health < 100){
+            else if (this.stage == 4) {
+                if (game.player.y > 800) {
+                    if (game.player.health < 100) {
                         this.stage = 3;
                         game.player.health = 100;
                     }
-                    else{
+                    else {
                         var hasCoin = false;
                         game.tileset.forEach((item, i) => {
-                            if (item.type == "tencoin"){ // The accursed tencoin is still here.
+                            if (item.type == "tencoin") { // The accursed tencoin is still here.
                                 hasCoin = true;
                             }
                         });
-                        if (hasCoin){
+                        if (hasCoin) {
                             this.stage = 3;
                         }
-                        else{
+                        else {
                             game.player.y = -500;
                             game.player.x = 0;
                             game.deleteAllBricks();
@@ -148,7 +148,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                             lava.isStatic = false;
                             lava.specialCollisions.push("player");
                             lava.specialCollision = (type) => {
-                                if (type == "player"){
+                                if (type == "player") {
                                     this.stage = 5;
                                     game.player.gravity = -2;
                                 }
@@ -158,15 +158,15 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                     }
                 }
             }
-            else if (this.stage == 5){
-                if (game.player.y < -800){
+            else if (this.stage == 5) {
+                if (game.player.y < -800) {
                     game.player.gravity = 1;
                     this.stage = 0;
                     game.deleteAllBricks();
                 }
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -179,28 +179,28 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 0, // VOID for now
         damageOnFall: 75,
         cap: [],
-        oncreate(game){
+        oncreate(game) {
             game.startX = 5000;
             game.startY = 3300;
             game.player.assignPowerWeapon(TimePausePower);
-            for (var x = 0; x < 10; x ++){
-                for (var y = 0; y < 10; y ++){
-                    if (y > Math.abs(x - 5) && y < 10 - Math.abs(x - 5)){
-                        if ((x + y) % 2 == 0){
+            for (var x = 0; x < 10; x++) {
+                for (var y = 0; y < 10; y++) {
+                    if (y > Math.abs(x - 5) && y < 10 - Math.abs(x - 5)) {
+                        if ((x + y) % 2 == 0) {
                             game.create(x * 19, y * 8, 15, 1);
                             game.create(x * 19 - 3, y * 8 + 4, 1, 1);
                             game.create(x * 19 + 17, y * 8 + 4, 1, 1);
-                            if (Math.random() > 0.8){
+                            if (Math.random() > 0.8) {
                                 game.create(x * 19 - 3, y * 8 + 3, 1, 1, "coin", "fiftycoin");
                             }
-                            else{
+                            else {
                                 game.create(x * 19 - 3, y * 8 + 3, 1, 1, "coin", "tencoin");
                             }
-                            if (Math.random() > 0.5){
-                                if (Math.random() > 0.8){
+                            if (Math.random() > 0.5) {
+                                if (Math.random() > 0.8) {
                                     game.create(x * 19 + 17, y * 8 + 3, 1, 1, "coin", "fiftycoin");
                                 }
-                                else{
+                                else {
                                     game.create(x * 19 + 17, y * 8 + 3, 1, 1, "coin", "tencoin");
                                 }
                             }
@@ -211,11 +211,11 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.sign(102, 71, "Mouse Over Me", "Welcome to the second training level of Platformer 2! This is a simple introduction to weapons and some advanced enemies. On the platforms below, you are given weapons. Space or click will fire any of them, but some require coins - there are plenty of those on this level. The end is at the top. Good luck!<br><br><small>I've significantly reduced the difficulty, so most enemies can be killed with one shot. Remember that it will be much harder in regular gameplay!</small>");
 
             game.create(88, 80, 9, 1, "glass", "solid");
-            game.create(89, 79, 1, 1, "acid", "none", WeaponField, {weapon: PrettyAverageSword, retrieve: false});
-            game.create(95, 79, 1, 1, "acid", "none", WeaponField, {weapon: BasicGun, retrieve: false});
+            game.create(89, 79, 1, 1, "acid", "none", WeaponField, { weapon: PrettyAverageSword, retrieve: false });
+            game.create(95, 79, 1, 1, "acid", "none", WeaponField, { weapon: BasicGun, retrieve: false });
             game.create(108, 80, 9, 1, "glass", "solid");
-            game.create(109, 79, 1, 1, "acid", "none", WeaponField, {weapon: Hypersling, retrieve: false});
-            game.create(115, 79, 1, 1, "acid", "none", WeaponField, {weapon: Grenades, retrieve: false});
+            game.create(109, 79, 1, 1, "acid", "none", WeaponField, { weapon: Hypersling, retrieve: false });
+            game.create(115, 79, 1, 1, "acid", "none", WeaponField, { weapon: Grenades, retrieve: false });
 
             game.create(76, 63, 1, 1, "glass", "field");
             game.create(90, 63, 1, 1, "glass", "field");
@@ -244,12 +244,14 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(27, 35, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
             game.create(29, 35, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
 
-            game.create(178, 39, 1, 1, "acid", "none", WeaponField, {weapon: MachineGun, retrieve: false});
+            game.create(178, 39, 1, 1, "acid", "none", WeaponField, { weapon: MachineGun, retrieve: false });
 
             game.create(158, 47, 1, 1, "glass", "field");
-            game.create(152, 33, 15, 15, "none", "none", RegenWatcher).watch(game.create(159, 47, 1, 1, "seabrick", "enemy", DoWhateverWhenPlayerIsNear, {callback: () => {
-                game.create(157, 40, 1, 1, "jumpthrough_", "enemy", PhaserEnemy);
-            }, sightRange: 400}));
+            game.create(152, 33, 15, 15, "none", "none", RegenWatcher).watch(game.create(159, 47, 1, 1, "seabrick", "enemy", DoWhateverWhenPlayerIsNear, {
+                callback: () => {
+                    game.create(157, 40, 1, 1, "jumpthrough_", "enemy", PhaserEnemy);
+                }, sightRange: 400
+            }));
 
             game.create(135, 21, 11, 3, "water", "water");
             game.create(134, 21, 1, 3, "seabrick", "solid");
@@ -271,7 +273,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(152, 19, 1, 13, "glass", "field");
             game.create(152, 18, 15, 1, "glass", "field");
             game.create(166, 19, 1, 13, "glass", "field");
-            game.create(159, 25, 1, 1, "none", "none", AngleBomberEnemy, {startAngle: 0, endAngle: 360, angleStep: 30, changeAngleDelay: 40, bombTime: 500, bombSpeed: 10, waitTillPlayer: true});
+            game.create(159, 25, 1, 1, "none", "none", AngleBomberEnemy, { startAngle: 0, endAngle: 360, angleStep: 30, changeAngleDelay: 40, bombTime: 500, bombSpeed: 10, waitTillPlayer: true });
 
             game.create(97, 40, 1, 1, "bouncy", "bouncy");
             game.create(102, 40, 1, 1, "bouncy", "bouncy");
@@ -289,7 +291,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             // 95, 56
             game.create(102, 55, 1, 1, "mine", "enemy", ProximityMineEnemy).sightRange = 100;
             var w = game.create(102, 41, 1, 14, "glass", "solid", BreakableBrick);
-            for (var i = 1; i < 7; i ++){
+            for (var i = 1; i < 7; i++) {
                 game.create(102 + (i % 2 ? 0.5 : 0), 41 + i * 2, 0.5, 0.5, "tar", "none", ChainBomb).isStatic = true;;
             }
             var b = game.create(102, 41, 1, 1, "tar", "none", ChainBomb);
@@ -298,15 +300,15 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             // 114, 48
             game.create(114, 33, 15, 3);
-            for (var i = 0; i < 4; i ++){
+            for (var i = 0; i < 4; i++) {
                 game.create(115 + i * 4, 36, 2, 2);
-                if (i < 3){
+                if (i < 3) {
                     game.create(117 + i * 4, 36, 2, 2, "lava", "splenectifyu", ThwompTrapEnemy);
                 }
             }
 
             // 133, 56
-            game.attachMaces(game.create(140, 55, 1, 1, "normal_", "enemy", BreakableBrick), 12, {doesExtend: true});
+            game.attachMaces(game.create(140, 55, 1, 1, "normal_", "enemy", BreakableBrick), 12, { doesExtend: true });
 
             game.create(102, 7, 1, 1, "end", "end");
 
@@ -314,59 +316,61 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(57, 22, 1, 2);
             game.create(71, 22, 1, 2);
             var end = (npc) => {
-                if (game.quest == "trin"){
+                if (game.quest == "trin") {
                     game.quest = "anton";
                 }
                 npc.say("Scut! The Ghosts are attacking! Run! Find Anton!");
-                for (var i = 0; i < 4; i ++){
-                    game.create((game.player.x + Math.random() * 1000 - 500)/50, (game.player.y - 1000 - Math.random() * 500)/50, 1, 1, "jumpthrough_", "enemy", PhaserEnemy);
+                for (var i = 0; i < 4; i++) {
+                    game.create((game.player.x + Math.random() * 1000 - 500) / 50, (game.player.y - 1000 - Math.random() * 500) / 50, 1, 1, "jumpthrough_", "enemy", PhaserEnemy);
                 }
                 npc.dieIn(50);
             };
-            var npc = game.create(64, 22, 1, 2, "harmless_npc", "none", LoreNPC, {name: "The strange Survivor", speech: [
-                {
-                    text: "Hello, fellow Survivor!",
-                    delay: 100
-                },
-                {
-                    text: "I am Trin. Trin Niyiti.",
-                    delay: 100
-                },
-                {
-                    call: (me) => {
-                        me.name = "Trin";
-                        me.glideToPlayer();
-                        return "I see you have found ways to avoid Mutation. A cure, perhaps?";
+            var npc = game.create(64, 22, 1, 2, "harmless_npc", "none", LoreNPC, {
+                name: "The strange Survivor", speech: [
+                    {
+                        text: "Hello, fellow Survivor!",
+                        delay: 100
                     },
-                    delay: 200
-                },
-                {
-                    text: "No, clearly not. A pity. Your methods are commendable, nonetheless.",
-                    delay: 200
-                },
-                {
-                    text: "It's a terrible price to pay, altering your own body to remain free of Mutation.",
-                    delay: 300
-                },
-                {
-                    text: "Anyways. I can see you have some questions. What should I answer first?",
-                    prompt: [
-                        {
-                            text: "How did I get here?",
-                            fun: end
+                    {
+                        text: "I am Trin. Trin Niyiti.",
+                        delay: 100
+                    },
+                    {
+                        call: (me) => {
+                            me.name = "Trin";
+                            me.glideToPlayer();
+                            return "I see you have found ways to avoid Mutation. A cure, perhaps?";
                         },
-                        {
-                            text: "How did the Mutation happen?",
-                            fun: end
-                        },
-                        {
-                            text: "How did you get here?",
-                            fun: end
-                        }
-                    ],
-                    delay: 0
-                }
-            ]});
+                        delay: 200
+                    },
+                    {
+                        text: "No, clearly not. A pity. Your methods are commendable, nonetheless.",
+                        delay: 200
+                    },
+                    {
+                        text: "It's a terrible price to pay, altering your own body to remain free of Mutation.",
+                        delay: 300
+                    },
+                    {
+                        text: "Anyways. I can see you have some questions. What should I answer first?",
+                        prompt: [
+                            {
+                                text: "How did I get here?",
+                                fun: end
+                            },
+                            {
+                                text: "How did the Mutation happen?",
+                                fun: end
+                            },
+                            {
+                                text: "How did you get here?",
+                                fun: end
+                            }
+                        ],
+                        delay: 0
+                    }
+                ]
+            });
             npc.art = document.getElementById("pixel_trin");
             npc.artFlipped = document.getElementById("pixel_trinFlipped");
 
@@ -384,46 +388,48 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(83, 7, 1, 1, "shooter", "enemy", ShooterEnemy);
 
             // 38, 32
-            game.create(43, 31, 1, 1, "acid", "none", WeaponField, {weapon: RPGs, retrieve: false});
+            game.create(43, 31, 1, 1, "acid", "none", WeaponField, { weapon: RPGs, retrieve: false });
 
             // 95, 24
-            game.create(102, 23, 1, 1, "ice", "none", DoWhateverWhenPlayerIsNear, {callback: () => {
-                game.create(102, 23, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 40});
-            }});
+            game.create(102, 23, 1, 1, "ice", "none", DoWhateverWhenPlayerIsNear, {
+                callback: () => {
+                    game.create(102, 23, 1, 1, "lava", "splenectifyu", TricklerEnemy, { waitTime: 40 });
+                }
+            });
         },
-        onloop(game, framesElapsed){
-            if (!this.closeGarbage){
-                if (game.player.y < this.cap[0].y + this.cap[0].height + game.blockHeight * 2 && game.player.x + game.player.width > this.cap[1].x && game.player.x < this.cap[2].x + this.cap[2].width){
+        onloop(game, framesElapsed) {
+            if (!this.closeGarbage) {
+                if (game.player.y < this.cap[0].y + this.cap[0].height + game.blockHeight * 2 && game.player.x + game.player.width > this.cap[1].x && game.player.x < this.cap[2].x + this.cap[2].width) {
                     this.openGarbage = true;
                 }
             }
-            if (this.closeGarbage && this.cap[0].y <= 30 * game.blockHeight){
+            if (this.closeGarbage && this.cap[0].y <= 30 * game.blockHeight) {
                 this.cap.forEach((item, i) => {
                     item.y += 5;
                 });
             }
-            else{
+            else {
                 this.closeGarbage = false;
             }
-            if (this.openGarbage){
-                if (this.cap[0].y >= 26 * game.blockHeight){
+            if (this.openGarbage) {
+                if (this.cap[0].y >= 26 * game.blockHeight) {
                     this.cap.forEach((item, i) => {
                         item.y -= 1;
                     });
                 }
-                else{
+                else {
                     this.openGarbage = false;
                     this.garbageTick = 50;
                 }
             }
-            if (this.garbageTick >= 0){
+            if (this.garbageTick >= 0) {
                 this.garbageTick -= framesElapsed;
-                if (this.garbageTick <= 0){
+                if (this.garbageTick <= 0) {
                     this.closeGarbage = true;
                 }
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -435,7 +441,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         clouds: true,
         phase: 0,
         fallingIsSafe: true,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(-3, -3, 1, 7, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -485,10 +491,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(36, 28, 4, 1, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(37, 30, 5, 3, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -497,64 +503,64 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         skippable: false,
         difficulty: 0.6,
         phase: 0,
-        oncreate(game){
-        /*    game.startX = 50;
-            game.startY = -100;
-            game.create(0, 0, 56, 1);
-            game.create(0, -4, 1, 5);
-            game.create(0, -5, 32, 1);
-
-            game.create(37, -5, 19, 1);
-            game.create(31, -9, 1, 6);
-            game.create(37, -9, 1, 6);
-
-            game.create(56, 0, 1, 8);
-            game.create(77, 0, 1, 8);
-            game.create(57, 7, 20, 1);
-            game.create(56, -9, 1, 5);
-            game.create(57, -9, 20, 1);
-            game.create(77, -9, 1, 5);
-            game.create(57, 0, 20, 1, "glass", "glass");
-
-            game.create(57, 6, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(76, 6, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(57, -8, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(76, -8, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
-            game.create(57, -6, 1, 1, "coin", "fiftycoin");
-            game.create(56, -4, 1, 4, "glass", "field");
-            game.create(77, -4, 1, 4, "glass", "field");
-
-            game.create(32, -5, 5, 1, "jumpthrough", "jumpthrough", RaisingPlatform);
-            game.create(35, -10, 1, 1, "invisible", "stopblock");
-            game.create(35, -3, 1, 1, "invisible", "stopblock");
-            game.create(31, -10, 1, 1, "heal", "heal");
-            game.create(37, -10, 1, 1, "heal", "heal");
-            game.create(38, -6, 1, 1, "coin", "tencoin");
-
-            game.create(5, -1, 1, 1, "lava", "killu");
-            game.create(6, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(16, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(17, -1, 1, 1, "lava", "killu");
-            game.create(18, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(27, -1, 1, 1, "lava", "killu");
-
-            game.create(40, -1, 1, 1, "lava", "killu");
-            game.create(41, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(48, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(53, -1, 1, 1, "lava", "killu");
-
-            game.create(78, 0, 30, 1);
-            game.create(78, -5, 30, 1);
-            game.create(108, -5, 1, 6);
-            game.create(107, -1, 1, 1, "end", "end");
-            game.create(106, -1, 1, 1, "coin", "fiftycoin");
-
-            game.create(84, -1, 1, 1, "lava", "killu");
-            game.create(87, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(92, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(98, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(104, -1, 1, 1, "lava", "enemy", NormalEnemy);
-            game.create(105, -1, 1, 1, "lava", "killu");*/
+        oncreate(game) {
+            /*    game.startX = 50;
+                game.startY = -100;
+                game.create(0, 0, 56, 1);
+                game.create(0, -4, 1, 5);
+                game.create(0, -5, 32, 1);
+    
+                game.create(37, -5, 19, 1);
+                game.create(31, -9, 1, 6);
+                game.create(37, -9, 1, 6);
+    
+                game.create(56, 0, 1, 8);
+                game.create(77, 0, 1, 8);
+                game.create(57, 7, 20, 1);
+                game.create(56, -9, 1, 5);
+                game.create(57, -9, 20, 1);
+                game.create(77, -9, 1, 5);
+                game.create(57, 0, 20, 1, "glass", "glass");
+    
+                game.create(57, 6, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+                game.create(76, 6, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+                game.create(57, -8, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+                game.create(76, -8, 1, 1, "shooter", "killu", ShooterEnemy, {shootAbove: false});
+                game.create(57, -6, 1, 1, "coin", "fiftycoin");
+                game.create(56, -4, 1, 4, "glass", "field");
+                game.create(77, -4, 1, 4, "glass", "field");
+    
+                game.create(32, -5, 5, 1, "jumpthrough", "jumpthrough", RaisingPlatform);
+                game.create(35, -10, 1, 1, "invisible", "stopblock");
+                game.create(35, -3, 1, 1, "invisible", "stopblock");
+                game.create(31, -10, 1, 1, "heal", "heal");
+                game.create(37, -10, 1, 1, "heal", "heal");
+                game.create(38, -6, 1, 1, "coin", "tencoin");
+    
+                game.create(5, -1, 1, 1, "lava", "killu");
+                game.create(6, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(16, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(17, -1, 1, 1, "lava", "killu");
+                game.create(18, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(27, -1, 1, 1, "lava", "killu");
+    
+                game.create(40, -1, 1, 1, "lava", "killu");
+                game.create(41, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(48, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(53, -1, 1, 1, "lava", "killu");
+    
+                game.create(78, 0, 30, 1);
+                game.create(78, -5, 30, 1);
+                game.create(108, -5, 1, 6);
+                game.create(107, -1, 1, 1, "end", "end");
+                game.create(106, -1, 1, 1, "coin", "fiftycoin");
+    
+                game.create(84, -1, 1, 1, "lava", "killu");
+                game.create(87, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(92, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(98, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(104, -1, 1, 1, "lava", "enemy", NormalEnemy);
+                game.create(105, -1, 1, 1, "lava", "killu");*/
             game.startX = 99; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = -1311.8639288151376; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(0, 0, 56, 42, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -607,12 +613,12 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(3, -40, 9, 36, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(78, 6, 30, 49, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
         },
-        onloop(game){
-            if (game.player.x > 57 * 50 && game.player.x < 76 * 50){
-                game.feChange = 1/2;
+        onloop(game) {
+            if (game.player.x > 57 * 50 && game.player.x < 76 * 50) {
+                game.feChange = 1 / 2;
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -621,7 +627,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         skippable: false,
         difficulty: 0.8,
         phase: 0,
-        oncreate(game){
+        oncreate(game) {
             /*game.startX = -3.8514466877124107; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 60.33163000843901; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.studio();
@@ -770,10 +776,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(3, 12, 2, 38, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.player.giveWeapon(PrettyAverageSword);
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -782,7 +788,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         skippable: false,
         difficulty: 0.5,
         phase: 1,
-        oncreate(game){
+        oncreate(game) {
             /*game.startX = -207.07068235061985; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 32.51172571301086; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(-5, 5, 40, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -838,7 +844,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.startX = -207.07068235061985; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 32.51172571301086; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
 
-            if (true){//game.skin != "pixel"){
+            if (true) {//game.skin != "pixel"){
                 game.create(-6, 5, 40, 24, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
                 game.create(-3, -1, 1, 6, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
                 game.create(10, 4, 1, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -910,7 +916,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 game.create(102, -15, 8, 9, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
                 game.create(110, -15, 6, 10, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             }
-            else{
+            else {
                 game.create(-3, -1, 1, 6, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
                 game.create(10, 4, 1, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
                 game.create(10, 3, 1, 1, 'pixel_cannon', 'enemy', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -1062,12 +1068,12 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 game.create(30, -7, 6, 1, 'dirt_empty', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             }
             // Don't let PS ruin any of this because it sux
-            game.create(-3, -2, 1, 1, 'cannon', 'enemy', CannonEnemy, {sightRange: Infinity});
+            game.create(-3, -2, 1, 1, 'cannon', 'enemy', CannonEnemy, { sightRange: Infinity });
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -1078,7 +1084,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         difficulty: 1,
         remainingTime: 0,
         maxTime: 2000,
-        oncreate(game){
+        oncreate(game) {
             game.player.timerate = 2;
             game.startX = 50; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -1161,7 +1167,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             this.remainingTime = this.maxTime;
             var npc_house_start = game.create(-110, -1, 1, 1, "none", "none");
             this.loreWall = game.create(-5, -3, 1, 8, 'glass', 'glass', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
-            function endConversation(){
+            function endConversation() {
                 npc.speech.push(
                     {
                         text: "Anyways. Food is rarely a problem for us as fish, birds, and mushrooms are not in short supply, but we are running low on solar cells to charge our exosuits.",
@@ -1283,42 +1289,42 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         },
         spawns: 24,
         spawnTime: Infinity,
-        onloop(game, framesElapsed){
-            if (this.spawns > 0){
+        onloop(game, framesElapsed) {
+            if (this.spawns > 0) {
                 this.spawnTime -= framesElapsed;
-                if (this.spawnTime <= 0){
+                if (this.spawnTime <= 0) {
                     this.spawnTime = 240;
-                    this.spawns --;
+                    this.spawns--;
                     game.create(-70, -10, 1, 1, "jumpthrough_", "enemy", PhaserEnemy);
                 }
             }
             game.feChange = 0.2;
             this.remainingTime -= framesElapsed;
-            if (game.quest == "anton" && this.remainingTime <= -1000){
-                if (this.loreWall.height <= game.blockHeight * 4){
+            if (game.quest == "anton" && this.remainingTime <= -1000) {
+                if (this.loreWall.height <= game.blockHeight * 4) {
                     this.loreWall.height = game.blockHeight * 4;
                 }
-                else{
+                else {
                     this.loreWall.height -= framesElapsed;
                     this.loreWall.y += framesElapsed;
                 }
             }
-            else if (this.remainingTime <= 0){
-                if (this.openWall.height <= game.blockHeight * 2){
+            else if (this.remainingTime <= 0) {
+                if (this.openWall.height <= game.blockHeight * 2) {
                     this.openWall.height = game.blockHeight * 2;
                 }
-                else{
+                else {
                     this.openWall.height -= framesElapsed;
                     this.openWall.y += framesElapsed;
                 }
             }
-            else{
+            else {
                 game.ctx.fillStyle = "green";
-                var width = this.remainingTime/this.maxTime * 0.8 * window.innerWidth;
-                game.ctx.fillRect(window.innerWidth/2 - width/2, window.innerHeight * 0.15, width, 10);
+                var width = this.remainingTime / this.maxTime * 0.8 * window.innerWidth;
+                game.ctx.fillRect(window.innerWidth / 2 - width / 2, window.innerHeight * 0.15, width, 10);
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
             game.player.timerate = 1;
         }
     },
@@ -1326,7 +1332,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         name: "Lava Cave",
         phase: 1,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 50; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(81, 35, 12, 6, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -1466,10 +1472,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(-13, 60, 1, 1, 'rock', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(14, 87, 1, 1, 'heal', 'heal');
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -1478,7 +1484,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 1,
         skippable: true,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = -150; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = -150; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(-40, 0, 40, 13, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -1626,12 +1632,12 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             //game.studio();
             //game.studioIsP = true;
         },
-        onloop(game, framesElapsed){
-            if (game.player.x < 20 * 50 || game.player.x > 24 * 50 || game.player.y > 30 * 50 || game.player.y < 23 * 50){
+        onloop(game, framesElapsed) {
+            if (game.player.x < 20 * 50 || game.player.x > 24 * 50 || game.player.y > 30 * 50 || game.player.y < 23 * 50) {
 
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -1644,7 +1650,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         fallingIsSafe: true,
         bats: [],
         hasGivenPlayerCoins: false,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(30, 1, 1, 1, 'cannon', 'solid', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -1669,9 +1675,9 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.player.giveWeapon(PrettyAverageSword, true);
             this.stage = 0; // Javascript.
         },
-        onloop(game){
-            if (this.stage == 0){
-                if (game.player.x > 2000){
+        onloop(game) {
+            if (this.stage == 0) {
+                if (game.player.x > 2000) {
                     game.player.x = 10000;
                     this.stage = 1;
                     var boss = game.create(220, -2, 1, 2, "lava", "enemy", PlayerbossBoss);
@@ -1681,23 +1687,23 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                         game.jitter(200);
                     };
                     this.bats.forEach((item, i) => {
-                        if (!item.dead){
+                        if (!item.dead) {
                             item.x = 9600 + i * 200;
                         }
                     });
                 }
             }
-            else if (this.stage == 2){
+            else if (this.stage == 2) {
                 game.deleteBrick(this.lastWall);
-                this.stage ++;
+                this.stage++;
             }
-            else if (this.stage == 3){
-                    if (game.player.y > 800){
+            else if (this.stage == 3) {
+                if (game.player.y > 800) {
                     game.player.y = 0;
                     game.player.x = 0;
                     game.deleteAllBricks();
                     game.create(-3, 4, 10, 1);
-                    if (!this.hasGivenPlayerCoins){
+                    if (!this.hasGivenPlayerCoins) {
                         game.create(-3, 3, 1, 1, "coin", "tencoin");
                         game.create(-2, 3, 1, 1, "coin", "tencoin");
                         game.create(-1, 3, 1, 1, "coin", "tencoin");
@@ -1711,7 +1717,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 }
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -1722,29 +1728,29 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         difficulty: 1,
         minimumExtent: 2000,
         hasGivenPlayerWeapon: false,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0;
             game.startY = -200;
             // Procedurally generate the rooms skeleton
             var numRooms = 7;
             var alternator = numRooms % 2 == 1;
             var isFirst = true;
-            for (var x = 0; x < numRooms; x ++){
+            for (var x = 0; x < numRooms; x++) {
                 game.create(alternator ? 0 : 1, x * 6, 16 + (isFirst ? 1 : 0), 1);
-                if (!isFirst){
+                if (!isFirst) {
                     game.create(alternator ? 16 : 0, x * 6, 1, 1, "jumpthrough", "jumpthrough");
                     game.create(alternator ? 16 : 0, x * 6 + 4, 1, 2);
                     var p1upX = alternator ? 16 : 0;
                     var p1upY = x * 6 + 3;
-                    if (Math.random() < 0.5){
-                        if (Math.random() < 0.3){
+                    if (Math.random() < 0.5) {
+                        if (Math.random() < 0.3) {
                             game.create(p1upX, p1upY, 1, 1, "coin", "fiftycoin");
                         }
-                        else{
+                        else {
                             game.create(p1upX, p1upY, 1, 1, "heal", "heal");
                         }
                     }
-                    else{
+                    else {
                         game.create(p1upX, p1upY, 1, 1, "coin", "tencoin");
                     }
                 }
@@ -1763,7 +1769,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(15, 40, 1, 1, "lava", "enemy", NormalEnemy).collisions.push("enemy");
 
             // Swarm room
-            game.create(7, 32, 1, 1, "averagingenemy", "enemy", AverageSwarmEnemy, {sightRange: Infinity});
+            game.create(7, 32, 1, 1, "averagingenemy", "enemy", AverageSwarmEnemy, { sightRange: Infinity });
 
             // Security room #1 (1 macer)
             game.create(7, 26, 1, 1, "lava", "enemy", MacerEnemy);
@@ -1778,7 +1784,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(1, 15, 1, 1, "heal", "heal");
             game.create(15, 17, 1, 1, "coin", "tencoin");
             game.create(2, 13, 15, 5, "water", "water");
-            game.create(6, 16, 1, 1, "fish", "enemy", FishEnemy, {health: 15});
+            game.create(6, 16, 1, 1, "fish", "enemy", FishEnemy, { health: 15 });
             game.create(16, 11, 1, 1, "heal", "heal");
 
             // Security room #2 (1 bruiser, they're really awful)
@@ -1797,21 +1803,21 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(-51, -23, 98, 19, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
 
         },
-        onloop(game){
-            if (game.player.y > 12 * 50 && game.player.y < 17 * 50){
-                if (!this.hasGivenPlayerWeapon){
+        onloop(game) {
+            if (game.player.y > 12 * 50 && game.player.y < 17 * 50) {
+                if (!this.hasGivenPlayerWeapon) {
                     this.hasGivenPlayerWeapon = true;
                     game.player.giveWeapon(PrettyAverageSword);
                 }
             }
-            else{
-                if (this.hasGivenPlayerWeapon){
+            else {
+                if (this.hasGivenPlayerWeapon) {
                     this.hasGivenPlayerWeapon = false;
                     game.player.clearWeapon();
                 }
             }
         },
-        ondestroy(){
+        ondestroy() {
 
         }
     },
@@ -1820,7 +1826,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: -1, // you have to enter the Void Lands to play this one.
         skippable: true,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = -100; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = -100; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.player.giveWeapon(Hypersling);
@@ -1828,13 +1834,13 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(-5, 0, 1, 4, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(16, 0, 1, 4, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(-4, 0, 20, 4, 'water', 'water', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
-            game.create(4, 3, 1, 1, "fish", "enemy", FishEnemy).isDamageable = false;
+            //game.create(4, 3, 1, 1, "fish", "enemy", FishEnemy).isDamageable = false;
             game.player.score = 1000;
         },
-        onloop(game){
+        onloop(game) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -1842,7 +1848,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         name: "Ponds",
         difficulty: 1,
         phase: 2,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 384.69128317100984; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 525.5028759732089; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.attachMaces(game.create(182, 22, 1, 1, "none", "none"), 8);
@@ -2008,18 +2014,18 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(226, -11, 1, 1, 'shooter', 'enemy', ShooterEnemy).transparents = []; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(188, -3, 1, 1, 'end', 'end', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
 
-            game.create(35, 17, 1, 1, "fish", "enemy", FishEnemy, {damage: 10});
+            game.create(35, 17, 1, 1, "fish", "enemy", FishEnemy, { damage: 10 });
             //game.create(22, 10, 1, 1, "fish", "enemy", FishEnemy, {damage: 10});
-            game.create(66, 8, 1, 1, "fish", "enemy", FishEnemy, {damage: 10});
+            game.create(66, 8, 1, 1, "fish", "enemy", FishEnemy, { damage: 10 });
 
-            game.create(102, 13, 1, 1, "fish", "enemy", FishEnemy, {damage: 10});
+            game.create(102, 13, 1, 1, "fish", "enemy", FishEnemy, { damage: 10 });
 
-            game.create(150, 24, 1, 1, "fish", "enemy", FishEnemy, {damage: 10});
+            game.create(150, 24, 1, 1, "fish", "enemy", FishEnemy, { damage: 10 });
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -2028,7 +2034,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 2,
         skippable: false,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.player.giveWeapon(BasicGun);
             game.startX = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = -100; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -2040,8 +2046,8 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(-67, 11, 1, 22, 'pixel_kelp', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             this.water = game.create(-77, 10, 75, 25, 'water', 'water', Current, {
                 currentFunction: (block) => {
-                    var depth = 1 - ((block.y + block.height) - (game.player.y + game.player.height))/block.height;
-                    block.cYv = -(1/(1 - depth) - 1);
+                    var depth = 1 - ((block.y + block.height) - (game.player.y + game.player.height)) / block.height;
+                    block.cYv = -(1 / (1 - depth) - 1);
                 }
             }); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(-3, 1, 6, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -2101,15 +2107,15 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             game.sign(-2, 0, "", "To advance, you must find all the Keys. The level is perilous, but I have given you the Gun of Slightly Better but Still Not That Great. Aim with your mouse and fire with the mouse button or the spacebar. Your gun will take 1 coin every time you fire - every time you kill an enemy, you get some coin. Here's 10 to start out.<br /><br />Be careful of the Fish!");
             game.create(49, 9, 1, 3, "seabrick", "solid", TrapperPlatformVertical, {
-                onClose(){
+                onClose() {
                     game.create(52, 12, 1, 1, "heal", "heal");
                     game.jitter(30);
                 }
             });
-            game.create(74, 12, 1, 1, "glass", "glass", CannonEnemy, {sightRange: 400});
-            game.create(40, 13, 1, 1, "seabrick", "solid", SpringerEnemy, {springStyle: "fish", springType: "enemy", springSpecial: FishEnemy, shots: 2});
-            game.create(90, 2, 1, 1, "glass", "glass", CannonEnemy, {sightRange: Infinity}); // Just some crossfire to screw the player.
-            game.create(90, 1, 1, 1, "glass", "glass", CannonEnemy, {sightRange: Infinity}); // Just some crossfire to screw the player.
+            game.create(74, 12, 1, 1, "glass", "glass", CannonEnemy, { sightRange: 400 });
+            game.create(40, 13, 1, 1, "seabrick", "solid", SpringerEnemy, { springStyle: "fish", springType: "enemy", springSpecial: FishEnemy, shots: 2 });
+            game.create(90, 2, 1, 1, "glass", "glass", CannonEnemy, { sightRange: Infinity }); // Just some crossfire to screw the player.
+            game.create(90, 1, 1, 1, "glass", "glass", CannonEnemy, { sightRange: Infinity }); // Just some crossfire to screw the player.
             game.create(55, 9, 1, 1, "fish", "enemy", FishEnemy);
             game.create(-1, 3, 3, 1, "glass", "glass", SideMovingPlatform);
             game.create(100, 3, 3, 1, "glass", "glass", SideMovingPlatform);
@@ -2118,97 +2124,99 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(20, 9, 1, 3, "seabrick", "solid", TrapperPlatformVertical);
 
             game.create(-45, 7, 1, 1, "coin", "tencoin");
-            this.npc = game.create(-48, 6, 1, 2, "harmless_npc", "none", LoreNPC, {speech: [
-                {
-                    text: "Oh, hello!",
-                    delay: 50
-                },
-                {
-                    text: "I'm just fishing at the springhead while the water's down.",
-                    delay: 75
-                },
-                {
-                    text: "I haven't had much luck though. I'm no good with a Super Sling.",
-                    delay: 75
-                },
-                {
-                    text: "... Say, you couldn't be bothered to help me, could you?",
-                    delay: 0,
-                    prompt: [
-                        {
-                            text: "Sure!",
-                            fun: (npc) => {
-                                game.player.giveWeapon(Hypersling);
-                                npc.say("Gee, thanks! If you could just get me ten fish, I have a reward for you. Here's my Super Sling - please just haul the fish out of the lake with it, thanks!");
-                                this.fishing = true;
+            this.npc = game.create(-48, 6, 1, 2, "harmless_npc", "none", LoreNPC, {
+                speech: [
+                    {
+                        text: "Oh, hello!",
+                        delay: 50
+                    },
+                    {
+                        text: "I'm just fishing at the springhead while the water's down.",
+                        delay: 75
+                    },
+                    {
+                        text: "I haven't had much luck though. I'm no good with a Super Sling.",
+                        delay: 75
+                    },
+                    {
+                        text: "... Say, you couldn't be bothered to help me, could you?",
+                        delay: 0,
+                        prompt: [
+                            {
+                                text: "Sure!",
+                                fun: (npc) => {
+                                    game.player.giveWeapon(Hypersling);
+                                    npc.say("Gee, thanks! If you could just get me ten fish, I have a reward for you. Here's my Super Sling - please just haul the fish out of the lake with it, thanks!");
+                                    this.fishing = true;
+                                }
                             }
-                        }
-                    ]
-                }
-            ]});
+                        ]
+                    }
+                ]
+            });
         },
         questFishes: [],
         caughtFishes: [],
-        onloop(game, framesElapsed){
-            if (this.fishing){
-                if (this.questFishes.length < 4 && Math.random() > 0.995){
-                    var fish = game.create(-70, 32, 1, 1, "fish", "enemy", FishEnemy, {health: 200, dontCollect: true, dropHealth: false});
+        onloop(game, framesElapsed) {
+            if (this.fishing) {
+                if (this.questFishes.length < 4 && Math.random() > 0.995) {
+                    var fish = game.create(-70, 32, 1, 1, "fish", "enemy", FishEnemy, { health: 200, dontCollect: true, dropHealth: false });
                     fish.frozen = false;
                     this.questFishes.push(fish);
                 }
-                if (this.caughtFishes.length >= 10){
+                if (this.caughtFishes.length >= 10) {
                     this.fishing = false;
                     this.npc.speech.push({
-                            text: "Thank you for catching my fish! For your trouble, I'll give you 5 coins.",
-                            delay: 100
-                        },{
-                            text: "Oh no! The water's rising!",
-                            delay: 50
-                        },{
-                            text: "Well bye now!",
-                            delay: 50
-                        },{
-                            call: () => {
-                                game.deleteBrick(this.npc);
-                                this.waterRise = true;
-                                this.caughtFishes = [];
-                                this.questFishes = [];
-                            },
-                            delay: 0
-                        });
+                        text: "Thank you for catching my fish! For your trouble, I'll give you 5 coins.",
+                        delay: 100
+                    }, {
+                        text: "Oh no! The water's rising!",
+                        delay: 50
+                    }, {
+                        text: "Well bye now!",
+                        delay: 50
+                    }, {
+                        call: () => {
+                            game.deleteBrick(this.npc);
+                            this.waterRise = true;
+                            this.caughtFishes = [];
+                            this.questFishes = [];
+                        },
+                        delay: 0
+                    });
                     game.player.collect(5);
                 }
             }
             this.questFishes.forEach((item, i) => {
-                if (item.dead){
+                if (item.dead) {
                     this.questFishes.splice(i, 1);
                 }
-                if (item.x > game.blockWidth * -53){
+                if (item.x > game.blockWidth * -53) {
                     this.questFishes.splice(i, 1);
                     this.caughtFishes.push(item);
                 }
             });
             this.caughtFishes.forEach((item, i) => {
-                if (item.dead){
+                if (item.dead) {
                     this.caughtFishes.splice(i, 1);
                 }
             });
-            if (this.waterRise){
-                if (this.water.y >= -4 * game.blockHeight){
+            if (this.waterRise) {
+                if (this.water.y >= -4 * game.blockHeight) {
                     this.water.y -= framesElapsed;
                     this.water.height += framesElapsed;
                 }
-                if (this.mainWater.y >= this.water.y){
+                if (this.mainWater.y >= this.water.y) {
                     this.mainWater.y -= framesElapsed;
                     this.mainWater.height += framesElapsed;
                 }
-                if (Math.random() > 0.996){
-                    var fish = game.create(-70, 32, 1, 1, "fish", "enemy", FishEnemy, {health: 200, dontCollect: true, dropHealth: false});
+                if (Math.random() > 0.996) {
+                    var fish = game.create(-70, 32, 1, 1, "fish", "enemy", FishEnemy, { health: 200, dontCollect: true, dropHealth: false });
                     fish.frozen = false;
                 }
             }
         },
-        ondestroy(){
+        ondestroy() {
             this.waterRise = false;
             this.fishing = false;
             this.questFishes = [];
@@ -2220,7 +2228,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 2,
         skippable: false,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 50;
             game.startY = 200;
             game.create(0, 0, 49, 1);
@@ -2229,24 +2237,24 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(49, 0, 1, 31);
 
             // Procedural generation of all the platforms
-            for (var x = 0; x < 5; x ++){
-                for (var y = 0; y < 7; y ++){
-                    if ((x + y) % 2 == 1){
+            for (var x = 0; x < 5; x++) {
+                for (var y = 0; y < 7; y++) {
+                    if ((x + y) % 2 == 1) {
                         game.create(x * 10 + 2, y * 4 + 4, 7, 1);
                         if (y < 4 && x % 2 == 0) {
                             game.create(x * 10 + 5, y * 4 + 3, 1, 1, "heal", "heal");
                         }
-                        if (Math.random() > 0.7){
+                        if (Math.random() > 0.7) {
                             game.create(x * 10 + 3, y * 4 + 3, 1, 1, "coin", "fiftycoin");
                         }
-                        else{
+                        else {
                             game.create(x * 10 + 3, y * 4 + 3, 1, 1, "coin", "tencoin");
                         }
-                        if (Math.random() > 0.8){
-                            if (Math.random() > 0.7){
+                        if (Math.random() > 0.8) {
+                            if (Math.random() > 0.7) {
                                 game.create(x * 10 + 6, y * 4 + 3, 1, 1, "coin", "fiftycoin");
                             }
-                            else{
+                            else {
                                 game.create(x * 10 + 6, y * 4 + 3, 1, 1, "coin", "tencoin");
                             }
                         }
@@ -2295,17 +2303,17 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(1, 29, 1, 1, "end", "end");
             this.isFinished = false;
         },
-        onloop(game){
+        onloop(game) {
             if (game.keyCount == 0 && !this.flooded && game.player.health > 0) {
                 game.create(1, 22, 48, 8, "water", "water");
                 //game.create(15, 27, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true, health: 20});
-                game.create(35, 27, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true, health: 20});
+                game.create(35, 27, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true, health: 20 });
                 game.player.giveWeapon(PrettyAverageSword);
                 this.flooded = true;
                 game.jitter(75);
             }
         },
-        ondestroy(){
+        ondestroy() {
             this.flooded = false;
             this.isFinished = true;
         }
@@ -2315,7 +2323,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 3,
         skippable: false,
         difficulty: 1.3,
-        oncreate(game){
+        oncreate(game) {
             game.isShadow = true;
             game.startX = -1070.4018298311007; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = -208.6421647621919; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -2375,14 +2383,16 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             // Don't let PS snip this out; it can't handle callbacks because it sux.
             game.attachMaces(game.create(81, 9, 1, 1, 'lava', 'enemy', NormalEnemy), 7);
             game.attachMaces(game.create(77, 9, 1, 1, 'lava', 'enemy', NormalEnemy), 7);
-            game.create(12, -9, 1, 1, "seabrick", "none", DoWhateverWhenPlayerIsNear, {callback: () => {
-                game.create(12, -9, 1, 1, "jumpthrough_", "enemy", PhaserEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
-            }});
+            game.create(12, -9, 1, 1, "seabrick", "none", DoWhateverWhenPlayerIsNear, {
+                callback: () => {
+                    game.create(12, -9, 1, 1, "jumpthrough_", "enemy", PhaserEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+                }
+            });
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
             game.isShadow = false;
         }
     },
@@ -2390,34 +2400,38 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         name: "Pyramid",
         phase: 3,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0;
             game.startY = -2000;
             //game.create()
-            for (var x = 0; x < 10; x ++){
+            for (var x = 0; x < 10; x++) {
                 game.create(-20 + 2 * x, -4 * x, 41 - 4 * x, 1, "jumpthrough", "jumpthrough");
                 game.create(-20, -4 * x, 2 * x, 1);
                 game.create(21 - 2 * x, -4 * x, 2 * x, 1);
-                if (x % 3 == 0){
+                if (x % 3 == 0) {
                     game.create(-20, -1 - 4 * x, 1, 1, "key", "key");
                 }
-                else if (x % 3 == 1){
+                else if (x % 3 == 1) {
                     game.create(20, -1 - 4 * x, 1, 1, "key", "key");
                 }
             }
             game.create(-20, -42, 1, 43, "none", "field");
-            game.create(-21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
-                for (var x = 0; x < 10; x ++){
-                    game.create(-19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
+            game.create(-21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {
+                onClose: () => {
+                    for (var x = 0; x < 10; x++) {
+                        game.create(-19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
+                    }
                 }
-            }});
+            });
 
             game.create(20, -42, 1, 43, "none", "field");
-            game.create(21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {onClose: () => {
-                for (var x = 0; x < 10; x ++){
-                    game.create(19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
+            game.create(21, -42, 1, 43, "normal", "solid", TrapperPlatformVertical, {
+                onClose: () => {
+                    for (var x = 0; x < 10; x++) {
+                        game.create(19, -4 * x - 1, 1, 1, "coin", "fiftycoin");
+                    }
                 }
-            }});
+            });
 
             game.create(0, -4, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
             game.create(0, -8, 0.5, 0.5, "hopper", "enemy", WeirdBoogerEnemy);
@@ -2425,10 +2439,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             game.create(20, -1, 1, 1, "end", "end");
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -2438,7 +2452,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         skippable: false,
         difficulty: 1,
         chambers: [],
-        oncreate(game){
+        oncreate(game) {
             this.heaven = false;
             game.startX = 0;
             game.startY = -150;
@@ -2470,7 +2484,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(-8, -3, 1, 8);
             game.create(-8, 5, 26, 1);
 
-            game.create(14, 4, 1, 1, "cannon", "enemy", CannonEnemy, {fireRate: 20, sightRange: Infinity});
+            game.create(14, 4, 1, 1, "cannon", "enemy", CannonEnemy, { fireRate: 20, sightRange: Infinity });
 
             game.create(26, 0, 1, 4, "normal", "none");
             game.create(26, 3, 1, 13);
@@ -2489,7 +2503,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(11, 9, 1, 1, "coin", "fiftycoin");
 
             game.create(21, 7, 2, 1);
-            game.attachMaces(game.create(21.5, 6, 1, 1, "shooter", "enemy", ShooterEnemy), 3, {doesExtend: true});
+            game.attachMaces(game.create(21.5, 6, 1, 1, "shooter", "enemy", ShooterEnemy), 3, { doesExtend: true });
 
             game.create(-6, 16, 33, 1);
             game.create(-8, 8, 1, 13);
@@ -2504,7 +2518,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             this.chambers.push({
                 door: game.create(10, 14, 1, 2, "tar", "solid"),
-                enemies: [game.create(20, 14, 1, 1, "lava", "enemy", BruiserEnemy, {dropHealth: true})]
+                enemies: [game.create(20, 14, 1, 1, "lava", "enemy", BruiserEnemy, { dropHealth: true })]
             });
 
             game.create(-7, 10, 17, 6, "water", "water");
@@ -2514,85 +2528,85 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             this.chambers.push({
                 door: game.create(-7, 16, 1, 1, "tar", "solid"),
                 isSideways: true,
-                enemies: [game.create(-5, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40}), game.create(2, 14, 1, 1, "fish", "enemy", FishEnemy, {health: 40})]
+                enemies: [game.create(-5, 14, 1, 1, "fish", "enemy", FishEnemy, { health: 40 }), game.create(2, 14, 1, 1, "fish", "enemy", FishEnemy, { health: 40 })]
             });
 
             game.create(-5, 20, 1, 1, "end", "end");
         },
-        onloop(game, framesElapsed){
-            if (!this.heaven){
+        onloop(game, framesElapsed) {
+            if (!this.heaven) {
                 this.chambers.forEach((item, i) => {
                     var isDead = true;
                     item.enemies.forEach((enemy, enemyi) => {
-                        if (enemy.dead){
+                        if (enemy.dead) {
                             item.enemies.splice(enemyi, 1);
                         }
-                        else{
+                        else {
                             isDead = false;
                         }
                     });
-                    if (isDead){
+                    if (isDead) {
                         var doDelete = false;
-                        if (item.isSideways){
-                            if (item.door.width > 0){
+                        if (item.isSideways) {
+                            if (item.door.width > 0) {
                                 item.door.width -= framesElapsed;
                             }
-                            else{
+                            else {
                                 doDelete = true;
                             }
                         }
-                        else{
-                            if (item.door.height > 0){
+                        else {
+                            if (item.door.height > 0) {
                                 item.door.height -= framesElapsed;
                             }
-                            else{
+                            else {
                                 doDelete = true;
                             }
                         }
-                        if (doDelete){
+                        if (doDelete) {
                             this.chambers.splice(i, 1);
                             game.deleteBrick(item.door);
                             game.jitter(30);
                             game.player.collect(Math.abs(item.score - game.player.score) * 3);
-                            if (this.chambers.length > 0){
+                            if (this.chambers.length > 0) {
                                 this.chambers[i].score = game.player.score;
                             }
                         }
                     }
                 });
-                if ((game.player.x > 799 && game.player.y > -500 && game.player.x + game.player.width < 1400 && game.player.y + game.player.height < 50) || game.player.x < -400){
+                if ((game.player.x > 799 && game.player.y > -500 && game.player.x + game.player.width < 1400 && game.player.y + game.player.height < 50) || game.player.x < -400) {
                     game.ctx.fillStyle = "white";
                     game.ctx.fillRect(0, 0, game.artOff.x + 800, window.innerHeight);
                     game.ctx.fillRect(0, game.artOff.y - 1, window.innerWidth, window.innerHeight);
                     game.ctx.fillStyle = "black";
                     game.ctx.textAlign = "center";
                     game.ctx.font = "bold 24px Arial";
-                    BrickDrawer.drawText(game.ctx, window.innerWidth/2, window.innerHeight/2, game.innerWidth * 2/3, Infinity, "Welcome to the Gateway to Heaven. This is a fantastical realm of magic and wonder - which is to say, it's a hidden room in Platformer. \n I'll probably hide more of these in later levels, so keep looking for them. \n \n If you go to the right, you'll end up back in Reality, falling off a cliff. If you click the button, you'll be teleported to Heaven. \n Your choice.");
+                    BrickDrawer.drawText(game.ctx, window.innerWidth / 2, window.innerHeight / 2, game.innerWidth * 2 / 3, Infinity, "Welcome to the Gateway to Heaven. This is a fantastical realm of magic and wonder - which is to say, it's a hidden room in Platformer. \n I'll probably hide more of these in later levels, so keep looking for them. \n \n If you go to the right, you'll end up back in Reality, falling off a cliff. If you click the button, you'll be teleported to Heaven. \n Your choice.");
                     game.ctx.fillStyle = "red";
-                    if ((game.mousePos.x > window.innerWidth/2 - 50) && (game.mousePos.x < window.innerWidth/2 + 50) && (game.mousePos.y > 200) && (game.mousePos.y < 250)){
+                    if ((game.mousePos.x > window.innerWidth / 2 - 50) && (game.mousePos.x < window.innerWidth / 2 + 50) && (game.mousePos.y > 200) && (game.mousePos.y < 250)) {
                         game.ctx.fillStyle = "green";
                         this.isButton = true;
                     }
-                    else{
+                    else {
                         this.isButton = false;
                     }
-                    game.ctx.fillRect(window.innerWidth/2 - 50, 200, 100, 50);
+                    game.ctx.fillRect(window.innerWidth / 2 - 50, 200, 100, 50);
                     this.isStairwayToHeaven = true;
                 }
-                else{
+                else {
                     this.isStairwayToHeaven = false;
                 }
             }
         },
-        onclick(game){
-            if (this.isStairwayToHeaven){
-                if (this.isButton){
+        onclick(game) {
+            if (this.isStairwayToHeaven) {
+                if (this.isButton) {
                     game.deleteAllBricks();
                     game.player.x = 0;
                     game.player.y = 0;
 
                     // Create Heaven
-                    for (var n = 0; n < 5; n ++){
+                    for (var n = 0; n < 5; n++) {
                         var x = n * 25;
                         var y = 0 + n * 3;
                         game.create(-3 + x, y - 3, 1, 8);
@@ -2602,8 +2616,8 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                         game.create(x + 20, y - 4, 1, 4, "glass", "none");
                         game.create(x + 20, y - 5, 1, 1, "shooter", "enemy", ShooterEnemy);
                         game.sign(x, y + 3, "", "Heaven is temporarily closed for maintenance. Please check back again later!");
-                        for (var cx = 0; cx < 20; cx ++){
-                            if (cx % 4 == 0){
+                        for (var cx = 0; cx < 20; cx++) {
+                            if (cx % 4 == 0) {
                                 game.create(-2 + x + cx, y, 1, 1, "heal", "heal");
                             }
                             //game.create(-2 + x + cx, y + 1, 1, 1, "coin", "tencoin");
@@ -2611,13 +2625,13 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                             //game.create(-2 + x + cx, y + 3, 1, 1, "coin", "fiftycoin");
                         }
                         var r = Math.random();
-                        if (r > 0.8){
+                        if (r > 0.8) {
                             game.create(x + 8, y + 1, 1, 1, "lava", "enemy", NormalEnemy);
                         }
-                        else if (r > 0.4){
+                        else if (r > 0.4) {
                             game.create(x + 8, y + 1, 1, 1, "tank", "enemy", TankEnemy);
                         }
-                        else if (r > 0.2){
+                        else if (r > 0.2) {
                             game.create(x + 8, y + 1, 1, 1, "lava", "killu", MacerEnemy);
                         }
                         else {
@@ -2632,7 +2646,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 }
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -2642,7 +2656,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         skippable: false,
         difficulty: 1,
         forceClassicJump: true, // Don't want Mario jumps in this level because of the CPU drag and the fact that all the jumps are meant to be done in classic mode.
-        oncreate(game){
+        oncreate(game) {
             game.startX = -500;
             game.startY = -800;
             BrickDrawer.isRadiating = true;
@@ -2674,7 +2688,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(38, -3, 5, 1, "normal_");
             game.create(46, -6, 5, 1, "normal_");
             game.create(54, -9, 5, 1, "normal_");
-            game.create(56, -17, 1, 1, "shooter_", "enemy", ShooterEnemy, {sightRange: 1000});
+            game.create(56, -17, 1, 1, "shooter_", "enemy", ShooterEnemy, { sightRange: 1000 });
 
             // Awful Climb
             game.create(64, -17, 1, 5, "normal_");
@@ -2697,13 +2711,13 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             // The dangerous elevator
             game.create(132, -19, 1, 1, "none", "stopblock");
             game.create(132, 0, 1, 1, "none", "stopblock");
-            game.create(132, -15, 1, 1, "normal_", "solid", RaisingPlatform, {speed: 7});
+            game.create(132, -15, 1, 1, "normal_", "solid", RaisingPlatform, { speed: 7 });
 
             // Evil platform
             game.create(136, -8, 1, 6, "none", "field");
             var b = game.create(141, -9, 1, 1, "bullet", "enemy", BatEnemy);
             game.attachMaces(b, 6)
-            game.create(137, -7, 10, 2, "normal_", "solid", RicketyPlatform, {killAlso: [b]});
+            game.create(137, -7, 10, 2, "normal_", "solid", RicketyPlatform, { killAlso: [b] });
             game.create(147, -8, 1, 6, "none", "field");
 
             // Safety at last
@@ -2711,29 +2725,31 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(155, -11, 1, 1, "heal_", "heal");
 
             // Or not.
-            game.create(165, -15, 1, 1, "bullet_", "enemy", BatGunnerEnemy, {onDie: () => {
-                game.create(200, -11, 1, 1, "end", "end");
-            }});
+            game.create(165, -15, 1, 1, "bullet_", "enemy", BatGunnerEnemy, {
+                onDie: () => {
+                    game.create(200, -11, 1, 1, "end", "end");
+                }
+            });
         },
         hasBequeathed: false,
-        onloop(game){
-            if (game.player.x > 1500 && this.phazah.x > 1450){
-                this.phazah.xv --;
+        onloop(game) {
+            if (game.player.x > 1500 && this.phazah.x > 1450) {
+                this.phazah.xv--;
             }
-            if (game.player.x > 7800){
-                if (!this.hasBequeathed){
+            if (game.player.x > 7800) {
+                if (!this.hasBequeathed) {
                     game.player.giveWeapon(BasicGun);
                     this.hasBequeathed = true
                 }
             }
-            else{
-                if (this.hasBequeathed){
+            else {
+                if (this.hasBequeathed) {
                     game.player.clearWeapon();
                     this.hasBequeathed = false;
                 }
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
             game.isShadow = false;
             BrickDrawer.isRadiating = false;
         }
@@ -2743,18 +2759,18 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: -1, // I want to do something with this but I'm not gonna deal with that rn
         skippable: true,
         difficulty: 1.5,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0;
             game.startY = 0;
             // procedurally generated honeycomb
-            for (var x = 0; x < 3; x ++){
+            for (var x = 0; x < 3; x++) {
                 var offX = x * 20;
-                if (x == 0){
+                if (x == 0) {
                     game.create(-12, 3, 2, 1);
                     game.create(-14, 2, 2, 1);
                     game.create(-12, 1, 2, 1);
                 }
-                if (x == 2){
+                if (x == 2) {
                     game.create(offX + 10, 4, 2, 1);
                     game.create(offX + 12, 3, 2, 1);
                     game.create(offX + 14, 2, 2, 1);
@@ -2766,7 +2782,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 game.create(offX - 6, 6, 2, 1);
                 game.create(offX - 4, 7, 2, 1);
                 game.create(offX - 2, 8, 2, 1);
-                game.create(offX,     9, 2, 1);
+                game.create(offX, 9, 2, 1);
                 game.create(offX + 2, 8, 2, 1);
                 game.create(offX + 4, 7, 2, 1);
                 game.create(offX + 6, 6, 2, 1);
@@ -2777,7 +2793,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 game.create(offX - 6, -2, 2, 1);
                 game.create(offX - 4, -3, 2, 1);
                 game.create(offX - 2, -4, 2, 1);
-                game.create(offX,     -5, 2, 1);
+                game.create(offX, -5, 2, 1);
                 game.create(offX + 2, -4, 2, 1);
                 game.create(offX + 4, -3, 2, 1);
                 game.create(offX + 6, -2, 2, 1);
@@ -2786,10 +2802,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             game.create(-11, 2, 1, 1, "jumpthrough_", "enemy", PathfinderEnemy);
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -2798,7 +2814,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 4,
         skippable: false,
         difficulty: 1,
-        oncreate(game){ // I used Studio on this one a lot more than usual. Studio can be activated by running "game.studio()" in the js console.
+        oncreate(game) { // I used Studio on this one a lot more than usual. Studio can be activated by running "game.studio()" in the js console.
             game.startX = 0;
             game.startY = 400;
             game.create(-5, -5, 1, 20, 'normal', 'solid'); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -2847,10 +2863,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             game.create(6, 5, 1, 1, "jumpthrough_", "enemy", PathfinderEnemy);
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
         }
     },
     {
@@ -2863,7 +2879,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         textCycleTick: 0,
         fallingIsSafe: false,
         forceClassicJump: true,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 35.4033099738878; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.startY = 21.10141033012775; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
             game.create(-3, 3, 10, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
@@ -2945,12 +2961,11 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             game.sign(-2, -196, "", "You've been tricked. This is not a pleasant place to be. You are now stuck in Hell.<br>Hell is similar to Purgatory (normal play), except that weapons no longer work. Hell is cleared when you beat the game, but will last between runs. Save slots no longer work when you're in Hell.<br><br>You'll lose the level when you fall, and you will be sent back to start. Enjoy escaping from Hell!");
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
             if (game.player.x >= -36 * game.blockWidth &&
                 game.player.x <= -27 * game.blockWidth &&
                 game.player.y >= 2 * game.blockHeight &&
-                game.player.y <= 10 * game.blockHeight)
-            {
+                game.player.y <= 10 * game.blockHeight) {
                 game.ctx.fillStyle = "white";
                 game.ctx.fillRect(0, 0, 1 + -36 * game.blockWidth + game.artOff.x, window.innerHeight);
                 game.ctx.fillRect(0, 0, window.innerWidth, game.artOff.y + 2 * game.blockWidth + 1);
@@ -2959,46 +2974,45 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
                 game.ctx.fillStyle = "black";
                 game.ctx.font = "bold 24px Arial";
                 game.ctx.textAlign = "center";
-                if (this.textCyclePos == 0){
-                    game.ctx.fillText(this.textCycle[this.textCyclePos], window.innerWidth/2, 24);
+                if (this.textCyclePos == 0) {
+                    game.ctx.fillText(this.textCycle[this.textCyclePos], window.innerWidth / 2, 24);
                 }
-                else if (this.textCyclePos < Infinity){
-                    game.ctx.fillText(this.textCycle[this.textCyclePos - 1], window.innerWidth/2, 24);
-                    game.ctx.fillText(this.textCycle[this.textCyclePos], window.innerWidth/2, 48);
+                else if (this.textCyclePos < Infinity) {
+                    game.ctx.fillText(this.textCycle[this.textCyclePos - 1], window.innerWidth / 2, 24);
+                    game.ctx.fillText(this.textCycle[this.textCyclePos], window.innerWidth / 2, 48);
                 }
                 this.textCycleTick += framesElapsed;
-                if (this.textCycleTick > 70){
+                if (this.textCycleTick > 70) {
                     this.textCycleTick = 0;
-                    this.textCyclePos ++;
+                    this.textCyclePos++;
                 }
-                if (this.textCyclePos >= this.textCycle.length){
+                if (this.textCyclePos >= this.textCycle.length) {
                     this.textCyclePos = Infinity;
                 }
                 var buttonW = 100;
                 var buttonH = 50;
-                var buttonX = (window.innerWidth - buttonW)/2;
+                var buttonX = (window.innerWidth - buttonW) / 2;
                 var buttonY = window.innerHeight - 100 - buttonH;
                 game.ctx.fillStyle = "orange";
                 if (game.mousePos.x > buttonX && game.mousePos.x < buttonX + buttonW &&
-                    game.mousePos.y > buttonY && game.mousePos.y < buttonY + buttonH)
-                {
+                    game.mousePos.y > buttonY && game.mousePos.y < buttonY + buttonH) {
                     game.ctx.fillStyle = "black";
                     this.isHeavenButton = true;
                 }
-                else{
+                else {
                     this.isHeavenButton = false;
                 }
                 game.ctx.fillRect(buttonX, buttonY, buttonW, buttonH);
             }
-            else{
+            else {
                 this.isHeavenButton = false; // So clicking don't weird
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         },
-        onclick(game){
-            if (this.isHeavenButton){
+        onclick(game) {
+            if (this.isHeavenButton) {
                 game.player.x = 0;
                 game.player.y = -10000;
                 gm.hell();
@@ -3011,7 +3025,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 4,
         skippable: true, // Just keep it skippable for now so nobody has to hate me.
         difficulty: 1.5,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0;
             game.startY = 0;
             game.player.giveWeapon(Hypersling);
@@ -3030,10 +3044,10 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
 
             game.create(6, 1, 16, 5, "water", "water");
             game.create(22, 1, 1, 5);
-            game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(7, 1, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
 
             game.create(6, 5, 1, 1, "end", "end");
-            game.create(70, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, {waitTime: 50, enemySpeed: 5});
+            game.create(70, 12, 1, 1, "lava", "splenectifyu", TricklerEnemy, { waitTime: 50, enemySpeed: 5 });
 
             game.create(28, 2, 1, 4, "glass", "glass");
             game.create(30, 3, 1, 1, "jumpthrough_", "enemy", PathfinderEnemy);
@@ -3052,12 +3066,135 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(92, 12, 1, 1, "key", "key");
             game.create(91, 12, 1, 1, "heal", "heal");
         },
-        onloop(game, framesElapsed){
-            if (game.player.x > 29 * 50 && game.player.x < 58 * 50){
-                game.feChange = 1/3;
+        onloop(game, framesElapsed) {
+            if (game.player.x > 29 * 50 && game.player.x < 58 * 50) {
+                game.feChange = 1 / 3;
             }
         },
-        ondestroy(game){
+        ondestroy(game) {
+
+        }
+    },
+    {
+        name: "Rabbit Hole",
+        difficulty: 1,
+        phase: 4,
+        oncreate(game) {
+            game.create(1, 43, 1, 1, 'fish', 'enemy', FishEnemy);
+            game.create(0, 132, 1, 1, 'bullet', 'enemy', BatEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+
+            game.startX = 100; //133.12717399475397; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.startY = 7200; //-22.92090964309498; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 46, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 44, 1, 3, 'pixel_kelp', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-2, 44, 12, 3, 'water', 'water', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(8, 39, 31, 9, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 5, 5, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-33, -32, 27, 47, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-11, -32, 17, 29, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 5, 4, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(2, 14, 37, 9, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 14, 2, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(3.2190000000000003, 13, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-33, 22, 31, 26, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(5, 22, 34, 18, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-2, 30, 4, 3, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-33, 14, 33, 9, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(4, 23, 1, 12, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(4, 35, 3, 4, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(5, -32, 44, 47, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-4, 33, 6, 6, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 4, 1, 1, 'pixel_cannon', 'enemy', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 2, 1, 1, 'pixel_cannon', 'enemy', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, -1, 1, 1, 'pixel_cannon', 'enemy', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, -3, 1, 1, 'pixel_cannon', 'enemy', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 6, 1, 1, 'none', 'enemy', ShooterEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(6, 47, 33, 35, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 47, 6, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 47, 6, 1, 'jumpthrough', 'jumpthrough', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 13, 1, 1, 'mushroom', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(4, 13, 1, 1, 'mushroom', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(1, 4, 1, 1, 'rock', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-4, 4, 1, 1, 'mushroom', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 54, 6, 5, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 53, 1, 1, 'heal', 'heal', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 53, 1, 1, 'mushroom', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(4, 53, 1, 1, 'rock', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 59, 5, 1, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-43, 47, 43, 26, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(4, 66, 2, 4, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(3, 70, 6, 12, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(3, 69, 1, 1, 'mushroom', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 62, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(0, 68, 1, 4, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 72, 2, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(1, 77, 2, 4, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 76, 1, 1, 'rock', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-11, 77, 12, 10, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-15, 91, 5, 22, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-10, 92, 7, 1, 'jumpthrough', 'jumpthrough', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-8.322999999999997, 91, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 98, 4, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-3, 81, 42, 25, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 104, 4, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5.331000000000001, 97, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6.799499999999999, 103, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-43, 72, 29, 41, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 105, 40, 21, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-11, 98, 4, 15, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 112, 4, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 117, 4, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5.179000000000002, 111, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-3.3309999999999995, 116, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(3, 125, 36, 22, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 126, 4, 5, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 137, 4, 4, 'pixel_lava', 'splenectifyu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, 131, 5, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(2, 132, 1, 1, 'none', 'enemy', ShooterEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 141, 5, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-3, 146, 42, 63, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 122, 4, 1, 'glass', 'field', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-4.799500000000002, 121, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-4, 151, 1, 2, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 147, 1, 3, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 156, 2, 5, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-43, 112, 38, 35, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-4, 165, 1, 8, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 169, 1, 11, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 176, 1, 4, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(1, 145, 1, 1, 'heal', 'heal', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 151, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 159, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-43, 146, 36, 63, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 168, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-6, 175, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 179, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 192, 4, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-33, -44, 30, 13, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-33, -61, 82, 18, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(16, -44, 33, 13, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(6, -33, 10, 1, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-3, -33, 6, 1, 'lava', 'killu', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(7, -34, 1, 2, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(14, -36, 1, 4, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(15, -43, 1, 1, 'key', 'key', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(14, -43, 1, 2, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(7, -35, 1, 1, 'averagingenemy', 'enemy', AverageSwarmEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(2, -34, 1, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(10, -34, 1, 1, 'rock', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(7, -36, 1, 1, 'rock', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(2, -35, 1, 1, 'mushroom', 'none', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(14, -37, 1, 1, 'pixel_cannonFlipped', 'enemy', CannonEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-1, -35, 2, 1, 'ice', 'ice', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-2, -39, 1, 1, 'ice', 'ice', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-3, -43, 1, 1, 'end', 'end', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+
+            game.create(-5, 191, 1, 1, 'end', 'solid', TeleporterBrick, { x: 5 * game.blockWidth, y: -35 * game.blockHeight }).studioComment = "fake end"; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+        },
+        onloop(game, framesElapsed) {
+
+        },
+        ondestroy(game) {
 
         }
     },
@@ -3066,42 +3203,42 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: -1,
         skippable: false,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0;
             game.startY = -100;
             //game.createRect(-15, -40, 30, 41);
-            game.create(-15, -40, 30, 1 );
-            game.create(-15, -39, 1 , 35);
-            game.create(15 , -40, 1 , 41);
-            game.create(-14, 1  , 30, 1 );
+            game.create(-15, -40, 30, 1);
+            game.create(-15, -39, 1, 35);
+            game.create(15, -40, 1, 41);
+            game.create(-14, 1, 30, 1);
 
             game.create(10, -36, 5, 1);
             game.create(14, -37, 1, 1, "end", "end");
 
-            game.create(-14, -7, 3, 1, "normal", "solid", BreakableBrick, {health: 40});
-            game.create(-9, -2, 1, 2, "none", "solid", Rocket, {proximity: true}).explodeRadius = 500;
-            game.create(-9, -33, 1, 1, "normal", "solid", BreakableBrick, {health: 20});
+            game.create(-14, -7, 3, 1, "normal", "solid", BreakableBrick, { health: 40 });
+            game.create(-9, -2, 1, 2, "none", "solid", Rocket, { proximity: true }).explodeRadius = 500;
+            game.create(-9, -33, 1, 1, "normal", "solid", BreakableBrick, { health: 20 });
             game.create(-10, -36, 3, 4, "normal", "solid").isStatic = false;
 
             game.create(-14, -38, 2, 1, "normal", "solid", BreakableBrick);
-            game.create(-14, -39, 1, 1, "tar", "enemy", ChainBomb, {chainTimeout: 160, explodeDamage: 30, explodeRadius: 500, knockbackModifier: 1});
-            game.create(-13, -39, 1, 1, "tar", "enemy", ChainBomb, {chainTimeout: 100, explodeDamage: 100, explodeRadius: 50});
+            game.create(-14, -39, 1, 1, "tar", "enemy", ChainBomb, { chainTimeout: 160, explodeDamage: 30, explodeRadius: 500, knockbackModifier: 1 });
+            game.create(-13, -39, 1, 1, "tar", "enemy", ChainBomb, { chainTimeout: 100, explodeDamage: 100, explodeRadius: 50 });
 
-            game.create(-13, -10, 1, 3, "glass", "field", BreakableBrick, {health: 40});
-            game.create(-13, -12, 1, 1, "tar", "enemy", ChainBomb, {chainTimeout: 400, knockbackModifier: 2}).friction = 0.99;
+            game.create(-13, -10, 1, 3, "glass", "field", BreakableBrick, { health: 40 });
+            game.create(-13, -12, 1, 1, "tar", "enemy", ChainBomb, { chainTimeout: 400, knockbackModifier: 2 }).friction = 0.99;
 
-            game.create(-14, -14, 6, 1, "jumpthrough", "jumpthrough", BreakableBrick, {health: 40});
+            game.create(-14, -14, 6, 1, "jumpthrough", "jumpthrough", BreakableBrick, { health: 40 });
 
             game.create(-4, -18, 3, 1);
 
-            game.create(12, 0, 1, 1, "glass", "field", BreakableBrick, {health: 20});
-            game.create(13, -1, 1, 2, "glass", "field", BreakableBrick, {health: 20});
-            var b = game.create(12, -1, 1, 1, "tar", "enemy", ChainBomb, {chainTimeout: 400, knockbackModifier: 2, explodeDamage: 30});
+            game.create(12, 0, 1, 1, "glass", "field", BreakableBrick, { health: 20 });
+            game.create(13, -1, 1, 2, "glass", "field", BreakableBrick, { health: 20 });
+            var b = game.create(12, -1, 1, 1, "tar", "enemy", ChainBomb, { chainTimeout: 400, knockbackModifier: 2, explodeDamage: 30 });
             b.friction = 0.99;
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -3110,14 +3247,14 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: -1,
         skippable: false,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.create(-10, 5, 20, 1);
-            game.create(-5, 0, 1, 2, "none", "solid", Rocket, {proximity: true, isPlayerRide: true, chainTimeout: 20, timeout: 25, eject: 100});
+            game.create(-5, 0, 1, 2, "none", "solid", Rocket, { proximity: true, isPlayerRide: true, chainTimeout: 20, timeout: 25, eject: 100 });
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
 
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
@@ -3128,11 +3265,11 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
         phase: 0,
         skippable: false,
         difficulty: 1,
-        oncreate(game){
+        oncreate(game) {
             game.startX = -0;
             game.startY = -0;
             game.player.giveWeapon(Hypersling);
-            game.create(-1, -0, 30, 3 );
+            game.create(-1, -0, 30, 3);
             game.create(29, 2, 30, 5, "normal", "solid", RicketyPlatform);
             game.create(59, 1, 2, 2)
             game.create(60, 2, 30, 5, "normal", "solid", RicketyPlatform);
@@ -3145,11 +3282,11 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(59, 3, 2, 19);
             game.create(60, 21, 31, 1, "glass", "field", Brick);
             game.create(90, 3, 1, 18, "glass", "field", Brick);
-            game.create(80, 17, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
-            game.create(70, 17, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
-            game.create(75, 17, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
-            game.create(71, 18, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
-            game.create(85, 19, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(80, 17, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
+            game.create(70, 17, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
+            game.create(75, 17, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
+            game.create(71, 18, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
+            game.create(85, 19, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
             game.create(91, 3, 30, 1, "glass", "field", Brick);
             game.create(91, 2, 30, 1, "water", "water");
             game.create(97, 1, 1, 1, "Fish", "enemy", FishEnemy);
@@ -3160,20 +3297,20 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(121, 1, 2, 3);
             game.create(122, 0, 1, 1, "coin", "fiftycoin");
         },
-        onloop(game, framesElapsed){
+        onloop(game, framesElapsed) {
         },
-        ondestroy(game){
+        ondestroy(game) {
 
         }
     },
     {
-        name:"train",
+        name: "train",
         phase: 1,
         skippable: false,
         difficulty: 1,
         community: true,
         author: "Ereed2010",
-        oncreate(game){
+        oncreate(game) {
             game.startX = 0
             game.startY = 0
             game.create(-1, 1, 3, 2);
@@ -3191,7 +3328,7 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(152, -2, 1, 1, "end", "end");
             game.create(122, 0, 30, 1, "water", "water");
             game.create(152, -1, 1, 3);
-            game.create(130, 0, 1, 1, "fish", "enemy", FishEnemy, {dropHealth: true});
+            game.create(130, 0, 1, 1, "fish", "enemy", FishEnemy, { dropHealth: true });
             game.create(89, -3, 2, 1, "jumpthrough", "jumpthrough", Brick);
             game.create(91, -7, 1, 1, "jumpthrough", "jumpthrough", Brick);
             game.create(93, -10, 26, 1, "jumpthrough", "jumpthrough", Brick);
@@ -3203,11 +3340,41 @@ let levels = [ // If it's const, I can't dynamically add levels in Worker Levels
             game.create(91, -17, 1, 1);
             game.create(95, -21, 1, 8);
             game.create(93, -51, 1, 1, "key", "key").isStatic = false;
-       },
-       onloop(game, framesElapsed){
-       },
-       ondestroy(game){
+        },
+        onloop(game, framesElapsed) {
+        },
+        ondestroy(game) {
 
-       }
-   }
+        }
+    },
+    {
+        name: "Multiplayer Room 1",
+        phase: -1,
+        skippable: false,
+        difficulty: 1,
+        oncreate(game) {
+            game.startX = 50; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.startY = 0; // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(18, 5, 18, 4, 'water', 'water', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-17, -18, 2, 43, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-16, 3, 34, 22, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(17, 9, 20, 16, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(35, -14, 4, 39, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(3.267500000000027, 2, 1, 1, 'lava', 'enemy', NormalEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-15, -11, 1, 1, 'none', 'enemy', ShooterEnemy); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-5, 0, 1, 4, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-10, -4, 1, 8, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-15, -1, 5, 1, 'jumpthrough', 'jumpthrough', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(17, 2, 1, 1, 'normal', 'solid', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-7, 2, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-14, 2, 1, 1, 'coin', 'fiftycoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+            game.create(-3, 2, 1, 1, 'coin', 'tencoin', Brick); // Autogenerated by Platformer Studio, a program built by Tyler Clarke.
+        },
+        onloop(game, framesElapsed) {
+            
+        },
+        ondestroy(game) {
+            
+        }
+    }
 ];

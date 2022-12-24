@@ -1,12 +1,12 @@
-class RaisingPlatform extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class RaisingPlatform extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.gravity = 0;
         this.isStatic = false;
-        if (config.speed){
+        if (config.speed) {
             this.yv = config.speed;
         }
-        else{
+        else {
             this.yv = -1;
         }
         this.frictionY = 1;
@@ -18,8 +18,8 @@ class RaisingPlatform extends Brick{
 }
 
 
-class SideMovingPlatform extends Brick{
-    constructor(game, x, y, width, height, style, type){
+class SideMovingPlatform extends Brick {
+    constructor(game, x, y, width, height, style, type) {
         super(game, x, y, width, height, style, type);
         this.gravity = 0;
         this.isStatic = false;
@@ -35,8 +35,8 @@ class SideMovingPlatform extends Brick{
 }
 
 
-class TrapperPlatformVertical extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class TrapperPlatformVertical extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.isStatic = false;
         this.gravity = 0;
@@ -50,23 +50,23 @@ class TrapperPlatformVertical extends Brick{
         this.onClose = config.onClose;
     }
 
-    specialCollision(type){
-        if (type == "player"){
-            if (!this.playerIn){
+    specialCollision(type) {
+        if (type == "player") {
+            if (!this.playerIn) {
                 this.playerSide = this.game.player.x > this.x; // Record what side the player entered by
             }
             this.playerIn = true;
         }
     }
 
-    noSpecial(type){
-        if (type == "player"){
-            if (this.playerIn){
+    noSpecial(type) {
+        if (type == "player") {
+            if (this.playerIn) {
                 this.playerIn = false;
-                if (this.game.player.x > this.x != this.playerSide){ // It only closes if the player enters on one side and exits on the other.
+                if (this.game.player.x > this.x != this.playerSide) { // It only closes if the player enters on one side and exits on the other.
                     this.style = this.trapStyle;
                     this.type = this.trapType;
-                    if (this.onClose){
+                    if (this.onClose) {
                         this.onClose();
                     }
                     this.isStatic = true;
@@ -77,8 +77,8 @@ class TrapperPlatformVertical extends Brick{
 }
 
 
-class RicketyPlatform extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class RicketyPlatform extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.isStatic = false;
         this.gravity = 0;
@@ -87,18 +87,18 @@ class RicketyPlatform extends Brick{
         this.killAlso = config.killAlso || [];
     }
 
-    specialCollision(type){
-        if (type == "player"){
+    specialCollision(type) {
+        if (type == "player") {
             this.isShrinking = true;
         }
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         super.loop(framesElapsed);
-        if (this.isShrinking){
+        if (this.isShrinking) {
             this.height -= framesElapsed;
-            this.y += framesElapsed/2;
-            if (this.height <= 0){
+            this.y += framesElapsed / 2;
+            if (this.height <= 0) {
                 this.game.deleteBrick(this);
                 this.killAlso.forEach((item, i) => {
                     this.game.deleteBrick(item);
@@ -108,19 +108,19 @@ class RicketyPlatform extends Brick{
     }
 }
 
-class DoWhateverWhenPlayerIsNear extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class DoWhateverWhenPlayerIsNear extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.callback = config.callback;
         this.isStatic = false;
-        if (config.sightRange != undefined){
+        if (config.sightRange != undefined) {
             this.sightRange = config.sightRange;
         }
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         super.loop(framesElapsed);
-        if (this.canSeePlayer()){
+        if (this.canSeePlayer()) {
             this.callback();
             this.game.deleteBrick(this);
         }
@@ -128,8 +128,8 @@ class DoWhateverWhenPlayerIsNear extends Brick{
 }
 
 
-class Explosion extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class Explosion extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.TTL = config.TTL || 10; // 10 works well, but I'm trying to keep this code clean.
         this.explodeDamage = config.damage;
@@ -143,21 +143,21 @@ class Explosion extends Brick{
         this.knockbackModifier = config.knockbackModifier || 1;
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         super.loop(framesElapsed);
         this.TTL -= framesElapsed;
-        if (this.TTL <= 0){
+        if (this.TTL <= 0) {
             this.game.deleteBrick(this);
         }
 
         const boomFun = (item, i) => {
-            if (!item.immuneToBombs && !(item == this)){
-                var centerDistX = item.x + item.width/2 - (this.x + this.width/2);
-                var centerDistY = item.y + item.height/2 - (this.y + this.height/2);
+            if (!item.immuneToBombs && !(item == this)) {
+                var centerDistX = item.x + item.width / 2 - (this.x + this.width / 2);
+                var centerDistY = item.y + item.height / 2 - (this.y + this.height / 2);
                 var totalDist = Math.sqrt(centerDistX * centerDistX + centerDistY * centerDistY);
-                if (totalDist < this.width * 0.75){
-                    item.xv += this.knockbackModifier * centerDistX/totalDist * this.explodeDamage/10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
-                    item.yv += this.knockbackModifier * centerDistY/totalDist * this.explodeDamage/10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
+                if (totalDist < this.width * 0.75) {
+                    item.xv += this.knockbackModifier * centerDistX / totalDist * this.explodeDamage / 10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
+                    item.yv += this.knockbackModifier * centerDistY / totalDist * this.explodeDamage / 10 * (item.explosionSensitivityModifier ? item.explosionSensitivityModifier : 1);
                 }
             }
         };
@@ -165,17 +165,17 @@ class Explosion extends Brick{
         boomFun(this.game.player);
     }
 
-    specialCollision(type, items){
+    specialCollision(type, items) {
         items.forEach((item, i) => {
-            if (!item.immuneToBombs){
-                if (item.damage){
+            if (!item.immuneToBombs) {
+                if (item.damage) {
                     item.damage(this.explodeDamage);
                 }
-                else{
+                else {
                     item.harm(this.explodeDamage);
                 }
             }
-            if (item.chainReactionExplosion){
+            if (item.chainReactionExplosion) {
                 item.chainReactionExplosion();
             }
         });
@@ -183,8 +183,8 @@ class Explosion extends Brick{
 }
 
 
-class Bomb extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class Bomb extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.TTL = config.TTL || 100;
         this.startTTL = this.TTL;
@@ -198,65 +198,65 @@ class Bomb extends Brick{
         this.specialCollisions = ["solid", "enemy"];
         this.allowChainReaction = config.chainReaction || true;
         this.armTimeout = 0;
-        if (config.arm){
+        if (config.arm) {
             this.armTimeout = config.arm;
         }
         this.timeBomb = true;
         this.chainTimeout = config.chainTimeout || 3;
     }
 
-    specialCollision(type, items){
-        if (this.armTimeout >= 0){
+    specialCollision(type, items) {
+        if (this.armTimeout >= 0) {
             return;
         }
-        if (this.explodeOnCollision){
+        if (this.explodeOnCollision) {
             this.blowUp();
         }
     }
 
-    setBombArt(){
-        if (this.armTimeout <= 0){
+    setBombArt() {
+        if (this.armTimeout <= 0) {
             this.game.ctx.globalAlpha = (this.TTL % 10) / 10;
         }
     }
 
-    unsetBombArt(){
+    unsetBombArt() {
         this.game.ctx.globalAlpha = 1;
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         this.setBombArt();
         super.loop(framesElapsed);
         this.unsetBombArt();
         this.game.ctx.globalAlpha = 1;
-        if (this.armTimeout >= 0){
+        if (this.armTimeout >= 0) {
             this.armTimeout -= framesElapsed;
         }
-        else{
+        else {
             this.TTL -= framesElapsed;
-            var percentage = (this.startTTL - this.TTL)/this.startTTL;
+            var percentage = (this.startTTL - this.TTL) / this.startTTL;
             var wPerc = this.width * percentage;
             var hPerc = this.height * percentage;
-            this.game.ctx.fillRect(this.x + this.game.artOff.x + this.width/2 - wPerc/2, this.y + this.game.artOff.y + this.height/2 - hPerc/2, wPerc, hPerc);
+            this.game.ctx.fillRect(this.x + this.game.artOff.x + this.width / 2 - wPerc / 2, this.y + this.game.artOff.y + this.height / 2 - hPerc / 2, wPerc, hPerc);
             if (this.TTL <= 0 || (this.isProximity && this.game.canSeeOneOf(this, ["enemy"]))) {
                 this.blowUp();
             }
         }
     }
 
-    blowUp(){
+    blowUp() {
         this.game.detonate(this, this.explodeRadius, this.explodeDamage);
     }
 
-    chainReactionExplosion(){
-        if (this.armTimeout <= 0){
+    chainReactionExplosion() {
+        if (this.armTimeout <= 0) {
             this.TTL = this.chainTimeout;
         }
     }
 }
 
-class ChainBomb extends Brick{ // Meant to be in explosion chains
-    constructor(game, x, y, width, height, style, type, config){
+class ChainBomb extends Brick { // Meant to be in explosion chains
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.TTL = 0;
         this.friction = 0;
@@ -266,17 +266,17 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         this.chainTimeout = config.chainTimeout || 1;
         this.explodeOnFastCollision = config.nitroglycerin;
         this.specialCollisions = this.collisions;
-        this.mass = this.width * this.height/3;
+        this.mass = this.width * this.height / 3;
         this.knockbackModifier = config.knockbackModifier || 0.1;
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         super.loop(framesElapsed);
         var wasActive = this.TTL > 0;
         this.TTL -= framesElapsed;
-        if (this.TTL < 0 && wasActive){
-            for (var x = 0; x < this.eject; x ++){
-                var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height/2 - 5, 10, 10, "tar", "solid", Bomb, {arm: 60, TTL: 100, nitroglycerine: true});
+        if (this.TTL < 0 && wasActive) {
+            for (var x = 0; x < this.eject; x++) {
+                var bomb = this.game._create(this.x + this.width / 2 - 5, this.y + this.height / 2 - 5, 10, 10, "tar", "solid", Bomb, { arm: 60, TTL: 100, nitroglycerine: true });
                 bomb.x += Math.random() * 50 - 25;
                 bomb.y += Math.random() * 50 - 25;
                 bomb.explodeDamage = 20;
@@ -289,25 +289,25 @@ class ChainBomb extends Brick{ // Meant to be in explosion chains
         }
     }
 
-    explode(){
-        this.game.detonate(this, (this.explodeRadius ? this.explodeRadius * 2 : this.mass), this.explodeDamage || this.mass/10, this.knockbackModifier);
+    explode() {
+        this.game.detonate(this, (this.explodeRadius ? this.explodeRadius * 2 : this.mass), this.explodeDamage || this.mass / 10, this.knockbackModifier);
     }
 
-    specialCollision(){
-        if (this.explodeOnFastCollision && this.yv + this.xv > 10){
+    specialCollision() {
+        if (this.explodeOnFastCollision && this.yv + this.xv > 10) {
             this.explode();
         }
     }
 
-    chainReactionExplosion(){
+    chainReactionExplosion() {
         this.isExploding = true;
         this.TTL = this.chainTimeout;
     }
 }
 
-class ExplodingBullet extends Bomb{ // Mostly meant for Tanks and Shooters.
+class ExplodingBullet extends Bomb { // Mostly meant for Tanks and Shooters.
     // Explosion-based enemies should use Bombs.
-    constructor(game, x, y, width, height, style, type, config){
+    constructor(game, x, y, width, height, style, type, config) {
         config.TTL = config.TTL || 50;
         config.chainReaction = config.chainReaction || true;
         super(game, x, y, width, height, style, type, config);
@@ -325,8 +325,8 @@ class ExplodingBullet extends Bomb{ // Mostly meant for Tanks and Shooters.
     }
 }
 
-class BreakableBrick extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class BreakableBrick extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.cracks = [];
         this.health = config.health || 100;
@@ -336,9 +336,9 @@ class BreakableBrick extends Brick{
         this.totalCracks = 0;
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         this.isHealthbar = false;
-        this.game.ctx.globalAlpha = this.health/this.maxHealth;
+        this.game.ctx.globalAlpha = this.health / this.maxHealth;
         super.loop(framesElapsed);
         this.game.ctx.globalAlpha = 1;
         this.game.ctx.lineWidth = 1;
@@ -353,53 +353,53 @@ class BreakableBrick extends Brick{
     }
 }
 
-class Rocket extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class Rocket extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.TTL = Infinity;
         this.timeout = config.timeout || 100;
         this.chainTimeout = config.chainTimeout || 0;
         this.fireWhenPlayerNear = config.proximity;
-        if (config.isPlayerRide){
+        if (config.isPlayerRide) {
             this.specialCollisions.push("player");
             this.restrictInteger = true;
         }
-        if (config.eject != undefined){
+        if (config.eject != undefined) {
             this.eject = config.eject;
         }
-        else{
+        else {
             this.eject = 0;
         }
     }
 
-    specialCollision(type){
+    specialCollision(type) {
 
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         super.loop(framesElapsed);
-        if (this.active){
+        if (this.active) {
             this.chainTimeout -= framesElapsed;
-            if (this.chainTimeout > 0){
+            if (this.chainTimeout > 0) {
                 return;
             }
         }
-        if (this.TTL < Infinity){
+        if (this.TTL < Infinity) {
             this.TTL -= framesElapsed;
             this.yv -= framesElapsed * 2;
-            if (this.TTL < 0){
+            if (this.TTL < 0) {
                 this.explode();
             }
         }
-        if (this.fireWhenPlayerNear && this.canSeePlayer()){
+        if (this.fireWhenPlayerNear && this.canSeePlayer()) {
             this.chainReactionExplosion();
         }
     }
 
-    explode(){
+    explode() {
         this.game.detonate(this, this.explodeRadius, this.explodeDamage);
-        for (var x = 0; x < this.eject; x ++){
-            var bomb = this.game._create(this.x + this.width/2 - 5, this.y + this.height, 10, 10, "tar", "solid", Bomb, {arm: 20, TTL: 50, nitroglycerin: true});
+        for (var x = 0; x < this.eject; x++) {
+            var bomb = this.game._create(this.x + this.width / 2 - 5, this.y + this.height, 10, 10, "tar", "solid", Bomb, { arm: 20, TTL: 50, nitroglycerin: true });
             bomb._x += Math.random() * this.width * 2 - this.width;
             bomb._y += Math.random() * 50 + 50;
             bomb.specialCollisions.push("player");
@@ -411,15 +411,15 @@ class Rocket extends Brick{
         }
     }
 
-    drawFlames(ctx){
+    drawFlames(ctx) {
         ctx.fillStyle = "red";
         ctx.beginPath();
         ctx.moveTo(0, this.height);
-        ctx.lineTo(this.width/6, this.height * 6/4);
-        ctx.lineTo(this.width * 2/6, this.height * 12/10);
-        ctx.lineTo(this.width * 3/6, this.height * 13/8);
-        ctx.lineTo(this.width * 4/6, this.height * 12/10);
-        ctx.lineTo(this.width * 5/6, this.height * 6/4);
+        ctx.lineTo(this.width / 6, this.height * 6 / 4);
+        ctx.lineTo(this.width * 2 / 6, this.height * 12 / 10);
+        ctx.lineTo(this.width * 3 / 6, this.height * 13 / 8);
+        ctx.lineTo(this.width * 4 / 6, this.height * 12 / 10);
+        ctx.lineTo(this.width * 5 / 6, this.height * 6 / 4);
         ctx.lineTo(this.width, this.height);
         ctx.closePath();
         ctx.fill();
@@ -427,17 +427,17 @@ class Rocket extends Brick{
         ctx.fillStyle = "orange";
         ctx.beginPath();
         ctx.moveTo(0, this.height);
-        ctx.lineTo(this.width/6, this.height * 5/4);
-        ctx.lineTo(this.width * 2/6, this.height * 11/10);
-        ctx.lineTo(this.width * 3/6, this.height * 11/8);
-        ctx.lineTo(this.width * 4/6, this.height * 11/10);
-        ctx.lineTo(this.width * 5/6, this.height * 5/4);
+        ctx.lineTo(this.width / 6, this.height * 5 / 4);
+        ctx.lineTo(this.width * 2 / 6, this.height * 11 / 10);
+        ctx.lineTo(this.width * 3 / 6, this.height * 11 / 8);
+        ctx.lineTo(this.width * 4 / 6, this.height * 11 / 10);
+        ctx.lineTo(this.width * 5 / 6, this.height * 5 / 4);
         ctx.lineTo(this.width, this.height);
         ctx.closePath();
         ctx.fill();
     }
 
-    draw(){
+    draw() {
         var ctx = this.game.ctx;
         var transX = this.x + this.game.artOff.x;
         var transY = this.y + this.game.artOff.y;
@@ -446,37 +446,37 @@ class Rocket extends Brick{
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
         ctx.fillStyle = "red";
-        ctx.moveTo(this.width/2, 0);
-        ctx.quadraticCurveTo(this.width, this.height/3, this.width, this.height/2);
+        ctx.moveTo(this.width / 2, 0);
+        ctx.quadraticCurveTo(this.width, this.height / 3, this.width, this.height / 2);
         ctx.lineTo(this.width, this.height);
         ctx.lineTo(0, this.height);
-        ctx.lineTo(0, this.height/2);
-        ctx.quadraticCurveTo(0, this.height/3, this.width/2, 0);
+        ctx.lineTo(0, this.height / 2);
+        ctx.quadraticCurveTo(0, this.height / 3, this.width / 2, 0);
         ctx.stroke();
         ctx.fill();
-        if (this.TTL < Infinity){
-            if (this.TTL % 2 < 1){
+        if (this.TTL < Infinity) {
+            if (this.TTL % 2 < 1) {
                 this.drawFlames(ctx);
             }
         }
         ctx.translate(-transX, -transY);
     }
 
-    chainReactionExplosion(){
-        if (!this.active){
+    chainReactionExplosion() {
+        if (!this.active) {
             this.active = true;
             this.TTL = this.timeout;
         }
     }
 
-    hitTop(){
+    hitTop() {
         this.explode();
     }
 }
 
 
-class WeaponField extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class WeaponField extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.gravity = 0;
         this.collisions = [];
@@ -484,31 +484,31 @@ class WeaponField extends Brick{
         this.isStatic = false;
         this.weapon = config.weapon || PrettyAverageSword;
         this.hasBequeathed = false;
-        if (config.retrieve == undefined){
+        if (config.retrieve == undefined) {
             this.doRetrieve = true;
         }
-        else{
+        else {
             this.doRetrieve = config.retrieve;
         }
         this.immuneToBombs = true;
     }
 
-    specialCollision(type){
-        if (type == "player"){
-            if (this.game.player.weapon != this.weapon && !this.hasBequeathed){
+    specialCollision(type) {
+        if (type == "player") {
+            if (this.game.player.weapon != this.weapon && !this.hasBequeathed) {
                 this.game.player.giveWeapon(this.weapon);
                 this.hasBequeathed = true;
             }
         }
     }
 
-    noSpecial(type){
-        if (type == "player"){
-            if (this.game.player.weapon == this.weapon && this.hasBequeathed && this.doRetrieve){
+    noSpecial(type) {
+        if (type == "player") {
+            if (this.game.player.weapon == this.weapon && this.hasBequeathed && this.doRetrieve) {
                 this.game.player.clearWeapon();
                 this.hasBequeathed = false;
             }
-            if (!this.doRetrieve){
+            if (!this.doRetrieve) {
                 this.hasBequeathed = false;
             }
         }
@@ -516,8 +516,8 @@ class WeaponField extends Brick{
 }
 
 
-class RegenWatcher extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class RegenWatcher extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.gravity = 0;
         this.collisions = [];
@@ -527,7 +527,7 @@ class RegenWatcher extends Brick{
         this.immuneToBombs = true;
     }
 
-    watch(brick){
+    watch(brick) {
         this.watching.push({
             b: brick,
             copy: {
@@ -536,13 +536,13 @@ class RegenWatcher extends Brick{
         });
     }
 
-    noSpecial(type){
-        if (type == "player"){
+    noSpecial(type) {
+        if (type == "player") {
             this.watching.forEach((item, i) => {
-                if (item.b.dead){
+                if (item.b.dead) {
                     Object.assign(item.b, item.copy);
                     this.game.tileset.push(item.b);
-                    if (item.b.onWatcherRegen){
+                    if (item.b.onWatcherRegen) {
                         item.b.onWatcherRegen();
                     }
                 }
@@ -552,26 +552,26 @@ class RegenWatcher extends Brick{
 }
 
 
-class FriendlyShooter extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class FriendlyShooter extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.isStatic = true;
         this.phase = 0;
         this.angle = 0;
         this.angleV = 0;
         this.sightRange = config.sightRange || Infinity;
-        if (config.shootAbove == undefined){
+        if (config.shootAbove == undefined) {
             this.shootAbove = true;
         }
-        else{
+        else {
             this.shootAbove = config.shootAbove;
         }
-        if (game.skin == "pixel"){
+        if (game.skin == "pixel") {
             this.style = "none";
         }
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         super.loop(framesElapsed);
         var goalAngle = 0;
         var angleFric = 0.9;
@@ -597,12 +597,12 @@ class FriendlyShooter extends Brick{
         var distY = 0;
         var hypotenuse = 0;
         this.game.tileset.forEach((item, i) => {
-            if (item.type == "enemy"){
-                if (!game.isLineObstructed([this.x, this.y], [item.x, item.y])){
-                    var _distX = this.x + this.width/2 - (item.x + item.width/2);
-                    var _distY = this.y + this.height/2 - (item.y + item.height/2);
+            if (item.type == "enemy") {
+                if (!game.isLineObstructed([this.x, this.y], [item.x, item.y])) {
+                    var _distX = this.x + this.width / 2 - (item.x + item.width / 2);
+                    var _distY = this.y + this.height / 2 - (item.y + item.height / 2);
                     var _hypotenuse = Math.sqrt(_distY * _distY + _distX * _distX);
-                    if (_hypotenuse < closestDist){
+                    if (_hypotenuse < closestDist) {
                         closestDist = _hypotenuse;
                         closest = item;
                         distX = _distX;
@@ -612,14 +612,14 @@ class FriendlyShooter extends Brick{
                 }
             }
         });
-        if (closest){
+        if (closest) {
             this.phase += framesElapsed;
-            goalAngle = Math.acos(distX/hypotenuse) * 180/Math.PI + 90;
-            if (distY < 0){
+            goalAngle = Math.acos(distX / hypotenuse) * 180 / Math.PI + 90;
+            if (distY < 0) {
                 goalAngle -= 180;
                 goalAngle *= -1;
             }
-            if (this.phase > 3){
+            if (this.phase > 3) {
                 this.phase = 0;
                 this.shoot();
             }
@@ -627,24 +627,24 @@ class FriendlyShooter extends Brick{
         }
         var isMoreThan = goalAngle > this.angle;
         var isLessThan = goalAngle < this.angle;
-        if (isMoreThan){
+        if (isMoreThan) {
             this.angleV += 2 * Math.random();
         }
-        else if (isLessThan){
+        else if (isLessThan) {
             this.angleV -= 2 * Math.random();
         }
         this.angle += this.angleV * framesElapsed;
         this.angleV *= angleFric;
         var ctx = this.game.ctx;
         ctx.save();
-        ctx.translate(this.x + this.game.artOff.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
-        ctx.rotate(this.angle * Math.PI/180);
-        if (this.game.skin == "pixel"){
-            ctx.rotate(Math.PI * 1/2);
-            ctx.translate(-this.width/2, -this.height/2);
+        ctx.translate(this.x + this.game.artOff.x + this.width / 2, this.game.artOff.y + this.y + this.height / 2);
+        ctx.rotate(this.angle * Math.PI / 180);
+        if (this.game.skin == "pixel") {
+            ctx.rotate(Math.PI * 1 / 2);
+            ctx.translate(-this.width / 2, -this.height / 2);
             ctx.drawImage(document.getElementById("pixel_friendlyTurret"), 0, 0);
         }
-        else{
+        else {
             ctx.fillStyle = "green";
             ctx.beginPath();
             ctx.translate(0, 20);
@@ -659,16 +659,16 @@ class FriendlyShooter extends Brick{
         ctx.restore();
     }
 
-    shoot(){
-        var thingX = Math.cos((this.angle + 90) * Math.PI/180);
-        var thingY = Math.sin((this.angle + 90) * Math.PI/180);
-        this.game._create(this.x + this.width/2 + thingX * 40, this.y + this.height/2 + thingY * 40, 10, 10, "ourbullet", "none", PlayerFriendlyBullet, {xv: thingX * 30, yv: thingY * 30, damage: 30});
+    shoot() {
+        var thingX = Math.cos((this.angle + 90) * Math.PI / 180);
+        var thingY = Math.sin((this.angle + 90) * Math.PI / 180);
+        this.game._create(this.x + this.width / 2 + thingX * 40, this.y + this.height / 2 + thingY * 40, 10, 10, "ourbullet", "none", PlayerFriendlyBullet, { xv: thingX * 30, yv: thingY * 30, damage: 30 });
     }
 }
 
 
-class HideWall extends Brick{
-    constructor(game, x, y, width, height, style, type){
+class HideWall extends Brick {
+    constructor(game, x, y, width, height, style, type) {
         super(game, x, y, width, height, style, type);
         this.isStatic = false;
         this.specialCollisions.push("player");
@@ -677,22 +677,22 @@ class HideWall extends Brick{
         this.gravity = 0;
     }
 
-    specialCollision(type, items){
-        if (type == "player"){
+    specialCollision(type, items) {
+        if (type == "player") {
             this.style = "none";
         }
     }
 
-    noSpecial(type){
-        if (type == "player"){
+    noSpecial(type) {
+        if (type == "player") {
             this.style = this._style;
         }
     }
 }
 
 
-class Current extends Brick{
-    constructor(game, x, y, width, height, style, type, config){
+class Current extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.collisions = [];
         this.gravity = 0;
@@ -702,13 +702,32 @@ class Current extends Brick{
         this.specialCollisions = ["player"];
     }
 
-    specialCollision(type){
-        if (type == "player"){
-            if (this.currentFunction){
+    specialCollision(type) {
+        if (type == "player") {
+            if (this.currentFunction) {
                 this.currentFunction(this);
             }
             this.game.player.xv += this.cXv;
             this.game.player.yv += this.cYv;
+        }
+    }
+}
+
+
+class TeleporterBrick extends Brick {
+    constructor(game, x, y, width, height, style, type, config) {
+        super(game, x, y, width, height, style, type);
+        this.specialCollisions.push("player");
+        this.teleX = config.x || x;
+        this.teleY = config.y || y - 300;
+    }
+
+    specialCollision(type, items) {
+        if (type == "player") {
+            this.game.player.x = this.teleX;
+            this.game.player.y = this.teleY;
+            this.game.player.xv = 0;
+            this.game.player.yv = 0;
         }
     }
 }

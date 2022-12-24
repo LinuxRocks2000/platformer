@@ -42,21 +42,21 @@ class Boink{
 
 
 class RisingTextBoink{
-    constructor(text, game){
+    constructor(text, player){
         this.text = text;
-        this.game = game;
+        this.player = player;
         this.TTL = 200;
         this.maxTTL = 200;
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
         this.TTL -= framesElapsed;
-        this.game.ctx.font = "bold 48px sans-serif";
-        this.game.ctx.fillStyle = "gold";
-        this.game.ctx.textAlign = "center";
-        this.game.ctx.globalAlpha = this.TTL/this.maxTTL;
-        this.game.ctx.fillText(this.text, -this.game.viewPos.x + window.innerWidth/2, -this.game.viewPos.y + window.innerHeight/2 * (this.TTL/this.maxTTL));
-        this.game.ctx.globalAlpha = 1;
+        this.player.game.ctx.font = "bold 48px sans-serif";
+        this.player.game.ctx.fillStyle = "gold";
+        this.player.game.ctx.textAlign = "center";
+        this.player.game.ctx.globalAlpha = this.TTL/this.maxTTL;
+        this.player.game.ctx.fillText(this.text, this.player.x + this.player.game.artOff.x + this.player.width/2, this.player.y + this.player.game.artOff.y - window.innerHeight/2 * (1 - this.TTL/this.maxTTL));
+        this.player.game.ctx.globalAlpha = 1;
     }
 }
 
@@ -538,6 +538,14 @@ const BrickDrawer = {
                     }
                 }
                 break;
+            case "mushroom":
+                var art = document.getElementById("pixel_mushroom_liminal");
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
             case "dirt_empty":
                 var art = document.getElementById("pixel_fancydirt_empty");
                 for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
@@ -855,6 +863,7 @@ const BrickDrawer = {
             }
             ctx.putImageData(data, _oldX, _oldY);
         }
+        ctx.globalAlpha = 1; // Just revert it. No matter what. Ya know?
     },
     applyComposite(color){
         this.composite = color;

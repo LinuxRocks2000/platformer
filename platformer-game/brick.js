@@ -28,7 +28,7 @@ class Brick extends PhysicsObject{
         }
         this.playerSight = 0;
 
-        this.transparents = ["glass", "none", "key", "water", "jumpthrough", "ice", "tar", "splenectifyu"];
+        this.transparents = ["glass", "none", "key", "water", "jumpthrough", "ice", "tar", "splenectifyu", "player", "enemy"];
         this.mouseOver = false;
         this.studioSelected = false;
         this.studioLeftHovered = false;
@@ -46,6 +46,29 @@ class Brick extends PhysicsObject{
 
         this.oldWidth = 0;
         this.oldHeight = 0;
+
+        this.targetPlayer = this.game.player; // Default until it's captured something [it will usually, in typical gameplay, remain game.player]
+    }
+
+    set style(val) {
+        this._style = val;
+        if (this.game.multiplayer.isServer) {
+            this.game.multiplayer.updateGraphics(this)
+        }
+    }
+
+    sendMultiplayerMessage(message) {
+        if (this.game.multiplayer.isServer) {
+            this.game.multiplayer.sendFromBrick(this, message);
+        }
+    }
+
+    onMultiplayerMessage(message) {
+        console.log(this.style, this.type);
+    }
+
+    get style() {
+        return this._style;
     }
 
     beginResize(){
@@ -206,7 +229,13 @@ class Brick extends PhysicsObject{
         }
     }
 
-    loop(framesElapsed){
+    loop(framesElapsed) {
+        if (this.game.multiplayer.isClient) {
+            this.draw();
+            return; // Don't do anythin' fiziks wize
+        }
+        var oldX = this.x; // for multiplayer stuff
+        var oldY = this.y;
         this.playerSight -= framesElapsed;
         if (this.oldWidth != this.width || this.oldHeight != this.height){
             this.dontPrerender = true;
@@ -271,6 +300,11 @@ class Brick extends PhysicsObject{
         }
         this.oldWidth = this.width;
         this.oldHeight = this.height;
+        if (this.game.multiplayer.isServer) {
+            if (this.x != oldX || this.y != oldY) {
+                this.game.multiplayer.moveBrick(this, this.x - oldX, this.y - oldY);
+            }
+        }
     }
 
     interlock(){
@@ -289,27 +323,52 @@ class Brick extends PhysicsObject{
         }
     }
 
-    canSeePlayer(rangeDoesntMatter, auxilaryRange){
-        if (!this.dead){
-            var lineToPlayer = [this.game.player.x + this.game.player.width/2, this.game.player.y + this.game.player.height/2, this.x + this.width/2, this.y + this.height/2];
-            var canSee = true;
-            var distToPlayer = Math.sqrt(Math.pow(lineToPlayer[0] - lineToPlayer[2], 2) + Math.pow(lineToPlayer[1] - lineToPlayer[3], 2));
-            if (distToPlayer > (auxilaryRange ? auxilaryRange : this.sightRange)){
-                if (!rangeDoesntMatter){
-                    canSee = false;
-                }
-            }
-            if (canSee){
-                this.game.tileset.forEach((item, i) => {
-                    if (this.transparents.indexOf(item.type) == -1){ // They can see through anything in that list.
-                        var rect = [item.x, item.y, item.x + item.width, item.y + item.height];
-                        if (!isRectOffLine(rect, lineToPlayer) && !isLineOffRect(rect, lineToPlayer) && item != this){
-                            canSee = false;
-                        }
+    canSeePlayer(rangeDoesntMatter, auxilaryRange){ // Sets this.targetPlayer to a player if it returns true. This is only really useful in multiplayer mode. USE this.targetPlayer!
+        if (!this.dead) {
+            const playerIsSeeable = (player) => { // LOTS OF OPTIMIZATION TO DO HERE
+                var lineToPlayer = [player.x + player.width / 2, player.y + player.height / 2, this.x + this.width / 2, this.y + this.height / 2];
+                var canSee = true;
+                var distToPlayer = Math.sqrt(Math.pow(lineToPlayer[0] - lineToPlayer[2], 2) + Math.pow(lineToPlayer[1] - lineToPlayer[3], 2));
+                if (distToPlayer > (auxilaryRange ? auxilaryRange : this.sightRange)) {
+                    if (!rangeDoesntMatter) {
+                        canSee = false;
                     }
-                });
+                }
+                if (canSee) {
+                    this.game.tileset.forEach((item, i) => {
+                        if (this.transparents.indexOf(item.type) == -1) { // They can see through anything in that list.
+                            var rect = [item.x, item.y, item.x + item.width, item.y + item.height];
+                            if (!isRectOffLine(rect, lineToPlayer) && !isLineOffRect(rect, lineToPlayer) && item != this) {
+                                canSee = false;
+                            }
+                        }
+                    });
+                }
+                return canSee;
             }
-            return canSee;
+            var ret = false;
+            var winningDistance = Infinity;
+            const doSightTasks = (player) => {
+                var lineToPlayer = [player.x + player.width / 2, player.y + player.height / 2, this.x + this.width / 2, this.y + this.height / 2];
+                var distToPlayer = Math.pow(lineToPlayer[0] - lineToPlayer[2], 2) + Math.pow(lineToPlayer[1] - lineToPlayer[3], 2);
+                if (distToPlayer > Math.pow((auxilaryRange ? auxilaryRange : this.sightRange), 2)) { // Easier to square than to sqrt, CPU-time wise
+                    if (!rangeDoesntMatter) {
+                        return; // Don't even try testing line obstruction, a very expensive task, if it's out of range.
+                    }
+                }
+                if (playerIsSeeable(player)) {
+                    ret = true;
+                    if (distToPlayer < winningDistance) {
+                        winningDistance = distToPlayer;
+                        this.targetPlayer = player;
+                    }
+                }
+            };
+            doSightTasks(this.game.player);
+            Object.values(this.game.multiplayers).forEach((item, i) => {
+                doSightTasks(item);
+            });
+            return ret;
         }
     }
 

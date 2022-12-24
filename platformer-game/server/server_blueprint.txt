@@ -1,0 +1,6 @@
+Server is just a P2P proxy.
+"server"-type client connects, sends "s<name>". New room is created. Server responds "s" if it is successfully created.
+"client"-type clients connect, send "c<name>". Are bound to new room. Server responds "c" if they are successfully bound and "f" if the room doesn't exist or another error happens. Eventually add error codes to "f".
+The server-type client is notified "c<client ID>".
+At any time, "client"-type clients can send data over the socket. This data is relayed in the form "<cliID><data>" to the server.
+At any time, the "server"-type client can send data over the socket. If the message starts with the number, the number is read and it is sent to a client of that number; otherwise, it is sent everywhere.
