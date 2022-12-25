@@ -1050,7 +1050,7 @@ class Game {
             this.setMousePos(event.clientX, event.clientY);
         });
 
-        this.multiplayer = new MultiplayerController("ws://localhost:8080/platformer-multiplayer-room-ws");
+        this.multiplayer = new MultiplayerController("wss://swaous.asuscomm.com/platformer-v2-multiplayer/");
         this.multiplayer.game = this;
 
         this.multiplayer.addEventListener("clientconnected", (evt) => {
