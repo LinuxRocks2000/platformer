@@ -161,8 +161,6 @@ class Player extends PhysicsObject {
         var options = ["i", "m", "f", "c", "l"];
         for (var z = 0; z < 3; z++) {
             this.colorMutation += options[Math.floor(Math.random() * options.length)];
-            this.colorMutation += options[Math.floor(Math.random() * options.length)];
-            this.colorMutation += options[Math.floor(Math.random() * options.length)];
         }
     }
 
