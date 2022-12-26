@@ -417,7 +417,11 @@ class Player extends PhysicsObject {
         if (this.game.multiplayer.isClient && !this.isMultiplayer) {
             return; // Don't even draw if it's NOT a controlled player - this is merely a broadcasting slave player.
         }
+        if (this.harmImmune > 0 || this.shielding > 0) {
+            this.game.ctx.globalAlpha = 0.5;
+        }
         this.draw(framesElapsed);
+        this.game.ctx.globalAlpha = 1;
         if (this.game.multiplayer.isClient) {
             return;
         }
@@ -477,10 +481,6 @@ class Player extends PhysicsObject {
             this.x = this.game.startX;
             this.y = this.game.startY;
         }
-        if (this.harmImmune > 0 || this.shielding > 0) {
-            this.game.ctx.globalAlpha = 0.5;
-        }
-        this.game.ctx.globalAlpha = 1;
         if (this.weapon) {
             this.weapon.loop(framesElapsed);
         }
