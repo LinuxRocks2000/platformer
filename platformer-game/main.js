@@ -2504,16 +2504,16 @@ gm.start();
 var wasUnfocused = true;
 
 function mainloop() {
-    //if (document.hasFocus()) {
+    if (document.hasFocus()) {
         if (wasUnfocused) { // This means it doesn't process any time passed when unfocused.
             wasUnfocused = false;
             gm.bumpTime()
         }
         gm.loop();
-    //}
-    //else {
-    //    wasUnfocused = true;
-    //}
+    }
+    else {
+        wasUnfocused = true;
+    }
     window.requestAnimationFrame(mainloop);
 }
 window.requestAnimationFrame(mainloop);
