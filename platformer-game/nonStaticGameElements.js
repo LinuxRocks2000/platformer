@@ -31,6 +31,7 @@ class SideMovingPlatform extends Brick {
         this.collisions.push("player");
         this.specialCollisions.push("player");
         this.touchingPlayer = false;
+        this.immuneToBombs = true;
     }
 }
 
@@ -482,7 +483,10 @@ class WeaponField extends Brick {
         this.collisions = [];
         this.specialCollisions = ["player"];
         this.isStatic = false;
-        this.weapon = config.weapon || PrettyAverageSword;
+        this.weapon = config.weapon || config.weaponType || PrettyAverageSword;
+        if (config.weapon) {
+            this.legacy = true;
+        }
         this.hasBequeathed = false;
         if (config.retrieve == undefined) {
             this.doRetrieve = true;
@@ -495,8 +499,13 @@ class WeaponField extends Brick {
 
     specialCollision(type) {
         if (type == "player") {
-            if (this.game.player.weapon != this.weapon && !this.hasBequeathed) {
-                this.game.player.giveWeapon(this.weapon);
+            if (!this.game.player.weapon || ((this.game.player.weapon != this.weapon) && (this.game.player.weapon.constructor != this.weapon)) && !this.hasBequeathed) {
+                if (this.legacy) {
+                    this.game.player.legacyGiveWeapon(this.weapon);
+                }
+                else {
+                    this.game.player.giveWeapon(this.weapon);
+                }
                 this.hasBequeathed = true;
             }
         }
@@ -505,7 +514,7 @@ class WeaponField extends Brick {
     noSpecial(type) {
         if (type == "player") {
             if (this.game.player.weapon == this.weapon && this.hasBequeathed && this.doRetrieve) {
-                this.game.player.clearWeapon();
+                this.game.player.legacyClearWeapon();
                 this.hasBequeathed = false;
             }
             if (!this.doRetrieve) {
@@ -718,8 +727,8 @@ class TeleporterBrick extends Brick {
     constructor(game, x, y, width, height, style, type, config) {
         super(game, x, y, width, height, style, type);
         this.specialCollisions.push("player");
-        this.teleX = config.x || x;
-        this.teleY = config.y || y - 300;
+        this.teleX = config.x || game.startX;
+        this.teleY = config.y || game.startY;
     }
 
     specialCollision(type, items) {
@@ -729,5 +738,72 @@ class TeleporterBrick extends Brick {
             this.game.player.xv = 0;
             this.game.player.yv = 0;
         }
+    }
+}
+
+
+class PlayerFriendlyBullet extends Brick{
+    constructor(game, x, y, width, height, style, type, config){
+        super(game, x, y, width, height, style, type);
+        this.xv = config.xv || 1;
+        this.yv = config.yv || 0;
+        this.gravity = 0;
+        this.friction = 1;
+        this.frictionY = 1;
+        this.specialCollisions.push("enemy");
+        this.specialCollisions.push("solid"); // Breakable Bricks
+        this.specialCollisions.push("bullet");
+        this.specialCollisions.push("none");
+        this.collisions.splice(this.collisions.indexOf("screen"), 1);
+        this.TTL = config.TTL || 50;
+        this.damageAmount = config.damage || 15;
+    }
+
+    hit(item){
+        if (item.phaser == 0){
+            item.damage(this.damageAmount);
+            item.xv += this.xv/2;
+            item.yv += this.yv/2;
+            this.game.deleteBrick(this);
+        }
+    }
+
+    specialCollision(type, items){
+        if (type == "enemy" || type == "bullet"){
+            items.forEach((item, i) => {
+                this.hit(item);
+            });
+        }
+        if (type == "none"){
+            items.forEach((item, i) => {
+                if (item.constructor.name == "Bomb"){
+                    this.hit(item);
+                }
+            });
+        }
+    }
+
+    loop(framesElapsed){
+        super.loop(framesElapsed);
+        this.TTL -= framesElapsed;
+        if (this.TTL < 0){
+            this.game.deleteBrick(this);
+        }
+    }
+
+    hitTop(){
+        this.game.deleteBrick(this);
+    }
+
+    hitLeft(){
+        this.game.deleteBrick(this);
+    }
+
+    hitBottom(){
+        this.game.deleteBrick(this);
+    }
+
+    hitRight(){
+        this.game.deleteBrick(this);
     }
 }

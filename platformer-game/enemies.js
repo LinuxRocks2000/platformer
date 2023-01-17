@@ -993,7 +993,7 @@ class TankEnemy extends NormalEnemy {
         this.turretAngle = Math.PI / 2;
         this.volley = 0;
         this.volleyPhase = 0;
-        this.collisions.push("tar");
+        this.collisions.push("tar", "glass");
         if (config.bomberTank) {
             this.shootBombs = true;
         }

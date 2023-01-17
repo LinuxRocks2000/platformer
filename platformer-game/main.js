@@ -198,7 +198,7 @@ class Player extends PhysicsObject {
         this.healthbar.style.display = "none";
     }
 
-    giveWeapon(weapon, doForceEquip) {
+    legacyGiveWeapon(weapon, doForceEquip) {
         if (gm.isHell && !doForceEquip) {
             this.risingTextBoinks.push(new RisingTextBoink("You are in Hell, so you can't equip " + weapon.name, this));
         }
@@ -209,6 +209,22 @@ class Player extends PhysicsObject {
             this.weapon = weapon;
             weapon.init(this);
             this.risingTextBoinks.push(new RisingTextBoink("Equipped " + this.weapon.name, this));
+        }
+    }
+
+    giveWeapon(weaponType, doForceEquip) {
+        if (gm.isHell && !doForceEquip) {
+            this.risingTextBoinks.push(new RisingTextBoink("You are in Hell, so you can't equip any weapons!", this));
+        }
+        else {
+            if (this.weapon) {
+                this.weapon.destroy(); // Destroy is universal to legacy weapons AND new weapons - backwards compatibility bit
+                if (this.weapon.constructor != Object) { // Legacy weapons are Objects, new weapons aren't. If it's not a legacy weapon, delete it properly.
+                    this.game.deleteBrick(this.weapon);
+                }
+            }
+            this.weapon = new weaponType(this.game);
+            this.risingTextBoinks.push(new RisingTextBoink("Equipped " + this.weapon.name(), this));
         }
     }
 
@@ -649,7 +665,7 @@ class Player extends PhysicsObject {
             this.score -= this.collectedRecently;
         }
         if (this.weapon) {
-            this.clearWeapon();
+            this.legacyClearWeapon();
         }
         Object.keys(this.keysHeld).forEach((item, i) => {
             this.keysHeld[item] = false;
@@ -667,7 +683,7 @@ class Player extends PhysicsObject {
         this.collectedRecently = 0;
     }
 
-    clearWeapon() {
+    legacyClearWeapon() {
         if (this.weapon) {
             this.weapon.destroy();
             delete this.weapon;
@@ -2502,7 +2518,7 @@ gm.start();
 var wasUnfocused = true;
 
 function mainloop() {
-    if (document.hasFocus()) {
+    if (true || document.hasFocus()) {
         if (wasUnfocused) { // This means it doesn't process any time passed when unfocused.
             wasUnfocused = false;
             gm.bumpTime()

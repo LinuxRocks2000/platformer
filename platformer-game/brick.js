@@ -48,6 +48,8 @@ class Brick extends PhysicsObject{
         this.oldHeight = 0;
 
         this.targetPlayer = this.game.player; // Default until it's captured something [it will usually, in typical gameplay, remain game.player]
+
+        this.graphicalAngle = 0;
     }
 
     set style(val) {
@@ -114,7 +116,7 @@ class Brick extends PhysicsObject{
         }
     }
 
-    draw(){
+    draw() {
         if (this.playerSight > 0){
             this.game.ctx.strokeStyle = "red";
             this.game.ctx.lineWidth = 1;
@@ -124,15 +126,19 @@ class Brick extends PhysicsObject{
             this.game.ctx.stroke();
             this.game.ctx.closePath();
         }
-        if (!this.dead){
-            BrickDrawer.drawBrick(this.game.ctx, this.game.artOff.x + this.x,
-                                                 this.game.artOff.y + this.y,
+        if (!this.dead) {
+            this.game.ctx.translate(this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
+            this.game.ctx.rotate(this.graphicalAngle);
+            BrickDrawer.drawBrick(this.game.ctx, -this.width/2,
+                                                 -this.height/2,
                                                  this.width,
                                                  this.height,
                                                  this.style,
                                                  this.type,
                                                  this.game,
                                                  this);
+            this.game.ctx.rotate(-this.graphicalAngle);
+            this.game.ctx.translate(-(this.game.artOff.x + this.x + this.width/2), -(this.game.artOff.y + this.y + this.height/2));
             if (this.style == "sign"){
                 if (this.mouseOver && !this.game.studioMode){
                     if (!this.signActive){

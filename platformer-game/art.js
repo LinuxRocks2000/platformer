@@ -425,6 +425,14 @@ const BrickDrawer = {
                     }
                 }
                 break;
+            case "gunThatIsntReallyThatBad":
+                for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
+                    for (var _y = 0; _y < height/50; _y ++){
+                        var art = document.getElementById("pixel_gunThatIsntReallyThatBad");
+                        ctx.drawImage(art, _x * 50 + x, _y * 50 + y);
+                    }
+                }
+                break;
             case "scaffold":
                 for (var _x = 0; _x < width/50; _x ++){ // Because the mushroom size is 50, DON'T scale it! Use the fixed value here.
                     for (var _y = 0; _y < height/50; _y ++){
@@ -726,6 +734,21 @@ const BrickDrawer = {
                     }
                 }
                 type = ""; // Don't want it to try Enemyrendering
+                break;
+            case "machineGun":
+                ctx.save();
+                ctx.strokeStyle = "blue";
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.translate(25, 25)
+                ctx.moveTo(-5, 0);
+                ctx.lineTo(0, 5);
+                ctx.lineTo(26, 2);
+                ctx.lineTo(26, -2);
+                ctx.lineTo(0, -5);
+                ctx.lineTo(-5, 0);
+                ctx.stroke();
+                ctx.restore();
                 break;
         }
         x = Math.floor(x);
