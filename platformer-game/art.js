@@ -852,25 +852,29 @@ const BrickDrawer = {
             ctx.fillRect(x, y, width, height);
             ctx.globalCompositeOperation = "source-over";
         }
-        if (style == "water" && game.skin == "pixel"){
-            if (_oldX < 0){
+        if (style == "water" && game.skin == "pixel") {
+            _oldX = thing.x + game.artOff.x;
+            _oldY = thing.y + game.artOff.y;
+            if (_oldX <= 0){
                 width += _oldX;
                 _oldX = 0;
             }
-            if (_oldY < 0){
+            if (_oldY <= 0){
                 height += _oldY;
                 _oldY = 0;
             }
-            if (_oldX + width > window.innerWidth){
+            if (_oldX + width >= window.innerWidth){
                 width = window.innerWidth - _oldX;
             }
-            if (_oldY + height > window.innerHeight){
+            if (_oldY + height >= window.innerHeight){
                 height = window.innerHeight - _oldY;
             }
-            if (Math.round(width) == 0 || Math.round(height) == 0){
+            width = Math.round(width);
+            height = Math.round(height);
+            if (width == 0 || height == 0){
                 return;
             }
-            var data = ctx.getImageData(_oldX, _oldY, Math.round(width), Math.round(height));
+            var data = ctx.getImageData(_oldX, _oldY, width, height);
             var buf = new Uint32Array(data.data.buffer);
             var i = 0;
             for(var y = 0; y < height; y ++){
@@ -878,10 +882,13 @@ const BrickDrawer = {
                 for (var x = 0; x < width; x ++){
                     i ++;
                     var _i = i;
-                    if (i + sine >= buf.length){
+                    if (i + sine >= buf.length) {
                         _i = buf.length - 1 - sine;
+                        buf[i] = 255;
                     }
-                    buf[i] = buf[_i + sine];
+                    else {
+                        buf[i] = buf[_i + sine];
+                    }
                 }
             }
             ctx.putImageData(data, _oldX, _oldY);

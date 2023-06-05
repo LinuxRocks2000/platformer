@@ -2476,12 +2476,19 @@ class GameManager {
         if (this.storage.savedGames.length > 0) {
             thing = "<select onchange='gm.switchToSlot(this.value)'>"
             this.storage.savedGames.forEach((item, i) => {
-                thing += "<option value='" + i + "'>" + i + ": " + item.name + "</option>";
+                thing += "<option value='" + i + "'>" + item.name + "</option>";
             });
             thing += "</select>"
         }
-        thing += "<br /><button onclick='gm.switchToSlot(gm.newSlot(prompt(\"New save slot name\")));gm.manageSaveslots()'>New</button>"
-        document.getElementById("cont").innerHTML = thing;
+        thing += "<br /><button onclick='gm.switchToSlot(gm.newSlot(prompt(\"New save slot name\")));gm.manageSaveslots()'>New</button><br><button onclick='gm.deleteSaveSlot()'>Delete</button>"
+        thing = "<button id=\"exitSaveslots\" onclick=\"gm.exitSaveslotManager()\">X</button><div id='saveslotinner'>" + thing + "</div>";
+        document.getElementById("saveslotman").innerHTML = thing;
+    }
+
+    deleteSaveSlot() {
+        delete this.storage.savedGames[this.saveSlot];
+        this.saveToStorage();
+        this.manageSaveslots();
     }
 
     exitSaveslotManager() {

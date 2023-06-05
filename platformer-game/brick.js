@@ -127,6 +127,9 @@ class Brick extends PhysicsObject{
             this.game.ctx.closePath();
         }
         if (!this.dead) {
+            if ((this.game.artOff.x + this.x + this.width < 0) || (this.game.artOff.y + this.y + this.height < 0) || (this.game.artOff.x + this.x > window.innerWidth) || (this.game.artOff.y + this.y > window.innerHeight)) {
+                return;
+            }
             this.game.ctx.translate(this.game.artOff.x + this.x + this.width/2, this.game.artOff.y + this.y + this.height/2);
             this.game.ctx.rotate(this.graphicalAngle);
             BrickDrawer.drawBrick(this.game.ctx, -this.width/2,
