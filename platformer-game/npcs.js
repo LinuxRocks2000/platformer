@@ -83,7 +83,7 @@ class NPC extends Brick { // Base class, covers interactions and stuff
     introduce(thing){
         this.game.consoleMessage(`
             <span class="console_introduction">` + thing + `</span>
-            `)
+            `);
     }
 
     glideToPlayer(){
@@ -98,12 +98,14 @@ class NPC extends Brick { // Base class, covers interactions and stuff
         var id = "conv_prompt_" + Date.now() + "" + Math.round(Math.random() * 200);
         this.say(text + "<div class='conversation_prompt' id='" + id + "'></div>");
         var convEl = document.getElementById(id);
+        console.log(convEl);
         prompts.forEach((item, i) => {
             var button = document.createElement("button");
             button.classList.add("conversation_promptButton");
             button.onclick = () => {
+                console.log(convEl);
                 this._say("You", button.innerHTML);
-                convEl.style.display = "none";
+                document.getElementById(id).style.display = "none";
                 item.fun(this);
             };
             button.innerHTML = item.text;
